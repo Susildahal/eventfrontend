@@ -1,14 +1,12 @@
 import React from 'react'
-import {Button} from '../components/ui/button'
 
 const page = () => {
   return (
     <div>
-      <h1>Welcome to My App</h1>
-<Button>Click Me</Button>
+      
+      this  for admin dashbord page
     </div>
   )
 }
-
 
 export default page
