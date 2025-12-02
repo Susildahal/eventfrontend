@@ -214,16 +214,16 @@ export default function BirthdayAdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Birthday Events - Admin Dashboard</h1>
-          <p className="text-gray-400">Events of the Century - Birthday Content Management</p>
+          <h1 className="text-4xl font-bold mb-2">Birthday Events - Admin Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400">Events of the Century - Birthday Content Management</p>
         </div>
 
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-gray-900 border border-gray-700">
+            <TabsList className="grid w-full grid-cols-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
               <TabsTrigger value="hero">Hero</TabsTrigger>
               <TabsTrigger value="services">Services</TabsTrigger>
               <TabsTrigger value="concepts">Concepts</TabsTrigger>
@@ -233,40 +233,40 @@ export default function BirthdayAdminDashboard() {
 
             {/* HERO SECTION */}
             <TabsContent value="hero" className="space-y-6 mt-6">
-              <Card className="bg-gray-900 border-gray-700">
+              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-white">Hero Section</CardTitle>
-                  <CardDescription className="text-gray-400">Edit main headline and introduction</CardDescription>
+                  <CardTitle className="text-gray-900 dark:text-white">Hero Section</CardTitle>
+                  <CardDescription className="text-gray-600 dark:text-gray-400">Edit main headline and introduction</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-200">Main Title</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Main Title</label>
                     <Input
                       value={sections.hero.title}
                       onChange={(e) => handleHeroChange('title', e.target.value)}
-                      className="mt-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                      className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
                       placeholder="Main title"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-200">Subtitle/Description</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Subtitle/Description</label>
                     <Textarea
                       value={sections.hero.subtitle}
                       onChange={(e) => handleHeroChange('subtitle', e.target.value)}
-                      className="mt-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500 min-h-[120px]"
+                      className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 min-h-[120px]"
                       placeholder="Hero subtitle"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-200">Hero Image URL</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Hero Image URL</label>
                     <Input
                       value={sections.hero.image}
                       onChange={(e) => handleHeroChange('image', e.target.value)}
-                      className="mt-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
+                      className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
                       placeholder="Image URL"
                       required
                     />
@@ -277,11 +277,11 @@ export default function BirthdayAdminDashboard() {
 
             {/* SERVICES SECTION */}
             <TabsContent value="services" className="space-y-6 mt-6">
-              <Card className="bg-gray-900 border-gray-700">
+              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">What We Handle</CardTitle>
-                    <CardDescription className="text-gray-400">Manage birthday event services</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">What We Handle</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage birthday event services</CardDescription>
                   </div>
                   <Button onClick={addService} size="sm" className="bg-amber-600 hover:bg-amber-700">
                     <Plus className="w-4 h-4 mr-2" />
@@ -290,14 +290,14 @@ export default function BirthdayAdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {sections.services.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-800 rounded-lg space-y-3 border border-gray-700">
+                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
                           <div className="grid grid-cols-2 gap-3">
                             <Input
                               value={item.icon}
                               onChange={(e) => handleServicesChange(item.id, 'icon', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                               placeholder="Icon emoji"
                               maxLength={2}
                               required
@@ -305,7 +305,7 @@ export default function BirthdayAdminDashboard() {
                             <Input
                               value={item.title}
                               onChange={(e) => handleServicesChange(item.id, 'title', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                               placeholder="Service title"
                               required
                             />
@@ -313,7 +313,7 @@ export default function BirthdayAdminDashboard() {
                           <Textarea
                             value={item.description}
                             onChange={(e) => handleServicesChange(item.id, 'description', e.target.value)}
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 min-h-[70px]"
+                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[70px]"
                             placeholder="Service description"
                             required
                           />
@@ -335,11 +335,11 @@ export default function BirthdayAdminDashboard() {
 
             {/* CONCEPTS SECTION */}
             <TabsContent value="concepts" className="space-y-6 mt-6">
-              <Card className="bg-gray-900 border-gray-700">
+              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Signature Birthday Concepts</CardTitle>
-                    <CardDescription className="text-gray-400">Manage birthday event concepts</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">Signature Birthday Concepts</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage birthday event concepts</CardDescription>
                   </div>
                   <Button onClick={addConcept} size="sm" className="bg-amber-600 hover:bg-amber-700">
                     <Plus className="w-4 h-4 mr-2" />
@@ -348,14 +348,14 @@ export default function BirthdayAdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {sections.concepts.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-800 rounded-lg space-y-3 border border-gray-700">
+                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
                           <div className="grid grid-cols-2 gap-3">
                             <Input
                               value={item.icon}
                               onChange={(e) => handleConceptsChange(item.id, 'icon', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                               placeholder="Icon emoji"
                               maxLength={2}
                               required
@@ -363,7 +363,7 @@ export default function BirthdayAdminDashboard() {
                             <Input
                               value={item.title}
                               onChange={(e) => handleConceptsChange(item.id, 'title', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                               placeholder="Concept title"
                               required
                             />
@@ -371,7 +371,7 @@ export default function BirthdayAdminDashboard() {
                           <Textarea
                             value={item.description}
                             onChange={(e) => handleConceptsChange(item.id, 'description', e.target.value)}
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 min-h-[70px]"
+                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[70px]"
                             placeholder="Concept description"
                             required
                           />
@@ -393,11 +393,11 @@ export default function BirthdayAdminDashboard() {
 
             {/* TIMELINE SECTION */}
             <TabsContent value="timeline" className="space-y-6 mt-6">
-              <Card className="bg-gray-900 border-gray-700">
+              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">Event Timeline</CardTitle>
-                    <CardDescription className="text-gray-400">Manage event timeline steps</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">Event Timeline</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage event timeline steps</CardDescription>
                   </div>
                   <Button onClick={addTimeline} size="sm" className="bg-amber-600 hover:bg-amber-700">
                     <Plus className="w-4 h-4 mr-2" />
@@ -406,21 +406,21 @@ export default function BirthdayAdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {sections.timeline.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-800 rounded-lg space-y-3 border border-gray-700">
+                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
                           <div className="grid grid-cols-3 gap-3">
                             <Input
                               value={item.step}
                               onChange={(e) => handleTimelineChange(item.id, 'step', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                               placeholder="Step number"
                               required
                             />
                             <Input
                               value={item.title}
                               onChange={(e) => handleTimelineChange(item.id, 'title', e.target.value)}
-                              className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 col-span-2"
+                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 col-span-2"
                               placeholder="Step title"
                               required
                             />
@@ -428,7 +428,7 @@ export default function BirthdayAdminDashboard() {
                           <Textarea
                             value={item.description}
                             onChange={(e) => handleTimelineChange(item.id, 'description', e.target.value)}
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 min-h-[70px]"
+                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[70px]"
                             placeholder="Step description"
                             required
                           />
@@ -450,11 +450,11 @@ export default function BirthdayAdminDashboard() {
 
             {/* FAQs SECTION */}
             <TabsContent value="faqs" className="space-y-6 mt-6">
-              <Card className="bg-gray-900 border-gray-700">
+              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-white">FAQs</CardTitle>
-                    <CardDescription className="text-gray-400">Manage frequently asked questions</CardDescription>
+                    <CardTitle className="text-gray-900 dark:text-white">FAQs</CardTitle>
+                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage frequently asked questions</CardDescription>
                   </div>
                   <Button onClick={addFaq} size="sm" className="bg-amber-600 hover:bg-amber-700">
                     <Plus className="w-4 h-4 mr-2" />
@@ -463,20 +463,20 @@ export default function BirthdayAdminDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {sections.faqs.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-800 rounded-lg space-y-3 border border-gray-700">
+                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
                           <Input
                             value={item.question}
                             onChange={(e) => handleFaqChange(item.id, 'question', e.target.value)}
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-500"
+                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
                             placeholder="Question"
                             required
                           />
                           <Textarea
                             value={item.answer}
                             onChange={(e) => handleFaqChange(item.id, 'answer', e.target.value)}
-                            className="bg-gray-700 border-gray-600 text-white placeholder-gray-500 min-h-[80px]"
+                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[80px]"
                             placeholder="Answer"
                             required
                           />

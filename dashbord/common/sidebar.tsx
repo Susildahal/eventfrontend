@@ -81,11 +81,32 @@ const navigationItems = [
     icon: Mail,
     href: "/admin/faq",
   },
+   {
+    title: "Events Dashboard",
+    icon: Bell,
+    href: "/admin/eventsdashbord",
+  },
   {
     title: "Notifications",
     icon: Bell,
     href: "/admin/notifications",
   },
+  {
+    title: "Service",
+    icon: Bell,
+    href: "/admin/service",
+  },
+   {
+    title: "Create Account",
+    icon: Bell,
+    href: "/admin/register",
+  },
+   {
+    title: "Book Now",
+    icon: Bell,
+    href: "/admin/book",
+  },
+
 ]
 
 function UserProfile() {

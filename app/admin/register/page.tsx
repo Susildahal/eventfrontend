@@ -18,6 +18,7 @@ import axiosInstance from "../../config/axiosInstance"
 import { toast, Toaster } from "sonner"
 import { Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Header from "@/dashbord/common/Header"
 
 const registerSchema = yup.object().shape({
   name: yup.string().min(2, "Name must be at least 2 characters").required("Name is required"),
@@ -84,15 +85,15 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <>
+    <Header title="Create Account" titledesc="Register a new admin account"/>
+    <div className="flex justify-center items-center ">
       <Toaster position="top-right" richColors />
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>Fill in the details to create your account</CardDescription>
-          <CardAction>
-            <Button variant="link" className=" cursor-pointer " onClick={() => router.push('/login')}>Sign in</Button>
-          </CardAction>
+         
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>
@@ -175,5 +176,6 @@ export default function RegisterPage() {
         </CardContent>
       </Card>
     </div>
+    </>
   )
 }

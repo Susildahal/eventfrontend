@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Header from '@/dashbord/common/Header'
 import {
   Table,
@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Trash2, Edit, Plus } from 'lucide-react'
+import axiosInstance from '@/app/config/axiosInstance'
 
 interface GalleryItem {
   id: number
@@ -22,50 +23,88 @@ interface GalleryItem {
 }
 
 export default function Page() {
-  const [items, setItems] = useState<GalleryItem[]>([
-    { id: 1, title: 'Anniversary', image: 'https://images.unsplash.com/photo-1508873699372-7ae81f5f3f7a?w=800&q=80' },
-    { id: 2, title: 'Birthday', image: 'https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=800&q=80' },
-    { id: 3, title: 'Conference', image: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80' },
-  ])
+  const [items, setItems] = useState<GalleryItem[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
-  const [form, setForm] = useState<{ title: string; image: string; fileName: string; customTitle?: string }>({ title: '', image: '', fileName: '' })
+  const [form, setForm] = useState<{ title: string; image: string; fileName: string; customTitle?: string; file?: File | null }>({ title: '', image: '', fileName: '', file: null })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const TITLE_OPTIONS = ['Anniversary', 'Birthday', 'Conference', 'Custom']
+  const TITLE_OPTIONS = ['Anniversary', 'Birthday', 'Conference']
+
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const openAdd = () => {
     setEditingId(null)
-    setForm({ title: '', image: '', fileName: '', customTitle: '' })
+    setForm({ title: '', image: '', fileName: '', customTitle: '', file: null })
     setIsOpen(true)
   }
 
   const openEdit = (item: GalleryItem) => {
     setEditingId(item.id)
-    setForm({ title: TITLE_OPTIONS.includes(item.title) ? item.title : 'Custom', image: item.image, fileName: '' })
+    setForm({ title: TITLE_OPTIONS.includes(item.title) ? item.title : 'Custom', image: item.image, fileName: '', file: null })
     setIsOpen(true)
   }
 
-  const handleSave = () => {
-    if (!form.title || !form.image) return
+  const fetchItems = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await axiosInstance.get('/gallery')
+      setItems(res.data.data || [])
+    } catch (err: any) {
+      setError(err?.message || 'Failed to fetch gallery')
+    } finally {
+      setLoading(false)
+    }
+  }
+ 
+  useEffect(() => {
+    fetchItems()
+  }, [])
+
+  const handleSave = async () => {
+    if (!form.title) return
 
     const finalTitle = form.title === 'Custom' ? (form.customTitle && form.customTitle.trim()) || 'Untitled' : form.title
 
-    if (editingId) {
-      setItems(prev => prev.map(it => (it.id === editingId ? { ...it, title: finalTitle, image: form.image } : it)))
-    } else {
-      const newItem: GalleryItem = { id: Date.now(), title: finalTitle, image: form.image }
-      setItems(prev => [newItem, ...prev])
-    }
+    try {
+      setLoading(true)
+      // If a file was chosen, use FormData
+      if (form.file) {
+        const fd = new FormData()
+        fd.append('title', finalTitle)
+        fd.append('image', form.file)
 
-    setIsOpen(false)
+        if (editingId) {
+          await axiosInstance.put(`/gallery/${editingId}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        } else {
+          await axiosInstance.post('/gallery', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+        }
+      } else {
+        // No file: send JSON with image URL
+        const payload = { title: finalTitle, image: form.image }
+        if (editingId) {
+          await axiosInstance.put(`/gallery/${editingId}`, payload)
+        } else {
+          await axiosInstance.post('/gallery', payload)
+        }
+      }
+
+      await fetchItems()
+      setIsOpen(false)
+    } catch (err: any) {
+      setError(err?.response?.data?.message || err?.message || 'Save failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0]
     if (!file) return
     const url = URL.createObjectURL(file)
-    setForm(prev => ({ ...prev, image: url, fileName: file.name }))
+    setForm(prev => ({ ...prev, image: url, fileName: file.name, file }))
   }
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -73,7 +112,7 @@ export default function Page() {
     const file = e.dataTransfer.files && e.dataTransfer.files[0]
     if (!file) return
     const url = URL.createObjectURL(file)
-    setForm(prev => ({ ...prev, image: url, fileName: file.name }))
+    setForm(prev => ({ ...prev, image: url, fileName: file.name, file }))
   }
 
   const triggerFileBrowse = () => {
@@ -81,7 +120,12 @@ export default function Page() {
   }
 
   const handleDelete = (id: number) => {
+    // optimistic UI: remove then call API
+    const previous = items
     setItems(prev => prev.filter(i => i.id !== id))
+    axiosInstance.delete(`/gallery/${id}`).catch(() => {
+      setItems(previous)
+    })
   }
 
   return (
@@ -91,7 +135,7 @@ export default function Page() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-2xl font-semibold">Gallery</h2>
-            <p className="text-sm text-gray-500">Add, edit or remove gallery images (admin only)</p>
+            <p className="text-sm text-gray-500">Add, edit or remove gallery images </p>
           </div>
           <div>
             <Button onClick={openAdd} className="flex items-center gap-2">
@@ -104,13 +148,15 @@ export default function Page() {
         <Card>
          
           <CardContent>
+            {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
+            {error && <div className="p-4 text-sm text-red-500">{error}</div>}
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-24">Preview</TableHead>
                     <TableHead>Title</TableHead>
-                    <TableHead className="w-48">Image URL</TableHead>
+                    
                     <TableHead className="w-36">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -118,12 +164,12 @@ export default function Page() {
                   {items.map(item => (
                     <TableRow key={item.id}>
                       <TableCell>
-                        <div className="h-16 w-24 bg-gray-100 rounded overflow-hidden">
-                          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                        <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
+                          <img src={`${process.env.NEXT_PUBLIC_API_URL}/${item.image}`} alt={item.title} className="h-full w-full object-cover" />
                         </div>
                       </TableCell>
                       <TableCell>{item.title}</TableCell>
-                      <TableCell className="truncate max-w-xs">{item.image}</TableCell>
+                      {/* <TableCell className="truncate max-w-xs">{item.image}</TableCell> */}
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item)}>
@@ -200,7 +246,7 @@ export default function Page() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Preview</label>
                       <div className="h-48 w-full bg-gray-100 rounded overflow-hidden">
-                        <img src={form.image} alt="preview" className="h-full w-full object-cover" />
+                        <img src={`${process.env.NEXT_PUBLIC_API_URL}/${form.image}`} alt="preview" className="h-full w-full object-cover" />
                       </div>
                     </div>
                   )}
