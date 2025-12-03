@@ -146,7 +146,7 @@ export default function EventTypesPage() {
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="sm">
-                                <MoreVertical className="w-4 h-4" />
+                                <MoreVertical className="w-4 h-4 rotate-90" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

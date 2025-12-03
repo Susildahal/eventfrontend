@@ -6,8 +6,9 @@ import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
 import { Plus, Trash2, Save } from 'lucide-react';
-
-// Types
+import { useRouter, useSearchParams } from 'next/navigation';
+import axiosInstance from '@/app/config/axiosInstance';
+import useEffect from 'react';
 interface CriteriaItem {
   id: number;
   label: string;
@@ -48,49 +49,74 @@ interface Sections {
   addOns: AddOnItem[];
   timeline: TimelineItem[];
 }
+interface ServiceTypeData { 
+  _id?: string;
+  id?: string | number;
+  name: string;
+  createdAt?: Date;
+}
 
 export default function Page () {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const id = searchParams?.get('id')
+  console.log('query id:', id)
   const [sections, setSections] = useState<Sections>({
     hero: {
-      title: 'Venue Sourcing Made Effortless',
-      mainTitle: 'Venue Sourcing Made Effortless',
-      subtitle: 'From waterfront rooftops and private villas to galleries, warehouses, and resort ballrooms, we source venues that match your brief, budget, and vibe—then negotiate the best terms and iron-clad logistics so bump-to-bump-out runs smooth.',
+      title: '',
+      mainTitle: '',
+      subtitle: '',
       image: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=600&h=400',
       criteria: [
-        { id: 1, label: 'Hard Criteria', description: 'Guest count, formal (cocktail/buffet, accessibility, noise limits, technical requirements' },
-        { id: 2, label: 'Curated Shortlist', description: 'Location ideas, venue specs, capacities, floor plans, photos, imagery' },
-        { id: 3, label: 'Site Visits & Holds', description: 'Hosted walk-throughs, soft holds on preferred dates, options on spaces' },
-        { id: 4, label: 'Layout & Flow', description: 'Draft floor plans, guest journey, bars, signage, accessible seating, green rooms' }
+        { id: 1, label: '', description: '' },
+        // { id: 2, label: '', description: '' },
+        // { id: 3, label: '', description: '' },
+        // { id: 4, label: 'Layout & Flow', description: 'Draft floor plans, guest journey, bars, signage, accessible seating, green rooms' }
       ]
     },
     beverageProgram: [
-      { id: 1, icon: '🏢', label: 'Rooftops', description: 'High-altitude venue with stunning city views' },
-      { id: 2, icon: '🏖️', label: 'Beach clubs & lawn terraces', description: 'Open-air seaside and garden spaces' },
-      { id: 3, icon: '🏠', label: 'Private homes/villas', description: 'Exclusive residential properties' },
-      { id: 4, icon: '🛍️', label: 'Boutique bars', description: 'Intimate upscale bar venues' },
-      { id: 5, icon: '🎨', label: 'Galleries & studios', description: 'Creative artistic spaces' },
-      { id: 6, icon: '🏭', label: 'Warehouses', description: 'Industrial loft spaces' },
-      { id: 7, icon: '🏨', label: 'Hotel ballrooms', description: 'Professional hotel event spaces' },
-      { id: 8, icon: '🌳', label: 'Garden estates', description: 'Outdoor garden venues' }
+      { id: 1, icon: '', label: '', description: '' },
+      // { id: 2, icon: '🏖️', label: 'Beach clubs & lawn terraces', description: 'Open-air seaside and garden spaces' },
+      // { id: 3, icon: '🏠', label: 'Private homes/villas', description: 'Exclusive residential properties' },
+      // { id: 4, icon: '🛍️', label: 'Boutique bars', description: 'Intimate upscale bar venues' },
+      // { id: 5, icon: '🎨', label: 'Galleries & studios', description: 'Creative artistic spaces' },
+      // { id: 6, icon: '🏭', label: 'Warehouses', description: 'Industrial loft spaces' },
+      // { id: 7, icon: '🏨', label: 'Hotel ballrooms', description: 'Professional hotel event spaces' },
+      // { id: 8, icon: '🌳', label: 'Garden estates', description: 'Outdoor garden venues' }
     ],
     addOns: [
-      { id: 1, title: 'Guest transfers & valet', description: 'Seamless guest arrivals with premium transfers' },
-      { id: 2, title: 'Accommodation blocks', description: 'Curated stays for comfort and convenience' },
-      { id: 3, title: 'Security & crowd flow', description: 'Discrete, professional and perfectly coordinated' },
-      { id: 4, title: 'Wayfinding signage', description: 'Elegant direction options designed for clarity' },
-      { id: 5, title: 'Cloak & green rooms', description: 'Thoughtfully crafted for comfort and ease' }
+      { id: 1, title: '', description: '' },
+      // { id: 2, title: 'Accommodation blocks', description: 'Curated stays for comfort and convenience' },
+      // { id: 3, title: 'Security & crowd flow', description: 'Discrete, professional and perfectly coordinated' },
+      // { id: 4, title: 'Wayfinding signage', description: 'Elegant direction options designed for clarity' },
+      // { id: 5, title: 'Cloak & green rooms', description: 'Thoughtfully crafted for comfort and ease' }
     ],
     timeline: [
-      { id: 1, step: '1', title: 'Discovery', duration: '48 hrs' },
-      { id: 2, step: '2', title: 'Shortlist', duration: '3-5 days' },
-      { id: 3, step: '3', title: 'Site Tours & Holds', duration: '1 week' },
-      { id: 4, step: '4', title: 'Contracting', duration: '2-5 days' },
-      { id: 5, step: '5', title: 'Floor Plan & Run Sheet', duration: '1-2 weeks' }
+      { id: 1, step: '1', title: '', duration: '' },
+      // { id: 2, step: '2', title: 'Shortlist', duration: '3-5 days' },
+      // { id: 3, step: '3', title: 'Site Tours & Holds', duration: '1 week' },
+      // { id: 4, step: '4', title: 'Contracting', duration: '2-5 days' },
+      // { id: 5, step: '5', title: 'Floor Plan & Run Sheet', duration: '1-2 weeks' }
     ]
   });
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('hero');
+  const [existingId, setExistingId] = useState<string | null>(null)
+  const [data , setData] = useState<any>([])
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get(`/servicetypes/${id}`);
+        setData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, [id]);
+
 
   const handleHeroChange = (field: keyof Hero, value: string) => {
     setSections(prev => ({
@@ -202,21 +228,27 @@ export default function Page () {
 
   const handleSubmit = async () => {
     setLoading(true);
-    
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch('/api/content/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sections)
-      });
+      const apiPath = '/api/servicedashboard'
+      // include the selected service-type id in the payload so backend can associate
+      const bodyToSend: any = { ...sections }
+      if (id) bodyToSend.serviceid = { id }
 
-      if (response.ok) {
-        alert('Content updated successfully!');
+      const res = await fetch(existingId ? `${apiPath}?id=${existingId}` : apiPath, {
+        method: existingId ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyToSend),
+      })
+
+      if (res.ok) {
+        alert('Content saved successfully!')
+        const data = await res.json().catch(() => null)
+        // if backend returned created/updated resource with id, store it
+        if (data && (data._id || data.id)) setExistingId(data._id || data.id)
       } else {
-        alert('Error updating content. Please try again.');
+        const text = await res.text().catch(() => '')
+        console.error('Save failed', res.status, text)
+        alert('Error saving content. See console for details.')
       }
     } catch (error) {
       console.error('Error:', error);
@@ -226,14 +258,62 @@ export default function Page () {
     }
   };
 
+  // Fetch existing servicedashboard data on mount
+  React.useEffect(() => {
+    let mounted = true
+    const controller = new AbortController()
+    const load = async () => {
+      try {
+        let fetchUrl = '/api/servicedashboard'
+        if (id) {
+          fetchUrl = `/api/servicedashboard?serviceid=${encodeURIComponent(id)}`
+        } else if (existingId) {
+          fetchUrl = `/api/servicedashboard?id=${encodeURIComponent(existingId)}`
+        }
+        const res = await fetch(fetchUrl, { signal: controller.signal })
+        if (!res.ok) return
+        const data = await res.json()
+        // backend may return an object or array; adapt accordingly
+        const payload = Array.isArray(data) ? data[0] ?? null : (data?.data ?? data)
+        if (!mounted || !payload) return
+        // Map payload fields to sections shape if present
+        if (payload.hero || payload.beverageProgram || payload.criteria) {
+          setSections((prev) => {
+            const mergedHero = { ...prev.hero, ...(payload.hero ?? {}) }
+            if (payload.criteria) mergedHero.criteria = payload.criteria
+
+            return {
+              ...prev,
+              hero: mergedHero,
+              beverageProgram: payload.beverageProgram ?? prev.beverageProgram,
+              addOns: payload.addOns ?? prev.addOns,
+              timeline: payload.timeline ?? prev.timeline,
+            }
+          })
+          setExistingId(payload._id || payload.id || (payload.data && (payload.data._id || payload.data.id)) || null)
+        }
+      } catch (e) {
+        if ((e as any)?.name === 'AbortError') return
+        console.error('Failed to load servicedashboard', e)
+      }
+    }
+    // reset existingId when id changes so we fetch the right record
+    if (id) setExistingId(null)
+    load()
+    return () => {
+      mounted = false
+      controller.abort()
+    }
+  }, [id])
+
   return (
     <div className="min-h-screen p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-      <div className="max-w-7xl mx-auto">
+      <div className=" ">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">Events of the Century - Content Management</p>
+          <h1 className="text-4xl font-bold mb-2 capitalize">{data.name || 'NA'}</h1>
+          <p className="text-gray-600 dark:text-gray-400">Manage the content of the {data.name || 'NA'} - Content Management</p>
         </div>
-
+  
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
@@ -313,7 +393,7 @@ export default function Page () {
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {sections.hero.criteria.map((item) => (
+                  {(sections.hero?.criteria ?? []).map((item) => (
                     <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
@@ -361,7 +441,7 @@ export default function Page () {
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {sections.beverageProgram.map((item) => (
+                  {(sections.beverageProgram ?? []).map((item) => (
                     <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
@@ -419,7 +499,7 @@ export default function Page () {
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {sections.addOns.map((item) => (
+                  {(sections.addOns ?? []).map((item) => (
                     <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
@@ -467,7 +547,7 @@ export default function Page () {
                   </Button>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {sections.timeline.map((item) => (
+                  {(sections.timeline ?? []).map((item) => (
                     <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">

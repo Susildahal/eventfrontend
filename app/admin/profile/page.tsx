@@ -41,13 +41,14 @@ export default function ProfilePage() {
     let mounted = true
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get('/users/me')
-        const data = res.data.user
-        
-        setData(data)
+        const res = await axiosInstance.get('/api/profile')
+        const resp = res.data
+        const profile = resp?.user ?? resp?.data ?? resp?.profile ?? resp
+
+        setData(profile)
         if (!mounted) return
-        setUser(data)
-        if (data?.email) setFormData(prev => ({ ...prev, email: data.email }))
+        setUser(profile)
+        if (profile?.email) setFormData(prev => ({ ...prev, email: profile.email }))
       } catch (err) {
         // ignore - user may not be authenticated
       }
@@ -126,8 +127,11 @@ export default function ProfilePage() {
         password: formData.newPassword || undefined,
       }
 
-      const res = await axiosInstance.put(`/users/updatepassword/${user?._id}`, payload)
-      const updatedUser = res.data?.data ?? res.data
+      // include id if available so proxy can route to /profile/:id if needed
+      if (user?._id) payload.id = user._id
+
+      const res = await axiosInstance.put('/api/profile', payload)
+      const updatedUser = res.data?.data ?? res.data?.user ?? res.data?.profile ?? res.data
       if (updatedUser) {
         setUser(updatedUser)
         toast.success('Profile updated successfully')

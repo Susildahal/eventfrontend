@@ -12,9 +12,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus, ArrowLeft } from 'lucide-react'
+import { Trash2, Edit, Plus, ArrowLeft, MoreVertical } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
 interface EventType {
   _id?: string
@@ -136,22 +137,29 @@ export default function servicetypesPage() {
                         <TableCell className="truncate max-w-xs">
                           {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}
                         </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" onClick={() => openEdit(item)}>
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              onClick={() => {
-                                setDeleteId((item._id ?? item.id) as string)
-                                setEditingId((item._id ?? item.id) as string)
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                      <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                  <Button variant="ghost" size="sm">
+                                                    <MoreVertical className="w-4 h-4 rotate-90" />
+                                                  </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                  <DropdownMenuItem onClick={() => openEdit(item)}>
+                                                    <Edit className="w-4 h-4 mr-2" />
+                                                    Edit
+                                                  </DropdownMenuItem>
+                                                  <DropdownMenuItem
+                                                    onClick={() => {
+                                                      setDeleteId((item._id ?? item.id) as string)
+                                                      setEditingId((item._id ?? item.id) as string)
+                                                    }}
+                                                    className="text-red-600 dark:text-red-400"
+                                                  >
+                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                    Delete
+                                                  </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                              </DropdownMenu>
                       </TableRow>
                     ))}
                   </TableBody>

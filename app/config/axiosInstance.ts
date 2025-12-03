@@ -1,12 +1,26 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("authToken") || ""}`,
     },
 });
+
+// Attach auth token at request time (safe for SSR/Next.js)
+axiosInstance.interceptors.request.use(
+    (config) => {
+        if (typeof window !== "undefined") {
+            const token = localStorage.getItem("authToken")
+            if (token) {
+                if (!config.headers) config.headers = {}
+                config.headers.Authorization = `Bearer ${token}`
+            }
+        }
+        return config
+    },
+    (error) => Promise.reject(error)
+)
 
 // Redirect to /login on 401 responses
 // axiosInstance.interceptors.response.use(

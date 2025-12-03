@@ -53,6 +53,7 @@ import Breadcrumb from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import axiosInstance from "@/app/config/axiosInstance"
 
+
 const navigationItems = [
   {
     title: "Dashboard",
@@ -109,11 +110,7 @@ const navigationItems = [
       { title: 'Dummy Item', href: '/admin/service-types/dummy' },
     ],
   },
-  //  {
-  //   title: "Service Types",
-  //   icon: Bell,
-  //   href: "/admin/service-types",
-  // },
+ 
   {
     title: "Service",
     icon: Bell,
@@ -129,22 +126,48 @@ const navigationItems = [
     icon: Bell,
     href: "/admin/book",
   },
-
 ]
+
+
 
 function UserProfile() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
   const [data, setData] = useState<{ name: string; email: string }>({ name: '', email: '' })
+  const [servicedata, setServiceData] = useState<any>(null)
+  const [eventsdata, setEventsData] = useState<any>(null)
   const router = useRouter()
+
 
   React.useEffect(() => {
     setMounted(true)
     const fetchUserData = async () => {
       try {
-        const response = await axiosInstance.get("/users/me") 
-        console.log("User profile data:", response.data.user)
-        setData(response.data.user)
+        console.log("Fetching /users/me, /service, /events")
+        const [userRes, serviceRes, eventsRes] = await Promise.allSettled([
+          axiosInstance.get("/users/me"),
+          axiosInstance.get("/servicetypes"),
+          axiosInstance.get("/events"),
+        ])
+
+        if (userRes.status === "fulfilled") {
+          console.log("User profile data:", userRes.value.data.user)
+          setData(userRes.value.data.user)
+        } else {
+          console.error("Error fetching /users/me:", userRes.reason)
+        }
+
+        if (serviceRes.status === "fulfilled") {
+          setServiceData(serviceRes.value.data.data)
+        } else {
+          console.error("Error fetching /service:", serviceRes.reason)
+        }
+
+        if (eventsRes.status === "fulfilled") {
+          setEventsData(eventsRes.value.data.data)
+        } else {
+          console.error("Error fetching /events:", eventsRes.reason)
+        }
       } catch (error) {
         console.error("Error fetching user profile:", error)
       } finally {
@@ -158,6 +181,8 @@ function UserProfile() {
     return null
   }
 console.log("User data in sidebar:", data)
+console.log("Service data in sidebar:", servicedata)
+console.log("Events data in sidebar:", eventsdata)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -215,6 +240,8 @@ console.log("User data in sidebar:", data)
 export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [filteredItems, setFilteredItems] = React.useState(navigationItems)
+  const [serviceTypesList, setServiceTypesList] = React.useState<any[]>([])
+  const [eventTypesList, setEventTypesList] = React.useState<any[]>([])
 
   React.useEffect(() => {
     if (searchQuery.trim() === "") {
@@ -226,6 +253,40 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
       setFilteredItems(filtered)
     }
   }, [searchQuery])
+
+  React.useEffect(() => {
+    // fetch service types and event types for the dropdowns in the sidebar
+    let mounted = true
+    const fetchLists = async () => {
+      try {
+        const [svcRes, evtRes] = await Promise.allSettled([
+          axiosInstance.get('/servicetypes'),
+          axiosInstance.get('/eventtypes'),
+        ])
+
+        if (!mounted) return
+
+        if (svcRes.status === 'fulfilled') {
+          setServiceTypesList(svcRes.value.data?.data ?? svcRes.value.data ?? [])
+        } else {
+          console.error('Error loading services for sidebar:', svcRes.reason)
+        }
+
+        if (evtRes.status === 'fulfilled') {
+          setEventTypesList(evtRes.value.data?.data ?? evtRes.value.data ?? [])
+        } else {
+          console.error('Error loading events for sidebar:', evtRes.reason)
+        }
+      } catch (e) {
+        console.error('Unexpected error fetching sidebar lists', e)
+      }
+    }
+
+    fetchLists()
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   return (
     <SidebarProvider>
@@ -265,8 +326,53 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                 {filteredItems.length > 0 ? (
                   filteredItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      {/* For Event Types we render a dropdown menu with dummy items */}
-                      {item.children && item.children.length > 0 ? (
+                      {/* Dynamic dropdowns for Event Types and Service Types */}
+                      
+                      {item.title === 'Event Types' && eventTypesList.length > 0 ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="flex w-full items-center gap-2 px-3 py-2 rounded-md hover:bg-sidebar-accent">
+                              <item.icon className="h-4 w-4" />
+                              <span className="group-data-[state=collapsed]:hidden">{item.title}</span>
+                              <ChevronDown className="ml-auto h-3 w-3 text-muted-foreground group-data-[state=collapsed]:hidden" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            
+                            {eventTypesList.map((et: any) => (
+                              <DropdownMenuItem className=" items-center justify-center flex flex-col" key={et._id || et.id || et.name}>
+                              
+                                <Link href={`/admin/eventsdashbord?id=${et._id || et.id}`} className="w-full block">{et.name}</Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : item.title === 'Service Types' && serviceTypesList.length > 0 ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="flex w-full items-center gap-2 px-3 py-2 rounded-md hover:bg-sidebar-accent">
+                              <item.icon className="h-4 w-4" />
+                              <span className="group-data-[state=collapsed]:hidden">{item.title}</span>
+                              <ChevronDown className="ml-auto h-3 w-3 text-muted-foreground group-data-[state=collapsed]:hidden" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            <DropdownMenuItem>
+                                <Link href="/admin/service-types"><span className=" cursor-pointer">  Add new service</span></Link>
+                            </DropdownMenuItem>
+                            {serviceTypesList.map((st: any) => (
+                              <div>
+                             
+                              <DropdownMenuItem key={st._id || st.id || st.name}>
+                                
+                                <Link href={`/admin/service?id=${st._id || st.id}`} className="w-full block">{st.name}</Link>
+                              
+                              </DropdownMenuItem>
+                              </div>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : item.children && item.children.length > 0 ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button className="flex w-full items-center gap-2 px-3 py-2 rounded-md hover:bg-sidebar-accent">
