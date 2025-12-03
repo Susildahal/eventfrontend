@@ -15,6 +15,7 @@ interface CriteriaItem {
 }
 
 interface Hero {
+  mainTitle: string;
   title: string;
   subtitle: string;
   image: string;
@@ -52,6 +53,7 @@ export default function Page () {
   const [sections, setSections] = useState<Sections>({
     hero: {
       title: 'Venue Sourcing Made Effortless',
+      mainTitle: 'Venue Sourcing Made Effortless',
       subtitle: 'From waterfront rooftops and private villas to galleries, warehouses, and resort ballrooms, we source venues that match your brief, budget, and vibe—then negotiate the best terms and iron-clad logistics so bump-to-bump-out runs smooth.',
       image: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=600&h=400',
       criteria: [
@@ -250,8 +252,19 @@ export default function Page () {
                   <CardDescription className="text-gray-600 dark:text-gray-400">Edit main headline and introduction</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+
+                       <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">  Main Title</label>
+                    <Input
+                      value={sections.hero.mainTitle}
+                      onChange={(e) => handleHeroChange('mainTitle', e.target.value)}
+                      className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
+                      placeholder="Main title"
+                      required
+                    />
+                  </div>
                   <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Main Title</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-200"> Title</label>
                     <Input
                       value={sections.hero.title}
                       onChange={(e) => handleHeroChange('title', e.target.value)}

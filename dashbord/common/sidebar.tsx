@@ -75,7 +75,7 @@ const navigationItems = [
     href: "/admin/gallery",
   },
   {
-    title: "Contracts",
+    title: "Notifications",
     icon: FileText,
     href: "/admin/contact",
   },
@@ -90,10 +90,30 @@ const navigationItems = [
     href: "/admin/eventsdashbord",
   },
   {
-    title: "Notifications",
+    title: "Event Types",
     icon: Bell,
-    href: "/admin/notifications",
+    href: "/admin/events-types",
+    children: [
+      { title: 'Add New Event Type', href: '/admin/events-types' },
+      { title: 'Dummy Item', href: '/admin/events-types/dummy' },
+    ],
   },
+
+
+   {
+    title: "Service Types",
+    icon: Bell,
+    href: "/admin/service-types",
+    children: [
+      { title: 'Add New Service Type', href: '/admin/service-types' },
+      { title: 'Dummy Item', href: '/admin/service-types/dummy' },
+    ],
+  },
+  //  {
+  //   title: "Service Types",
+  //   icon: Bell,
+  //   href: "/admin/service-types",
+  // },
   {
     title: "Service",
     icon: Bell,
@@ -245,12 +265,32 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                 {filteredItems.length > 0 ? (
                   filteredItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild>
-                        <Link href={item.href}>
-                          <item.icon className="h-4 w-4" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
+                      {/* For Event Types we render a dropdown menu with dummy items */}
+                      {item.children && item.children.length > 0 ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <button className="flex w-full items-center gap-2 px-3 py-2 rounded-md hover:bg-sidebar-accent">
+                              <item.icon className="h-4 w-4" />
+                              <span className="group-data-[state=collapsed]:hidden">{item.title}</span>
+                              <ChevronDown className="ml-auto h-3 w-3 text-muted-foreground group-data-[state=collapsed]:hidden" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start">
+                            {item.children.map((child: any) => (
+                              <DropdownMenuItem key={child.title}>
+                                <Link href={child.href} className="w-full block">{child.title}</Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <SidebarMenuButton asChild>
+                          <Link href={item.href}>
+                            <item.icon className="h-4 w-4" />
+                            <span className="group-data-[state=collapsed]:hidden">{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      )}
                     </SidebarMenuItem>
                   ))
                 ) : (
