@@ -100,9 +100,7 @@ export default function LoginPage() {
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
-          <CardAction>
-            <Button  variant="link" className=" cursor-pointer " onClick={() => router.push('/register')}>Sign Up</Button>
-          </CardAction>
+          
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit}>

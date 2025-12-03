@@ -61,11 +61,7 @@ export default function RegisterPage() {
       const payload = { name: formData.name, email: formData.email, password: formData.password }
       const response = await axiosInstance.post("/users/register", payload)
       toast.success("Registration successful!", { description: "You can now log in." })
-      // Optionally store token or redirect
-         setTimeout(() => {router.push('/login');}, 2000);
-      if (response?.data?.token) {
-        localStorage.setItem("authToken", response.data.token)  
-      }
+ 
     } catch (err) {
       if (err instanceof yup.ValidationError) {
         const validationErrors: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}

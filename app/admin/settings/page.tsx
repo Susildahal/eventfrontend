@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
 import axiosInstance from '../../config/axiosInstance'
 import Header from '@/dashbord/common/Header';
 
@@ -22,7 +22,7 @@ export default function SiteSettings() {
     phone: '',
     email: '',
     address: '',
-    socialMedia: [{ name: '', url: '' }],
+    socialMedia: [{ name: '', url: '', icon: '' }],
   };
 
   const [formData, setFormData] = useState(defaultForm);
@@ -36,8 +36,14 @@ export default function SiteSettings() {
         const data = res.data?.data ?? res.data ?? null
         if (data) {
           const socialArray = data.socialMedia
-            ? Object.entries(data.socialMedia).map(([name, url]) => ({ name, url: typeof url === 'string' ? url : '' }))
-            : [{ name: '', url: '' }]
+            ? Object.entries(data.socialMedia).map(([name, value]) => {
+                // value might be a string (legacy) or an object { url, icon }
+                if (typeof value === 'string') {
+                  return { name: value, url: value, icon: '' }
+                }
+                return { name:value?.name, url: value?.url ?? '', icon: value?.icon ?? '' }
+              })
+            : [{ name: '', url: '', icon: '' }]
 
           setFormData({
             siteName: data.siteName || '',
@@ -45,7 +51,7 @@ export default function SiteSettings() {
             phone: data.phone || '',
             email: data.email || '',
             address: data.address || '',
-            socialMedia: socialArray.length ? socialArray : [{ name: '', url: '' }],
+            socialMedia: socialArray.length ? socialArray : [{ name: '', url: '', icon: '' }],
           })
           setIsEditing(true)
         }
@@ -78,10 +84,48 @@ export default function SiteSettings() {
     setSuccess(false);
   };
 
+  const handleSocialMediaIconChange = (index: number, icon: string) => {
+    const newSocialMedia = [...formData.socialMedia];
+    newSocialMedia[index].icon = icon;
+    setFormData(prev => ({
+      ...prev,
+      socialMedia: newSocialMedia
+    }));
+    setSuccess(false);
+  };
+
+  const getIconComponent = (name?: string) => {
+    if (!name) return Link
+    switch ((name || '').toLowerCase()) {
+      case 'facebook':
+        return Facebook
+      case 'twitter':
+        return Twitter
+      case 'instagram':
+        return Instagram
+      case 'linkedin':
+      case 'linkdin':
+      case 'linkedIn':
+        return Linkedin
+      case 'youtube':
+        return Youtube
+      case 'github':
+        return Github
+      case 'globe':
+        return Globe
+      case 'mail':
+      case 'email':
+        return Mail
+      case 'link':
+      default:
+        return Link
+    }
+  }
+
   const addSocialMedia = () => {
     setFormData(prev => ({
       ...prev,
-      socialMedia: [...prev.socialMedia, { name: '', url: '' }]
+      socialMedia: [...prev.socialMedia, { name: '', url: '', icon: '' }]
     }));
   };
 
@@ -100,10 +144,11 @@ export default function SiteSettings() {
 
     try {
       // Convert social media array to key-value pairs (object)
-      const socialMediaObj: Record<string, string> = {};
+      // Build socialMedia object mapping name -> { url, icon }
+      const socialMediaObj: Record<string, { name: string; url: string; icon?: string }> = {};
       formData.socialMedia.forEach(item => {
         if (item.name && item.url) {
-          socialMediaObj[item.name] = item.url;
+          socialMediaObj[item.name] = { name: item.name, url: item.url, icon: item.icon || undefined };
         }
       });
 
@@ -286,9 +331,20 @@ export default function SiteSettings() {
                           />
                         </div>
 
-                        <div className="relative">
-                          <Label htmlFor={`social-url-${index}`}>URL</Label>
-                          <div className="flex gap-2 mt-2">
+                        <div>
+                          <Label htmlFor={`social-url-${index}`}>URL & Icon</Label>
+                          <div className="flex gap-3 mt-2 items-center">
+                            {/* Icon preview */}
+                            <div className="flex-shrink-0">
+                              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                {(() => {
+                                  const Icon = getIconComponent(social.icon)
+                                  return <Icon className="w-5 h-5 text-gray-600 dark:text-gray-200" />
+                                })()}
+                              </div>
+                            </div>
+
+                            {/* URL input */}
                             <Input
                               id={`social-url-${index}`}
                               type="url"
@@ -297,12 +353,39 @@ export default function SiteSettings() {
                               placeholder="https://example.com/profile"
                               className="flex-1"
                             />
+
+                            {/* Icon select (compact) */}
+                            <div className="flex flex-col">
+                              <Label className="sr-only" htmlFor={`social-icon-${index}`}>Icon</Label>
+                              <select
+                                id={`social-icon-${index}`}
+                                value={social.icon ?? ''}
+                                onChange={(e) => handleSocialMediaIconChange(index, e.target.value)}
+                                className="rounded-md border border-gray-200 bg-white text-gray-900 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                                title="Choose an icon"
+                              >
+                                <option value="">Icon</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Twitter">Twitter</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="Linkedin">Linkedin</option>
+                                <option value="Youtube">Youtube</option>
+                                <option value="Github">Github</option>
+                                <option value="Globe">Globe</option>
+                                <option value="Link">Link</option>
+                                <option value="Mail">Mail</option>
+                              </select>
+                              
+                            </div>
+
+                            {/* Remove button */}
                             {formData.socialMedia.length > 1 && (
                               <Button
                                 type="button"
                                 onClick={() => removeSocialMedia(index)}
                                 variant="destructive"
                                 size="icon"
+                                className="ml-1"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>

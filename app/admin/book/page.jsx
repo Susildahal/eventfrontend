@@ -30,8 +30,8 @@ import {
     SheetFooter,
 } from '../../../components/ui/sheet'
 import { MoreVertical } from 'lucide-react'
-import   DeleteModel from '../../../dashbord/common/DeleteModel';
- 
+import DeleteModel from '../../../dashbord/common/DeleteModel';
+
 
 export default function Page() {
     const [bookings, setBookings] = useState([]);
@@ -135,11 +135,11 @@ export default function Page() {
     return (
         <>
             <Header title=" Book Now" titledesc=" You can manage the all booking details " />
-            <Table>
+            <Table className=' max-w-7xl mx-auto '>
 
                 <TableHeader>
                     <TableRow>
-                                                <TableHead >Index</TableHead>
+                        <TableHead >Index</TableHead>
 
 
                         <TableHead >Name</TableHead>
@@ -160,7 +160,7 @@ export default function Page() {
                 <TableBody>
                     {bookings.map((booking) => (
                         <TableRow key={booking.id}>
-                        <TableCell >{bookings.indexOf(booking)+1}</TableCell>
+                            <TableCell >{bookings.indexOf(booking) + 1}</TableCell>
                             <TableCell className="font-medium">{booking.name}</TableCell>
                             <TableCell>{booking.email}</TableCell>
                             <TableCell>{booking.phone}</TableCell>
@@ -261,7 +261,7 @@ function EditForm({ booking, onCancel, onSave, loading }) {
             <div>
                 <label className="block text-sm font-medium">Status</label>
                 <select className="mt-1 block w-full rounded-md border p-2" value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <option value="">Select priority</option>
+                    <option value="">Select New status</option>
                     <option value="Low">Low</option>
                     <option value="Medium">Medium</option>
                     <option value="High">High</option>
@@ -280,6 +280,6 @@ function EditForm({ booking, onCancel, onSave, loading }) {
                 <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
             </div>
         </form>
-    
+
     )
 }

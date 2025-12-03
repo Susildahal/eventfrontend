@@ -28,7 +28,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
+import { useEffect ,useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Home,
   Calendar,
@@ -48,7 +49,9 @@ import {
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
+
 import Link from "next/link"
+import axiosInstance from "@/app/config/axiosInstance"
 
 const navigationItems = [
   {
@@ -112,26 +115,40 @@ const navigationItems = [
 function UserProfile() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const [data, setData] = useState<{ name: string; email: string }>({ name: '', email: '' })
+  const router = useRouter()
 
   React.useEffect(() => {
     setMounted(true)
+    const fetchUserData = async () => {
+      try {
+        const response = await axiosInstance.get("/users/me") 
+        console.log("User profile data:", response.data.user)
+        setData(response.data.user)
+      } catch (error) {
+        console.error("Error fetching user profile:", error)
+      } finally {
+        setMounted(true)
+      }
+    }
+    fetchUserData()
   }, [])
 
   if (!mounted) {
     return null
   }
-
+console.log("User data in sidebar:", data)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors">
+        <button className=  "flex w-full items-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors">
           <Avatar className="h-9 w-9">
             <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{data.name?.charAt(0) || ""}</AvatarFallback>
           </Avatar>
           <div className="flex flex-1 flex-col items-start text-sm">
-            <span className="font-semibold">John Doe</span>
-            <span className="text-xs text-muted-foreground">admin@example.com</span>
+            <span className="font-semibold">{data.name}</span>
+            <span className="text-xs text-muted-foreground"></span>
           </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </button>
@@ -142,11 +159,11 @@ function UserProfile() {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span onClick={() => router.push("/admin/profile")}>Profile</span>
           </DropdownMenuItem>
        
           <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 h-4 w-4"onClick={() => router.push("/admin/settings")} />
             <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
