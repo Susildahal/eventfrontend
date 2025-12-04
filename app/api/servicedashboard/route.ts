@@ -47,6 +47,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   // Create new servicedashboard record
+  const contentType = req.headers.get('content-type') || ''
+  // If multipart/form-data, forward raw body so file uploads stream through
+  if (contentType.includes('multipart/form-data')) {
+    const buf = await req.arrayBuffer()
+    return proxyFetchWithReq('/servicedashboard', req, {
+      method: 'POST',
+      body: buf as any,
+    })
+  }
+
   const body = await req.json()
   return proxyFetchWithReq('/servicedashboard', req, {
     method: 'POST',
@@ -59,6 +69,18 @@ export async function PUT(req: NextRequest) {
   // Update servicedashboard - expects id either in body.id or query ?id=...
   const url = new URL(req.url)
   const id = url.searchParams.get('id')
+  const contentType = req.headers.get('content-type') || ''
+  // If multipart, forward raw body
+  if (contentType.includes('multipart/form-data')) {
+    const buf = await req.arrayBuffer()
+    // determine target from query string if provided (we keep target logic simple)
+    const target = id ? `/servicedashboard/${id}` : '/servicedashboard'
+    return proxyFetchWithReq(target, req, {
+      method: 'PUT',
+      body: buf as any,
+    })
+  }
+
   const body = await req.json()
 
   const target = id ? `/servicedashboard/${id}` : (body.id ? `/servicedashboard/${body.id}` : '/servicedashboard')

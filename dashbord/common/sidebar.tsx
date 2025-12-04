@@ -116,6 +116,7 @@ const navigationItems = [
     icon: Bell,
     href: "/admin/service",
   },
+  
    {
     title: "Create Account",
     icon: Bell,
@@ -125,6 +126,12 @@ const navigationItems = [
     title: "Book Now",
     icon: Bell,
     href: "/admin/book",
+  },
+
+   {
+    title: "About ",
+    icon: Calendar,
+    href: "/admin/mission",
   },
 ]
 
@@ -138,12 +145,17 @@ function UserProfile() {
   const [eventsdata, setEventsData] = useState<any>(null)
   const router = useRouter()
 
+  const handlelogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken")
+      router.push("/login")
+    }
+  }
 
   React.useEffect(() => {
     setMounted(true)
     const fetchUserData = async () => {
       try {
-        console.log("Fetching /users/me, /service, /events")
         const [userRes, serviceRes, eventsRes] = await Promise.allSettled([
           axiosInstance.get("/users/me"),
           axiosInstance.get("/servicetypes"),
@@ -228,7 +240,7 @@ console.log("Events data in sidebar:", eventsdata)
           />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-600">
+        <DropdownMenuItem className="text-red-600" onClick={handlelogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

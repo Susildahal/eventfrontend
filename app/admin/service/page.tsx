@@ -8,8 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui
 import { Plus, Trash2, Save } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axiosInstance from '@/app/config/axiosInstance';
-import useEffect from 'react';
-interface CriteriaItem {
+import {RefreshCcw} from 'lucide-react';
+import { toast } from "react-hot-toast";
+import { Spinner } from '@/components/ui/spinner';
+ interface CriteriaItem {
   id: number;
   label: string;
   description: string;
@@ -104,6 +106,21 @@ export default function Page () {
   const [activeTab, setActiveTab] = useState('hero');
   const [existingId, setExistingId] = useState<string | null>(null)
   const [data , setData] = useState<any>([])
+  const [heroFile, setHeroFile] = useState<File | null>(null)
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null)
+  const previewUrl = React.useMemo(() => {
+    if (heroFile) return URL.createObjectURL(heroFile)
+    return sections.hero?.image || ''
+  }, [heroFile, sections.hero?.image])
+
+  React.useEffect(() => {
+    // revoke object URL when heroFile changes/unmount
+    return () => {
+      if (heroFile) {
+        try { URL.revokeObjectURL(previewUrl) } catch (e) { /* ignore */ }
+      }
+    }
+  }, [heroFile, previewUrl])
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -125,12 +142,20 @@ export default function Page () {
     }));
   };
 
+  const handleHeroFileChange = (f: File | null) => {
+    setHeroFile(f)
+    // if a file is chosen, clear the URL field (but keep it if user clears file)
+    if (f) {
+      setSections(prev => ({ ...prev, hero: { ...prev.hero, image: '' } }))
+    }
+  }
+
   const handleCriteriaChange = (id: number, field: keyof CriteriaItem, value: string) => {
     setSections(prev => ({
       ...prev,
       hero: {
         ...prev.hero,
-        criteria: prev.hero.criteria.map(item =>
+        criteria: prev.hero?.criteria.map(item =>
           item.id === id ? { ...item, [field]: value } : item
         )
       }
@@ -234,25 +259,45 @@ export default function Page () {
       const bodyToSend: any = { ...sections }
       if (id) bodyToSend.serviceid = { id }
 
-      const res = await fetch(existingId ? `${apiPath}?id=${existingId}` : apiPath, {
-        method: existingId ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyToSend),
-      })
+      // If user picked a local file, send multipart/form-data with JSON payload in 'data' key
+      let res: Response
+      if (heroFile) {
+       
+        const form = new FormData()
+        const jsonPayload = { ...bodyToSend }
+        if (jsonPayload?.hero) {
+          const { image, ...restHero } = jsonPayload.hero
+          jsonPayload.hero = restHero
+        }
+        form.append('data', JSON.stringify(jsonPayload))
+        // append file under nested key 'hero.image' so backend receives binary
+        form.append('hero.image', heroFile)
+
+        res = await fetch(existingId ? `${apiPath}?id=${existingId}` : apiPath, {
+          method: existingId ? 'PUT' : 'POST',
+          body: form,
+        })
+      } else {
+        res = await fetch(existingId ? `${apiPath}?id=${existingId}` : apiPath, {
+          method: existingId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyToSend),
+        })
+      }
 
       if (res.ok) {
-        alert('Content saved successfully!')
+       toast.success('Content saved successfully!');
         const data = await res.json().catch(() => null)
         // if backend returned created/updated resource with id, store it
         if (data && (data._id || data.id)) setExistingId(data._id || data.id)
       } else {
         const text = await res.text().catch(() => '')
-        console.error('Save failed', res.status, text)
-        alert('Error saving content. See console for details.')
+        console.error('Save failed', res.status, text);
+        toast.error('Error saving content..');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error submitting form. Please check console.');
+      toast.error('Error submitting form.');
     } finally {
       setLoading(false);
     }
@@ -273,25 +318,40 @@ export default function Page () {
         const res = await fetch(fetchUrl, { signal: controller.signal })
         if (!res.ok) return
         const data = await res.json()
-        // backend may return an object or array; adapt accordingly
-        const payload = Array.isArray(data) ? data[0] ?? null : (data?.data ?? data)
-        if (!mounted || !payload) return
-        // Map payload fields to sections shape if present
-        if (payload.hero || payload.beverageProgram || payload.criteria) {
-          setSections((prev) => {
-            const mergedHero = { ...prev.hero, ...(payload.hero ?? {}) }
-            if (payload.criteria) mergedHero.criteria = payload.criteria
-
-            return {
-              ...prev,
-              hero: mergedHero,
-              beverageProgram: payload.beverageProgram ?? prev.beverageProgram,
-              addOns: payload.addOns ?? prev.addOns,
-              timeline: payload.timeline ?? prev.timeline,
-            }
-          })
-          setExistingId(payload._id || payload.id || (payload.data && (payload.data._id || payload.data.id)) || null)
+       
+      
+        let payload: any = null
+        if (Array.isArray(data)) {
+          payload = data[0] ?? null
+        } else if (data?.data !== undefined) {
+          if (Array.isArray(data.data)) payload = data.data[0] ?? null
+          else payload = data.data
+        } else {
+          payload = data
         }
+        if (!mounted || !payload) return
+        console.debug('servicedashboard payload:', payload)
+
+       
+        const heroFromPayload = payload.hero ?? payload
+        const payloadCriteria = heroFromPayload?.criteria ?? payload.criteria ?? []
+
+        setSections((prev) => {
+          const mergedHero = { ...prev.hero, ...(heroFromPayload ?? {}) }
+          // Ensure criteria is an array
+          mergedHero.criteria = Array.isArray(payloadCriteria) ? payloadCriteria : prev.hero.criteria
+
+          return {
+            ...prev,
+            hero: mergedHero,
+            beverageProgram: payload.beverageProgram ?? prev.beverageProgram,
+            addOns: payload.addOns ?? prev.addOns,
+            timeline: payload.timeline ?? prev.timeline,
+          }
+        })
+
+        // Determine existing id (top-level or inside heroFromPayload)
+        setExistingId(payload._id || payload.id || heroFromPayload._id || heroFromPayload.id || null)
       } catch (e) {
         if ((e as any)?.name === 'AbortError') return
         console.error('Failed to load servicedashboard', e)
@@ -306,12 +366,24 @@ export default function Page () {
     }
   }, [id])
 
+  if(loading){
+    return(
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner className="w-12 h-12  " />
+      </div>
+    ) 
+  }
+
   return (
     <div className="min-h-screen p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       <div className=" ">
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
+          <div className=' flex flex-col'>
           <h1 className="text-4xl font-bold mb-2 capitalize">{data.name || 'NA'}</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage the content of the {data.name || 'NA'} - Content Management</p>
+          <p className="text-gray-600 dark:text-gray-400">Manage the content of the {data.name || 'NA'} - Content Management</p><span className=''> </span>
+          </div>
+
+          <div>  <RefreshCcw height={20} className='cursor-pointer'  onClick={()=>{window.location.reload()}} width={20}/></div>
         </div>
   
         <div>
@@ -374,6 +446,50 @@ export default function Page () {
                       placeholder="Image URL"
                       required
                     />
+                    <div className="mt-2">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Hero Image</label>
+                      <div className="mt-2 flex items-start gap-4">
+                        <div className="w-48 h-32 rounded-md border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex items-center justify-center overflow-hidden relative">
+                          {previewUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={previewUrl} alt="Hero preview" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="text-center p-2 text-sm text-gray-500">No image</div>
+                          )}
+                          {heroFile && (
+                            <Button
+                              size="sm"
+                              value="hero-file"
+                              variant="destructive"
+                              onClick={() => {
+                                handleHeroFileChange(null)
+                                // keep previous URL blank
+                                if (fileInputRef.current) fileInputRef.current.value = ''
+                              }}
+                              className="absolute top-2 right-2"
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <input
+                            ref={fileInputRef}
+                            id="hero-file"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleHeroFileChange(e.target.files?.[0] ?? null)}
+                          />
+                          <Button onClick={() => fileInputRef.current?.click()} className="bg-amber-600 hover:bg-amber-700 text-white" value="hero-file">
+                            Choose Image
+                          </Button>
+                          <p className="text-xs text-gray-500">Or paste an image URL above</p>
+                          {heroFile && <p className="text-sm text-gray-600 dark:text-gray-400">Selected: {heroFile.name}</p>}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -1,45 +1,63 @@
-import axios from "axios";
+"use client";
+
+import axios, { AxiosError } from "axios";
+import { toast } from "react-hot-toast";
 
 const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
-    headers: {
-        "Content-Type": "application/json",
-    },
+  baseURL: process.env.NEXT_PUBLIC_API_URL || " http://192.168.10.79:8000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Attach auth token at request time (safe for SSR/Next.js)
-axiosInstance.interceptors.request.use(
-    (config) => {
-        if (typeof window !== "undefined") {
-            const token = localStorage.getItem("authToken")
-            if (token) {
-                if (!config.headers) config.headers = {}
-                config.headers.Authorization = `Bearer ${token}`
-            }
-        }
-        return config
-    },
-    (error) => Promise.reject(error)
-)
 
-// Redirect to /login on 401 responses
-// axiosInstance.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//         if (error?.response?.status === 401) {
-//             // Optional: clear stored auth state
-//             try {
-//                 localStorage.removeItem("authToken");
-//             } catch (e) {
-//                 // ignore
-//             }
-//             // Navigate to login page
-//             if (typeof window !== "undefined") {
-//                 window.location.href = "/login";
-//             }
-//         }
-//         return Promise.reject(error);
-//     }
-// );
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("authToken");
+
+      if (token) {
+        if (!config.headers) config.headers = {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error: AxiosError) => {
+    toast.error("Failed to send request.");
+    return Promise.reject(error);
+  }
+);
+
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    // 👉 Show success toast only for create/update/delete
+    const method = response.config.method;
+
+    if (method && method !== "get") {
+      toast.success("Success!");
+    }
+
+    return response;
+  },
+
+  (error: AxiosError) => {
+    const message =
+      (error.response?.data as any)?.message ||
+      error.message ||
+      "Something went wrong.";
+
+    toast.error(message);
+
+    // OPTIONAL: Auto-redirect to login on 401
+    // if (error.response?.status === 401 && typeof window !== "undefined") {
+    //   localStorage.removeItem("authToken");
+    //   window.location.href = "/login";
+    // }
+
+    return Promise.reject(error);
+  }
+);
 
 export default axiosInstance;

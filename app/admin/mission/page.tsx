@@ -9,6 +9,7 @@ import { Plus, Trash2, Save } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { toast } from 'react-hot-toast';
 
+
 interface HeroImage {
   id: number;
   url: string;
@@ -399,27 +400,73 @@ export default function AboutUsAdminDashboard() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Include _id in payload when updating so proxy can route to /about/:id
-      const payload = hasData ? { ...sections, _id: aboutId } : sections;
-      
-      const res = hasData
-        ? await axiosInstance.put(`/about/${aboutId}`, payload)
-        : await axiosInstance.post('/about', payload);
-      
-      // Handle both { data: {...} } and direct object responses
-      let result = res.data?.data ?? res.data;
-      if (Array.isArray(result)) {
-        result = result[0];
+      // Build multipart FormData so images are sent as binary.
+      const form = new FormData();
+
+      // Prepare a copy of sections without image URLs (we'll attach files separately)
+      const sectionsCopy: any = { ...sections };
+      const heroImages = Array.isArray(sections.hero?.images) ? sections.hero.images : [];
+      sectionsCopy.hero = { ...sections.hero, images: [] };
+
+      form.append('data', JSON.stringify(sectionsCopy));
+
+      // Attach images as files. If the image entry is a File/Blob use it, otherwise fetch remote URL.
+      for (let i = 0; i < heroImages.length; i++) {
+        const img = heroImages[i];
+        if (!img) continue;
+        const url = (img as any).url ?? img;
+        try {
+          if (url instanceof File) {
+            form.append('images', url);
+          } else if (typeof url === 'string') {
+            if (url.startsWith('data:')) {
+              const res = await fetch(url);
+              const blob = await res.blob();
+              form.append('images', new File([blob], `image-${i}`, { type: blob.type }));
+            } else if (url.startsWith('http')) {
+              const fetched = await fetch(url);
+              const blob = await fetched.blob();
+              const filename = url.split('/').pop()?.split('?')[0] ?? `image-${i}`;
+              form.append('images', new File([blob], filename, { type: blob.type }));
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to attach image', e);
+        }
       }
-      
-      if (result) {
-        // Capture _id from response for subsequent updates (MongoDB uses _id)
+
+      // Choose endpoint: use Next API proxy so we avoid CORS and preserve auth via forwarded header
+      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+      const headers: Record<string, string> = {};
+      if (token) headers['authorization'] = `Bearer ${token}`;
+
+      const query = hasData && aboutId ? `?id=${aboutId}` : '';
+      const url = `/api/about${query}`;
+
+      const response = await fetch(url, {
+        method: hasData ? 'PUT' : 'POST',
+        headers,
+        body: form,
+      });
+
+      let result = null;
+      try {
+        const json = await response.json();
+        result = json?.data ?? json;
+        if (Array.isArray(result)) result = result[0];
+      } catch (e) {
+        // non-json response
+        result = null;
+      }
+
+      if (response.ok && result) {
         const returnedId = result._id ?? result.id ?? aboutId;
         if (returnedId) setAboutId(returnedId);
         setHasData(true);
         toast.success(`About Us content ${hasData ? 'updated' : 'created'} successfully!`);
       } else {
-        toast.error('Error saving content. Please try again.');
+        const msg = (result && (result.message || result.error)) || `HTTP ${response.status}`;
+        toast.error(msg || 'Error saving content.');
       }
     } catch (error: any) {
       console.error('Error:', error);
@@ -429,7 +476,6 @@ export default function AboutUsAdminDashboard() {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-8">
       <div className="max-w-7xl mx-auto">

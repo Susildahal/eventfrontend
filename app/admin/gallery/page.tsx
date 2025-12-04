@@ -15,15 +15,17 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Trash2, Edit, Plus } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
+import { Spinner } from '@/components/ui/spinner'
 
 interface GalleryItem {
-  id: number
+  _id: number
   title: string
   image: string
 }
 
 export default function Page() {
   const [items, setItems] = useState<GalleryItem[]>([])
+  const [submitting, setSubmitting] = useState(false)
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -41,7 +43,7 @@ export default function Page() {
   }
 
   const openEdit = (item: GalleryItem) => {
-    setEditingId(item.id)
+    setEditingId(item._id)
     setForm({ title: TITLE_OPTIONS.includes(item.title) ? item.title : 'Custom', image: item.image, fileName: '', file: null })
     setIsOpen(true)
   }
@@ -50,12 +52,14 @@ export default function Page() {
     setLoading(true)
     setError(null)
     try {
+      setSubmitting(true)
       const res = await axiosInstance.get('/gallery')
       setItems(res.data.data || [])
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch gallery')
     } finally {
       setLoading(false)
+      setSubmitting(false)
     }
   }
  
@@ -77,18 +81,27 @@ export default function Page() {
         fd.append('image', form.file)
 
         if (editingId) {
+          setSubmitting(true)
           await axiosInstance.put(`/gallery/${editingId}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+          setSubmitting(false)
         } else {
+          setSubmitting(true)
           await axiosInstance.post('/gallery', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
+          setSubmitting(false)
         }
       } else {
         // No file: send JSON with image URL
         const payload = { title: finalTitle, image: form.image }
         if (editingId) {
+          setSubmitting(true)
           await axiosInstance.put(`/gallery/${editingId}`, payload)
+          setSubmitting(false)
         } else {
+          setSubmitting(true)
           await axiosInstance.post('/gallery', payload)
+          setSubmitting(false)
         }
+        setSubmitting(false)
       }
 
       await fetchItems()
@@ -122,12 +135,20 @@ export default function Page() {
   const handleDelete = (id: number) => {
     // optimistic UI: remove then call API
     const previous = items
-    setItems(prev => prev.filter(i => i.id !== id))
+    setItems(prev => prev.filter(i => i._id !== id))
     axiosInstance.delete(`/gallery/${id}`).catch(() => {
+      setSubmitting(false)
       setItems(previous)
     })
+    setSubmitting(false)
   }
-
+if (submitting) {
+    return (
+      <div className="flex items-center justify-center h-64"> 
+        <Spinner />
+      </div>
+    )
+  }
   return (
     <div>
 
@@ -148,8 +169,8 @@ export default function Page() {
         <Card>
          
           <CardContent>
-            {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
-            {error && <div className="p-4 text-sm text-red-500">{error}</div>}
+            {/* {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
+            {error && <div className="p-4 text-sm text-red-500">{error}</div>} */}
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -162,10 +183,10 @@ export default function Page() {
                 </TableHeader>
                 <TableBody>
                   {items.map(item => (
-                    <TableRow key={item.id}>
+                    <TableRow key={item._id}>
                       <TableCell>
                         <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
-                          <img src={`${process.env.NEXT_PUBLIC_API_URL}/${item.image}`} alt={item.title} className="h-full w-full object-cover" />
+                          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
                         </div>
                       </TableCell>
                       <TableCell>{item.title}</TableCell>
@@ -175,7 +196,7 @@ export default function Page() {
                           <Button variant="ghost" onClick={() => openEdit(item)}>
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="destructive" onClick={() => handleDelete(item.id)}>
+                          <Button variant="destructive" onClick={() => handleDelete(item._id)}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -246,7 +267,7 @@ export default function Page() {
                     <div>
                       <label className="block text-sm font-medium mb-1">Preview</label>
                       <div className="h-48 w-full bg-gray-100 rounded overflow-hidden">
-                        <img src={`${process.env.NEXT_PUBLIC_API_URL}/${form.image}`} alt="preview" className="h-full w-full object-cover" />
+                        <img src={form.image} alt="preview" className="h-full w-full object-cover" />
                       </div>
                     </div>
                   )}
