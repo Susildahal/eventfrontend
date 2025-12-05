@@ -15,24 +15,40 @@ import {
 } from '@/components/ui/table'
  import { useEffect, useState } from 'react'
  import { Trash2 } from 'lucide-react'
-import DeleteModel from '@/dashbord/common/DeleteModel'
+import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
+import { Spinner } from '@/components/ui/spinner'
 const page = () => {
     const [contacts, setContacts] = useState([])
+    const [deleteId, setDeleteId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchContacts = async () => {
             try {
                 const response = await axiosInstance.get('/contactus')
                 setContacts(response.data.data)
-            }
-            catch (error) {
+            } catch (error) {
                 console.error('Error fetching contacts:', error)
             }
         }
 
         fetchContacts()
-    }, [])
-    console.log(contacts)
+    }, [ ]);
+
+    const fetchContacts = async () => {
+        try {
+            const response = await axiosInstance.get('/contactus')
+            setContacts(response.data.data)
+        } catch (error) {
+            console.error('Error fetching contacts:', error)
+        }
+    }
+   if (!contacts) {
+        return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+    }
+    if (contacts.length === 0) {
+        return <div className='text-center'>No Notic was found.</div>
+    }
+    
     return (
 
         <div className='space-y-4'>
@@ -64,13 +80,7 @@ const page = () => {
                                 
                                     className="cursor-pointer hover:text-red-600 h-6 w-6 text-red-700"
                                     onClick={async () => {          
-                                        try {
-                                            await axiosInstance.delete(`/contactus/${contact._id}`)
-                                            setContacts(contacts.filter((c: any) => c._id !== contact._id))
-                                        }
-                                        catch (error) {
-                                            console.error('Error deleting contact:', error)
-                                        }
+                                       setDeleteId(contact._id);
                                     }}
                                 />
                               
@@ -78,8 +88,13 @@ const page = () => {
                         </TableRow>
                     ))}
             </Table>
-
-            {/* <DeleteModel /> */}
+<Newdeletemodel
+  deleteId={deleteId}
+  endpoint="/contactus"
+  setDeleteId={setDeleteId}
+  onSuccess={fetchContacts}
+/>
+           
         </div>
     )
 }

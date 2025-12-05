@@ -41,7 +41,7 @@ export default function ProfilePage() {
     let mounted = true
     const fetchUser = async () => {
       try {
-        const res = await axiosInstance.get('/api/profile')
+        const res = await axiosInstance.get('users/me')
         const resp = res.data
         const profile = resp?.user ?? resp?.data ?? resp?.profile ?? resp
 
@@ -122,15 +122,15 @@ export default function ProfilePage() {
       }
 
       // Send update request to backend (backend must validate currentPassword)
-      const payload = {
-        oldPassword: formData.currentPassword,
-        password: formData.newPassword || undefined,
-      }
-
-      // include id if available so proxy can route to /profile/:id if needed
-      if (user?._id) payload.id = user._id
-
-      const res = await axiosInstance.put('/api/profile', payload)
+            const payload: { oldPassword: string; password?: string; id?: string } = {
+              oldPassword: formData.currentPassword,
+              password: formData.newPassword || undefined,
+            }
+      
+            // include id if available so proxy can route to /profile/:id if needed
+            if (user?._id) payload.id = user._id
+      
+            const res = await axiosInstance.put(`/users/updatepassword/${user?._id || ''}`, payload)
       const updatedUser = res.data?.data ?? res.data?.user ?? res.data?.profile ?? res.data
       if (updatedUser) {
         setUser(updatedUser)
@@ -154,7 +154,7 @@ export default function ProfilePage() {
       })
 
     } catch (error: any) {
-      toast.error(error.message)
+     
     } finally {
       setLoading(false)
     }

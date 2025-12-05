@@ -41,7 +41,8 @@ export default function SiteSettings() {
                 if (typeof value === 'string') {
                   return { name: value, url: value, icon: '' }
                 }
-                return { name:value?.name, url: value?.url ?? '', icon: value?.icon ?? '' }
+                const objValue = value as { name?: string; url?: string; icon?: string };
+                return { name: objValue?.name ?? name, url: objValue?.url ?? '', icon: objValue?.icon ?? '' }
               })
             : [{ name: '', url: '', icon: '' }]
 

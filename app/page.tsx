@@ -1,11 +1,10 @@
 import React from 'react'
-import {Button} from '../components/ui/button'
+import LoginPage from './(auth)/login/page'
 
 const page = () => {
   return (
     <div>
-      <h1>Welcome to My App</h1>
-<Button>Click Me</Button>
+      <LoginPage/>
     </div>
   )
 }

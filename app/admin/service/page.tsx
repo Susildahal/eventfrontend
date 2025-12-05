@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -58,7 +58,7 @@ interface ServiceTypeData {
   createdAt?: Date;
 }
 
-export default function Page () {
+function ServicePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams?.get('id')
@@ -720,5 +720,13 @@ export default function Page () {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ServicePage />
+    </Suspense>
   );
 }

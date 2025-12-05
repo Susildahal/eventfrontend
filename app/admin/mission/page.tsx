@@ -8,87 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Trash2, Save } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { toast } from 'react-hot-toast';
-
-
-interface HeroImage {
-  id: number;
-  url: string;
-}
-
-interface HeroSection {
-  title: string;
-  mainTitle: string;
-  description: string;
-  cta: string;
-  images: HeroImage[];
-}
-
-interface MissionVisionItem {
-  id: number;
-  type: 'mission' | 'vision';
-  title: string;
-  description: string;
-  missiondescription?: string;
-
-}
-
-interface BeliefItem {
-  id: number;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface MethodItem {
-  id: number;
-  number: string;
-  title: string;
-  description: string;
-}
-
-interface SustainabilityItem {
-  id: number;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface TechPoint {
-  id: number;
-  point: string;
-}
-
-interface TechnologyItem {
-  id: number;
-  icon: string;
-  title: string;
-  description: string;
-  points: TechPoint[];
-}
-
-interface BudgetItem {
-  id: number;
-  icon: string;
-  title: string;
-  description: string;
-  details: string;
-}
-
-interface Sections {
-  hero: HeroSection;
-  missionVision: MissionVisionItem[];
-  missionTitle?: string;
-  missionDescription?: string;
-  whatWeBelieve: BeliefItem[];
-  theOcMethod: MethodItem[];
-  sustainability: SustainabilityItem[];
-  technology: TechnologyItem[];
-  budgets: BudgetItem[];
-  whatWeBelieveTitle?: string;
-  theOcMethodTitle?: string;
-  sustainabilityTitle?: string;
-  budgetsTitle?: string;
-}
+import { HeroForm, MissionVisionForm, BeliefsForm, TechnologyForm } from './MissionFormComponents';
+import type { Sections, HeroSection, MissionVisionItem, BeliefItem, MethodItem, SustainabilityItem, TechnologyItem, BudgetItem } from './types';
 
 export default function AboutUsAdminDashboard() {
   const [sections, setSections] = useState<Sections>({
@@ -97,42 +18,16 @@ export default function AboutUsAdminDashboard() {
       mainTitle: '',
       description: '',
       cta: 'Our Story',
-      images: [
-        // { id: 1, url: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=300&h=400' },
-        // { id: 2, url: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=300&h=400' },
-        // { id: 3, url: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=300&h=400' },
-        // { id: 4, url: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=300&h=400' },
-        // { id: 5, url: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=300&h=400' }
-      ]
+      images: []
     },
-    missionVision: [
-    //   { id: 1, type: 'mission', title: 'Our Mission', description: 'To redefine event planning by creating deeply personal, flawlessly executed experiences that reflect the unique essence of every client.' },
-    //   { id: 2, type: 'vision', title: 'Our Vision', description: 'A world where every celebration is a reflection of personal identity, where logistics fade away and moments shine.' }
-    ],
-    // missionTitle: 'Mission & Vision',
-    // missionDescription: 'Our mission is to redefine event planning by creating deeply personal, flawlessly executed experiences that reflect the unique essence of every client. Our vision is a world where every celebration is a reflection of personal identity, where logistics fade away and moments shine.',
-    whatWeBelieve: [
-    //   { id: 1, icon: '✨', title: 'Personal Over Typical', description: 'We ditch the cookie-cutter approach. Your event tells your story.' },
-    //   { id: 2, icon: '🎯', title: 'Flow Before Clutter', description: 'Seamless logistics create space for joy and connection.' },
-    //   { id: 3, icon: '🌟', title: 'Memorable Is Non-Negotiable', description: 'Every detail is designed to be talked about for years.' },
-    //   { id: 4, icon: '💫', title: 'Details Are Everything', description: 'Nothing is too small or too specific for our attention.' }
-    ],
-    theOcMethod: [
-    //   { id: 1, number: '01', title: 'Discovery', description: 'Understanding your vision, values, and the story you want to tell.' },
-    //   { id: 2, number: '02', title: 'Design', description: 'Crafting a bespoke concept that brings your vision to life.' },
-    //   { id: 3, number: '03', title: 'Curation', description: 'Sourcing the best venues, vendors, and experiences.' },
-    //   { id: 4, number: '04', title: 'Execution', description: 'Managing every detail with precision and grace.' },
-    //   { id: 5, number: '05', title: 'Experience', description: 'Delivering an unforgettable moment that exceeds expectations.' },
-    //   { id: 6, number: '06', title: 'Afterglow', description: 'Following up to capture memories and celebrate the impact.' }
-    ],
+    missionVision: [],
+    whatWeBelieve: [],
+    theOcMethod: [],
     theOcMethodTitle: '',
-    sustainability: [
-    //   { id: 1, icon: '♻️', title: 'Eco-Conscious Events', description: 'We prioritize sustainable practices without compromising elegance.' },
-    //   { id: 2, icon: '🌱', title: 'Ethical Partnerships', description: 'We work with vendors who share our values and commitments.' },
-    //   { id: 3, icon: '❤️', title: 'Social Responsibility', description: 'Giving back and creating positive community impact.' }
-    ],
+    sustainability: [],
     sustainabilityTitle: 'Sustainability',
     whatWeBelieveTitle: 'What We Believe',
+    technologyTitle: 'Technology & Tools',
     budgetsTitle: 'Budgets',
     technology: [
       {
@@ -140,24 +35,30 @@ export default function AboutUsAdminDashboard() {
         icon: '🔧',
         title: '',
         description: '',
-        points: [
-        //   { id: 1, point: 'Real-time collaboration and updates' },
-        // //   { id: 2, point: 'Integrated vendor management system' },
-        //   { id: 3, point: 'Custom event dashboards and timelines' }
-        ]
+        points: []
       }
     ],
     budgets: [
-    //   { id: 1, icon: '💰', title: 'Private Events', description: 'Intimate gatherings with bespoke experiences. Starting from $5,000.', details: 'Perfect for intimate celebrations and private gatherings. Fully customized experiences tailored to your vision.' },
-    //   { id: 2, icon: '🎉', title: 'Brand Launches', description: 'Make a statement with an unforgettable launch event. Starting from $25,000.', details: 'Bold, impactful events designed to make your brand memorable and create lasting impressions.' },
-    //   { id: 3, icon: '🍾', title: 'Both Options', description: 'Flexible packages tailored to your budget and vision. Starting from $10,000.', details: 'Custom solutions that blend luxury with flexibility to match your exact needs and timeline.' }
+      {
+        id: 1,
+        icon: '🎪',
+        title: 'Private Events',
+        description: 'Lead Time: 4 to 8 weeks',
+        details: 'Designed for elegance and intimacy with flexible scaling options.'
+      }
     ]
+      ,
+      missionTitle: '',
+      missionDescription: '',
+      visionTitle: '',
+      visionDescription: ''
   });
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('hero');
   const [hasData, setHasData] = useState(false);
   const [aboutId, setAboutId] = useState<string | number | null>(null);
+  // removed heroFiles state – images are URL-only now
 
   // Fetch initial data from backend
   useEffect(() => {
@@ -195,8 +96,9 @@ export default function AboutUsAdminDashboard() {
           setSections(prev => ({ ...prev, ...processedData }));
           // Capture id from response for PUT requests (use _id for MongoDB)
           const id = data._id ?? data.id ?? null;
+          console.log('Fetched about data:', { id, hasData: !!id, dataKeys: Object.keys(data) });
           if (id) setAboutId(id);
-          setHasData(true);
+          setHasData(!!id);
         }
       } catch (error: any) {
         // silently fail - use default state
@@ -207,7 +109,7 @@ export default function AboutUsAdminDashboard() {
     fetchAboutData();
   }, []);
 
-  // Hero Section
+  // Hero Section Handlers
   const handleHeroChange = (field: keyof HeroSection, value: string) => {
     setSections(prev => ({
       ...prev,
@@ -247,7 +149,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // Mission Vision
+  // Mission Vision Handlers
   const handleMissionChange = (id: number, field: keyof MissionVisionItem | 'description', value: string) => {
     setSections(prev => ({
       ...prev,
@@ -257,7 +159,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // What We Believe
+  // What We Believe Handlers
   const handleBeliefChange = (id: number, field: keyof BeliefItem, value: string) => {
     setSections(prev => ({
       ...prev,
@@ -281,7 +183,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // OC Method
+  // OC Method Handlers
   const handleMethodChange = (id: number, field: keyof MethodItem, value: string) => {
     setSections(prev => ({
       ...prev,
@@ -305,7 +207,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // Sustainability
+  // Sustainability Handlers
   const handleSustainabilityChange = (id: number, field: keyof SustainabilityItem, value: string) => {
     setSections(prev => ({
       ...prev,
@@ -329,7 +231,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // Technology (now supports multiple technology items, each with its own key points)
+  // Technology Handlers
   const handleTechnologyItemChange = (techId: number, field: 'icon' | 'title' | 'description', value: string) => {
     setSections(prev => ({
       ...prev,
@@ -380,7 +282,7 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // Budgets
+  // Budgets Handlers
   const handleBudgetChange = (id: number, field: keyof BudgetItem, value: string) => {
     setSections(prev => ({
       ...prev,
@@ -397,85 +299,60 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
+  const addBudget = () => {
+    setSections(prev => ({
+      ...prev,
+      budgets: [...prev.budgets, { id: Date.now(), icon: '🎉', title: '', description: '', details: '' }]
+    }));
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Build multipart FormData so images are sent as binary.
-      const form = new FormData();
-
-      // Prepare a copy of sections without image URLs (we'll attach files separately)
+      // Send data as JSON only - no file uploads
       const sectionsCopy: any = { ...sections };
       const heroImages = Array.isArray(sections.hero?.images) ? sections.hero.images : [];
-      sectionsCopy.hero = { ...sections.hero, images: [] };
+      sectionsCopy.hero = { ...sections.hero, images: heroImages };
 
-      form.append('data', JSON.stringify(sectionsCopy));
+      // Use axiosInstance to send directly to backend API
+      const endpoint = hasData && aboutId ? `/about/${aboutId}` : '/about';
+      const method = hasData ? 'put' : 'post';
 
-      // Attach images as files. If the image entry is a File/Blob use it, otherwise fetch remote URL.
-      for (let i = 0; i < heroImages.length; i++) {
-        const img = heroImages[i];
-        if (!img) continue;
-        const url = (img as any).url ?? img;
-        try {
-          if (url instanceof File) {
-            form.append('images', url);
-          } else if (typeof url === 'string') {
-            if (url.startsWith('data:')) {
-              const res = await fetch(url);
-              const blob = await res.blob();
-              form.append('images', new File([blob], `image-${i}`, { type: blob.type }));
-            } else if (url.startsWith('http')) {
-              const fetched = await fetch(url);
-              const blob = await fetched.blob();
-              const filename = url.split('/').pop()?.split('?')[0] ?? `image-${i}`;
-              form.append('images', new File([blob], filename, { type: blob.type }));
-            }
-          }
-        } catch (e) {
-          console.warn('Failed to attach image', e);
-        }
-      }
-
-      // Choose endpoint: use Next API proxy so we avoid CORS and preserve auth via forwarded header
-      const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
-      const headers: Record<string, string> = {};
-      if (token) headers['authorization'] = `Bearer ${token}`;
-
-      const query = hasData && aboutId ? `?id=${aboutId}` : '';
-      const url = `/api/about${query}`;
-
-      const response = await fetch(url, {
-        method: hasData ? 'PUT' : 'POST',
-        headers,
-        body: form,
+      console.log('Submit details:', {
+        hasData,
+        aboutId,
+        endpoint,
+        method,
+        currentImageCount: heroImages.length
       });
 
-      let result = null;
-      try {
-        const json = await response.json();
-        result = json?.data ?? json;
-        if (Array.isArray(result)) result = result[0];
-      } catch (e) {
-        // non-json response
-        result = null;
-      }
+      const response = await axiosInstance[method](endpoint, sectionsCopy, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      if (response.ok && result) {
-        const returnedId = result._id ?? result.id ?? aboutId;
+      console.log('Response:', response.data);
+
+      const result = response.data?.data ?? response.data;
+      const normalized = Array.isArray(result) ? result[0] : result;
+
+      if (normalized) {
+        const returnedId = normalized._id ?? normalized.id ?? aboutId;
         if (returnedId) setAboutId(returnedId);
         setHasData(true);
         toast.success(`About Us content ${hasData ? 'updated' : 'created'} successfully!`);
-      } else {
-        const msg = (result && (result.message || result.error)) || `HTTP ${response.status}`;
-        toast.error(msg || 'Error saving content.');
       }
     } catch (error: any) {
       console.error('Error:', error);
+      console.error('Error response:', error.response?.data);
       const msg = error.response?.data?.message || error.message || 'Error submitting form';
       toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-8">
       <div className="max-w-7xl mx-auto">
@@ -487,7 +364,7 @@ export default function AboutUsAdminDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-7 bg-[var(--color-card)] border-[var(--color-border)] overflow-x-auto">
             <TabsTrigger value="hero">Hero</TabsTrigger>
-            <TabsTrigger value="mission">Mission And Vision</TabsTrigger>
+            <TabsTrigger value="mission">Mission & Vision</TabsTrigger>
             <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
             <TabsTrigger value="method">OC Method</TabsTrigger>
             <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
@@ -497,217 +374,45 @@ export default function AboutUsAdminDashboard() {
 
           {/* HERO SECTION */}
           <TabsContent value="hero" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader>
-                <CardTitle className="text-[var(--color-foreground)]">Hero Section</CardTitle>
-                <CardDescription className="text-[var(--color-muted-foreground)]">Edit about us hero content</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
-                  <Input
-                    value={sections.hero.title}
-                    onChange={(e) => handleHeroChange('title', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                    placeholder="Section title"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Main Title</label>
-                  <Input
-                    value={sections.hero.mainTitle}
-                    onChange={(e) => handleHeroChange('mainTitle', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                    placeholder="Main title"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Description</label>
-                  <Textarea
-                    value={sections.hero.description}
-                    onChange={(e) => handleHeroChange('description', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
-                    placeholder="Hero description"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">CTA Button Text</label>
-                  <Input
-                    value={sections.hero.cta}
-                    onChange={(e) => handleHeroChange('cta', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                    placeholder="CTA text"
-                    required
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-[var(--color-foreground)]">Gallery Images</CardTitle>
-                  <CardDescription className="text-[var(--color-muted-foreground)]">Manage hero gallery images</CardDescription>
-                </div>
-                <Button onClick={addHeroImage} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Image
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {sections.hero.images.map((img, idx) => (
-                  <div key={img.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Image {idx + 1} URL</label>
-                        <Input
-                          value={img.url}
-                          onChange={(e) => handleHeroImageChange(img.id, e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                          placeholder="Image URL"
-                          required
-                        />
-                      </div>
-                      <Button
-                        onClick={() => deleteHeroImage(img.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="ml-3"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <HeroForm
+              hero={sections.hero}
+              onHeroChange={handleHeroChange}
+              onHeroImageChange={handleHeroImageChange}
+              onAddHeroImage={addHeroImage}
+              onDeleteHeroImage={deleteHeroImage}
+            />
           </TabsContent>
 
           {/* MISSION VISION */}
           <TabsContent value="mission" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader>
-                <CardTitle className="text-[var(--color-foreground)]">Mission & Vision</CardTitle>
-                <CardDescription className="text-[var(--color-muted-foreground)]">Edit company mission statement</CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Mission / Vision Title</label>
-                  <Input
-                    value={sections.missionTitle}
-                    onChange={(e) => setSections(prev => ({ ...prev, missionTitle: e.target.value }))}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                    placeholder="Section title (e.g., Mission & Vision)"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Mission / Vision Text</label>
-                  <Textarea
-                    value={sections.missionDescription}
-                    onChange={(e) => setSections(prev => ({ ...prev, missionDescription: e.target.value }))}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
-                    placeholder="Write the mission and vision here"
-                  />
-                </div>
-                {sections.missionVision.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <Input
-                      value={item.title}
-                      onChange={(e) => handleMissionChange(item.id, 'title', e.target.value)}
-                      className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                      placeholder="Title (e.g., Our Mission)"
-                      required
-                    />
-                    <Textarea
-                      value={item.description}
-                      onChange={(e) => handleMissionChange(item.id, 'description', e.target.value)}
-                      className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[100px]"
-                      placeholder="Mission description"
-                      required
-                    />
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <MissionVisionForm
+              missionTitle={sections.missionTitle}
+              missionDescription={sections.missionDescription}
+              missionVision={sections.missionVision}
+              visionDescription={sections.visionDescription}
+              onMissionChange={handleMissionChange}
+              onSetMissionTitle={(value) => setSections(prev => ({ ...prev, missionTitle: value }))}
+              onSetMissionDescription={(value) => setSections(prev => ({ ...prev, missionDescription: value }))}
+              onSetVisionDescription={(value) => setSections(prev => ({ ...prev, visionDescription: value }))}
+            />
           </TabsContent>
 
           {/* WHAT WE BELIEVE */}
           <TabsContent value="beliefs" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-[var(--color-foreground)]">What We Believe</CardTitle>
-                  <CardDescription className="text-[var(--color-muted-foreground)]">Manage company values and beliefs</CardDescription>
-                </div>
-                <Button onClick={addBelief} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Belief
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
-                <Input
-                  value={sections.whatWeBelieveTitle ?? ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, whatWeBelieveTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                  placeholder="Section title (e.g., What We Believe)"
-                />
-                {sections.whatWeBelieve.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <Input
-                            value={item.icon}
-                            onChange={(e) => handleBeliefChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Icon emoji"
-                            maxLength={2}
-                            required
-                          />
-                          <Input
-                            value={item.title}
-                            onChange={(e) => handleBeliefChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Belief title"
-                            required
-                          />
-                        </div>
-                        <Textarea
-                          value={item.description}
-                          onChange={(e) => handleBeliefChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
-                          placeholder="Belief description"
-                          required
-                        />
-                      </div>
-                      <Button
-                        onClick={() => deleteBelief(item.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="ml-3"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <BeliefsForm
+              whatWeBelieveTitle={sections.whatWeBelieveTitle}
+              whatWeBelieve={sections.whatWeBelieve}
+              onBeliefChange={handleBeliefChange}
+              onAddBelief={addBelief}
+              onDeleteBelief={deleteBelief}
+              onSetBelieveTitle={(value) => setSections(prev => ({ ...prev, whatWeBelieveTitle: value }))}
+            />
           </TabsContent>
 
           {/* OC METHOD */}
           <TabsContent value="method" className="space-y-6 mt-6">
-            <Card className=" flex flex-col  justify-center bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center  justify-between">
+            <Card className="flex flex-col justify-center bg-[var(--color-card)] border-[var(--color-border)]">
+              <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">The OC Method</CardTitle>
                   <CardDescription className="text-[var(--color-muted-foreground)]">Manage methodology steps</CardDescription>
@@ -717,15 +422,13 @@ export default function AboutUsAdminDashboard() {
                   Add Step
                 </Button>
               </CardHeader>
-            
-             
               <CardContent className="space-y-4">
-                   <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
+                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
                 <Input
-                  value={sections.sustainabilityTitle ?? ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
+                  value={sections.theOcMethodTitle ?? ''}
+                  onChange={(e) => setSections(prev => ({ ...prev, theOcMethodTitle: e.target.value }))}
                   className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                  placeholder="Section title (e.g., Sustainability)"
+                  placeholder="Section title (e.g., The OC Method)"
                 />
                 {sections.theOcMethod.map((item) => (
                   <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
@@ -767,9 +470,7 @@ export default function AboutUsAdminDashboard() {
                   </div>
                 ))}
               </CardContent>
-              
             </Card>
-           
           </TabsContent>
 
           {/* SUSTAINABILITY */}
@@ -785,12 +486,11 @@ export default function AboutUsAdminDashboard() {
                   Add Initiative
                 </Button>
               </CardHeader>
-               
               <CardContent className="space-y-4">
-                 <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
+                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
                 <Input
                   value={sections.sustainabilityTitle ?? ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
+                  onChange={(e) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
                   className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Sustainability)"
                 />
@@ -840,88 +540,17 @@ export default function AboutUsAdminDashboard() {
 
           {/* TECHNOLOGY */}
           <TabsContent value="technology" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader>
-                <CardTitle className="text-[var(--color-foreground)]">Technology & Tools</CardTitle>
-                <CardDescription className="text-[var(--color-muted-foreground)]">Manage technology section</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 flex flex-col">
-                <div className="flex justify-between items-center mb-4">
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Technology Items</label>
-                  <Button onClick={addTechnologyItem} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Technology Item
-                  </Button>
-                </div>
-
-                {sections.technology.map((tech) => (
-                  <div key={tech.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-3 gap-3">
-                          <Input
-                            value={tech.icon}
-                            onChange={(e) => handleTechnologyItemChange(tech.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Icon emoji"
-                            maxLength={2}
-                          />
-                          <Input
-                            value={tech.title}
-                            onChange={(e) => handleTechnologyItemChange(tech.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
-                            placeholder="Title"
-                          />
-                        </div>
-
-                        <Textarea
-                          value={tech.description}
-                          onChange={(e) => handleTechnologyItemChange(tech.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[80px]"
-                          placeholder="Description"
-                        />
-
-                        <div className="pt-4 border-t border-[var(--color-border)]">
-                          <div className="flex justify-between items-center mb-4">
-                            <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Key Points</label>
-                            <Button onClick={() => addTechnologyPoint(tech.id)} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                              <Plus className="w-4 h-4 mr-2" />
-                              Add Point
-                            </Button>
-                          </div>
-
-                          <div className="space-y-3">
-                            {(tech.points ?? []).map((pt) => (
-                              <div key={pt.id} className="flex justify-between items-start gap-3 p-3 bg-[var(--color-card)] rounded-lg border border-[var(--color-border)]">
-                                <Input
-                                  value={pt.point}
-                                  onChange={(e) => handleTechnologyPointChange(tech.id, pt.id, e.target.value)}
-                                  className="flex-1 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                                  placeholder="Key point"
-                                  required
-                                />
-                                <Button
-                                  onClick={() => deleteTechnologyPoint(tech.id, pt.id)}
-                                  size="sm"
-                                  variant="destructive"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <Button onClick={() => deleteTechnologyItem(tech.id)} size="sm" variant="destructive">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <TechnologyForm
+              technologyTitle={sections.technologyTitle}
+              technology={sections.technology}
+              onTechnologyItemChange={handleTechnologyItemChange}
+              onTechnologyPointChange={handleTechnologyPointChange}
+              onAddTechnologyItem={addTechnologyItem}
+              onDeleteTechnologyItem={deleteTechnologyItem}
+              onAddTechnologyPoint={addTechnologyPoint}
+              onDeleteTechnologyPoint={deleteTechnologyPoint}
+              onSetTechnologyTitle={(value) => setSections(prev => ({ ...prev, technologyTitle: value }))}
+            />
           </TabsContent>
 
           {/* BUDGETS & TIMELINES */}
@@ -932,13 +561,16 @@ export default function AboutUsAdminDashboard() {
                   <CardTitle className="text-[var(--color-foreground)]">Budgets & Timelines</CardTitle>
                   <CardDescription className="text-[var(--color-muted-foreground)]">Manage budget packages</CardDescription>
                 </div>
+                <Button onClick={addBudget} size="sm" className="bg-amber-600 hover:bg-amber-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Budget Item
+                </Button>
               </CardHeader>
-              
               <CardContent className="space-y-4">
-                  <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
+                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
                 <Input
                   value={sections.budgetsTitle ?? ''}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, budgetsTitle: e.target.value }))}
+                  onChange={(e) => setSections(prev => ({ ...prev, budgetsTitle: e.target.value }))}
                   className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Budgets)"
                 />
@@ -978,6 +610,14 @@ export default function AboutUsAdminDashboard() {
                           required
                         />
                       </div>
+                      <Button
+                        onClick={() => deleteBudget(item.id)}
+                        size="sm"
+                        variant="destructive"
+                        className="ml-3"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -1000,4 +640,3 @@ export default function AboutUsAdminDashboard() {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestHeaders } from "axios";
 import { toast } from "react-hot-toast";
 
 const axiosInstance = axios.create({
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
       const token = localStorage.getItem("authToken");
 
       if (token) {
-        if (!config.headers) config.headers = {};
+        if (!config.headers) config.headers = {} as AxiosRequestHeaders;
         config.headers.Authorization = `Bearer ${token}`;
       }
     }

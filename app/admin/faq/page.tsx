@@ -141,7 +141,7 @@ export default function Page() {
                       <TableCell>{item.title}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.question}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.answer}</TableCell>
-                       <TableCell className="truncate max-w-xs">{new Date(item.createdAt).toLocaleString()}</TableCell>
+                       <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item as FaqItem)}>
