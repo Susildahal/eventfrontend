@@ -27,13 +27,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
+import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 interface PortfolioItem {
   id: string
   name: string
   description: string
   star: number
   image?: string
+  _id: string
 }
 
 const Page = () => {
@@ -61,6 +62,7 @@ const Page = () => {
   // Fetch portfolio items
   useEffect(() => {
     fetchPortfolioItems()
+    gatbyid(id as string)
   }, [])
 
   const fetchPortfolioItems = async () => {
@@ -100,26 +102,28 @@ const Page = () => {
     }
   }
 
-  // Delete portfolio item
-  const handleDelete = async (itemId: string) => {
-    try {
-      await axiosInstance.delete(`/preview/${itemId}`)
-      console.log('Portfolio deleted successfully')
-      fetchPortfolioItems()
-    } catch (error) {
-      console.error('Error deleting portfolio:', error)
-    }
-  }
+ 
 
   // Edit portfolio item
   const handleEdit = (item: PortfolioItem) => {
-    setEditingId(item.id)
+    setEditingId(item._id)
     setDialogOpen(true)
   }
 
   const handleDialogClose = () => {
     setDialogOpen(false)
     setEditingId(null)
+  }
+const [data, setData] = useState<any>(null);
+  const gatbyid = async (itemId: string) => {
+    try {
+      const response = await axiosInstance.get(`/portfolio/${id}`)
+      setData(response.data.data || null)
+      return response?.data?.data || null
+    } catch (error) {
+      console.error('Error fetching portfolio item by ID:', error)
+      return null
+    }
   }
 
   return (
@@ -133,8 +137,8 @@ const Page = () => {
               onClick={() => router.back()} 
             />
             <div>
-              <h2 className="text-2xl font-semibold text-black dark:text-white">Portfolio</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Add, edit or remove portfolio items</p>
+              <h2 className="text-2xl font-semibold text-black dark:text-white">Preview</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Add, edit or remove portfolio items for {data?.title|| ''} portfolio</p>
             </div>
           </div>
 
@@ -165,9 +169,9 @@ const Page = () => {
               <Formik
                 initialValues={editingId
                   ? {
-                      name: portfolioItems.find(item => item.id === editingId)?.name || '',
-                      description: portfolioItems.find(item => item.id === editingId)?.description || '',
-                      star: String(portfolioItems.find(item => item.id === editingId)?.star || '')
+                      name: portfolioItems.find(item => item._id === editingId)?.name || '',
+                      description: portfolioItems.find(item => item._id === editingId)?.description || '',
+                      star: String(portfolioItems.find(item => item._id === editingId)?.star || '')
                     }
                   : initialValues
                 }
@@ -280,8 +284,8 @@ const Page = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {portfolioItems.map((item) => (
-                      <TableRow key={item.id} className="border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
+                    {portfolioItems.map((item, idx) => (
+                      <TableRow key={item.id ?? idx} className="border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
                         <TableCell className="font-medium text-black dark:text-white">{item.name}</TableCell>
                         <TableCell className="text-gray-600 dark:text-gray-400 max-w-xs truncate">{item.description}</TableCell>
                         <TableCell className="text-center text-black dark:text-white">
@@ -301,7 +305,7 @@ const Page = () => {
                               <Edit2 className="w-4 h-4" />
                             </Button>
                             <Button
-                              onClick={() => handleDelete(item.id)}
+                              onClick={() => setEditingId(item._id)}
                               variant="outline"
                               size="sm"
                               className="border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
@@ -319,6 +323,13 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <Newdeletemodel
+        deleteId={editingId}
+        setDeleteId={setEditingId}
+        endpoint="/preview"
+        onSuccess={fetchPortfolioItems}
+
+      />
     </div>
   )
 }

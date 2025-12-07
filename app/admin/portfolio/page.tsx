@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { X, Trash2, Pencil } from 'lucide-react'
+import { X, Trash2, Pencil, Upload } from 'lucide-react'
 import axiosInstance from '../../config/axiosInstance'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -356,7 +356,7 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                     <tbody>
                                         {portfolioItems.map((item, idx) => (
                                             <tr
-                                                key={item.id}
+                                                key={item._id ?? item.id ?? idx}
                                                 className={`border-b border-gray-300 dark:border-gray-700 ${
                                                     idx % 2 === 0
                                                         ? 'bg-gray-50 dark:bg-gray-900'

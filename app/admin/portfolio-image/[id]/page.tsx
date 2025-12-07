@@ -197,10 +197,8 @@ if (submitting) {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-24">Preview</TableHead>
-                
-                    
-                    <TableHead className="w-36">Actions</TableHead>
+                    <TableHead >Preview</TableHead>
+                    <TableHead >Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
