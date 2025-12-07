@@ -60,7 +60,7 @@ export function HeroForm({
             <Input
               value={hero.title}
               onChange={(e) => onHeroChange('title', e.target.value)}
-              className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+              className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
               placeholder="Section title"
               required
             />
@@ -71,7 +71,7 @@ export function HeroForm({
             <Input
               value={hero.mainTitle}
               onChange={(e) => onHeroChange('mainTitle', e.target.value)}
-              className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+              className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
               placeholder="Main title"
               required
             />
@@ -82,7 +82,7 @@ export function HeroForm({
             <Textarea
               value={hero.description}
               onChange={(e) => onHeroChange('description', e.target.value)}
-              className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
+              className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
               placeholder="Hero description"
               required
             />
@@ -93,7 +93,7 @@ export function HeroForm({
             <Input
               value={hero.cta}
               onChange={(e) => onHeroChange('cta', e.target.value)}
-              className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+              className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
               placeholder="CTA text"
               required
             />
@@ -143,7 +143,7 @@ export function MissionVisionForm({
           <Input
             value={missionTitle}
             onChange={(e) => onSetMissionTitle(e.target.value)}
-            className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+            className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
             placeholder="Section title (e.g., Mission & Vision)"
           />
         </div>
@@ -155,7 +155,7 @@ export function MissionVisionForm({
           <Textarea
             value={missionDescription}
             onChange={(e) => onSetMissionDescription(e.target.value)}
-            className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
+            className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
             placeholder="Write the mission and vision here"
           />
         </div>
@@ -164,7 +164,7 @@ export function MissionVisionForm({
               <Textarea
                 value={visionDescription}
                 onChange={(e) => onSetVisionDescription?.(e.target.value)}
-                className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
+                className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
                 placeholder="Write the vision here"
               />
             </div>
@@ -173,14 +173,14 @@ export function MissionVisionForm({
             <Input
               value={item.title}
               onChange={(e) => onMissionChange(item.id, 'title', e.target.value)}
-              className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+              className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
               placeholder="Title (e.g., Our Mission)"
               required
             />
             <Textarea
               value={item.description}
               onChange={(e) => onMissionChange(item.id, 'description', e.target.value)}
-              className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[100px]"
+              className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[100px]"
               placeholder="Mission description"
               required
             />
@@ -226,7 +226,7 @@ export function BeliefsForm({
         <Input
           value={whatWeBelieveTitle ?? ''}
           onChange={(e) => onSetBelieveTitle(e.target.value)}
-          className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+          className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
           placeholder="Section title (e.g., What We Believe)"
         />
         {whatWeBelieve.map((item) => (
@@ -237,7 +237,7 @@ export function BeliefsForm({
                   <Input
                     value={item.icon}
                     onChange={(e) => onBeliefChange(item.id, 'icon', e.target.value)}
-                    className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Icon emoji"
                     maxLength={2}
                     required
@@ -245,7 +245,7 @@ export function BeliefsForm({
                   <Input
                     value={item.title}
                     onChange={(e) => onBeliefChange(item.id, 'title', e.target.value)}
-                    className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Belief title"
                     required
                   />
@@ -253,7 +253,7 @@ export function BeliefsForm({
                 <Textarea
                   value={item.description}
                   onChange={(e) => onBeliefChange(item.id, 'description', e.target.value)}
-                  className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                  className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                   placeholder="Belief description"
                   required
                 />
@@ -311,7 +311,7 @@ export function TechnologyForm({
           <Input
             value={technologyTitle ?? ''}
             onChange={(e) => onSetTechnologyTitle(e.target.value)}
-            className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+            className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
             placeholder="Section title (e.g., Technology & Tools)"
           />
         </div>
@@ -331,14 +331,14 @@ export function TechnologyForm({
                   <Input
                     value={tech.icon}
                     onChange={(e) => onTechnologyItemChange(tech.id, 'icon', e.target.value)}
-                    className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Icon emoji"
                     maxLength={2}
                   />
                   <Input
                     value={tech.title}
                     onChange={(e) => onTechnologyItemChange(tech.id, 'title', e.target.value)}
-                    className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
+                    className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
                     placeholder="Title"
                   />
                 </div>
@@ -346,7 +346,7 @@ export function TechnologyForm({
                 <Textarea
                   value={tech.description}
                   onChange={(e) => onTechnologyItemChange(tech.id, 'description', e.target.value)}
-                  className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[80px]"
+                  className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[80px]"
                   placeholder="Description"
                 />
 
@@ -365,7 +365,7 @@ export function TechnologyForm({
                         <Input
                           value={pt.point}
                           onChange={(e) => onTechnologyPointChange(tech.id, pt.id, e.target.value)}
-                          className="flex-1 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                          className="flex-1 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                           placeholder="Key point"
                           required
                         />

@@ -127,8 +127,8 @@ const [data, setData] = useState<any>(null);
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white dark:bg-black">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div className="flex items-center gap-4">

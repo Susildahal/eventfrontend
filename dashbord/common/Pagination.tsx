@@ -19,8 +19,10 @@ const Pagination: React.FC<PaginationProps> = ({
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
+  const totalPagesCalculated = totalPages || Math.ceil(totalItems / itemsPerPage);
+
   const handlePageChange = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 1 && page <= totalPagesCalculated) {
       onPageChange(page);
     }
   };
@@ -29,7 +31,7 @@ const Pagination: React.FC<PaginationProps> = ({
     const pages = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    let endPage = Math.min(totalPagesCalculated, startPage + maxVisiblePages - 1);
 
     // Adjust start page if we're near the end
     if (endPage - startPage + 1 < maxVisiblePages) {

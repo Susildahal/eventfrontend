@@ -13,9 +13,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus } from 'lucide-react'
+import { Trash2, Edit, Plus ,ArrowLeft } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import { Spinner } from '@/components/ui/spinner'
+import { useRouter } from 'next/navigation'
 
 interface GalleryItem {
   _id: number
@@ -26,6 +27,7 @@ interface GalleryItem {
 export default function Page() {
   const [items, setItems] = useState<GalleryItem[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const router = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -163,10 +165,12 @@ export default function Page() {
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
             
-          <div>
-            
+          <div className=' flex gap-4 items-center justify-center'> 
+            <ArrowLeft className="h-6 w-6 cursor-pointer mb-2" onClick={() => router.back()} />
+            <div className=' flex flex-col'>
             <h2 className="text-2xl font-semibold">About Images</h2>
             <p className="text-sm text-gray-500">Add, edit or remove about images </p>
+            </div>
           </div>
           <div>
             <Button onClick={openAdd} className="flex items-center gap-2">

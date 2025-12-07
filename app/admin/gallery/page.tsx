@@ -10,15 +10,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus } from 'lucide-react'
+import { Trash2, Edit, Plus, ArrowLeft } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import { Spinner } from '@/components/ui/spinner'
+import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
+import NewPagination from '@/dashbord/common/Newpagination'
+import { useRouter } from 'next/navigation'
+
 
 interface GalleryItem {
-  _id: number
+  _id: string
   title: string
   image: string
 }
@@ -26,9 +41,13 @@ interface GalleryItem {
 export default function Page() {
   const [items, setItems] = useState<GalleryItem[]>([])
   const [submitting, setSubmitting] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 })
+  const [title ,setTitle]=useState('')
+  const router = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<{ title: string; image: string; fileName: string; customTitle?: string; file?: File | null }>({ title: '', image: '', fileName: '', file: null })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const TITLE_OPTIONS = ['Anniversary', 'Birthday', 'Conference']
@@ -53,8 +72,9 @@ export default function Page() {
     setError(null)
     try {
       setSubmitting(true)
-      const res = await axiosInstance.get('/gallery')
+      const res = await axiosInstance.get(`/gallery?page=${pagination.page}&limit=${pagination.limit}&title=${title}`)
       setItems(res.data.data || [])
+      setPagination(prev => ({ ...prev, total: res.data?.pagination?.total || 0 }))
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch gallery')
     } finally {
@@ -62,10 +82,10 @@ export default function Page() {
       setSubmitting(false)
     }
   }
- 
+
   useEffect(() => {
     fetchItems()
-  }, [])
+  }, [pagination.page, title])
 
   const handleSave = async () => {
     if (!form.title) return
@@ -131,53 +151,65 @@ export default function Page() {
   const triggerFileBrowse = () => {
     fileInputRef.current?.click()
   }
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }))
+  }
 
-  const handleDelete = (id: number) => {
-    // optimistic UI: remove then call API
-    const previous = items
-    setItems(prev => prev.filter(i => i._id !== id))
-    axiosInstance.delete(`/gallery/${id}`).catch(() => {
-      setSubmitting(false)
-      setItems(previous)
-    })
-    setSubmitting(false)
-  }
-if (submitting) {
-    return (
-      <div className="flex items-center justify-center h-64"> 
-        <Spinner />
-      </div>
-    )
-  }
+console.log(title)
+
   return (
     <div>
 
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl font-semibold">Gallery</h2>
-            <p className="text-sm text-gray-500">Add, edit or remove gallery images </p>
+          <div className='flex gap-4  items-center justify-center'>
+            <ArrowLeft className="w-6 h-6 cursor-pointer" onClick={() => router.back()} />
+            <div className=' flex flex-col'>
+              <h2 className="text-2xl font-semibold">Gallery</h2>
+              <p className="text-sm text-gray-500">Add, edit or remove gallery images </p>
+            </div>
           </div>
           <div>
+            <div className=' flex gap-3 '>
+              
+            <Select
+              onValueChange={(value) => { setTitle(value); }
+              }
+              value={title}
+            >
+              
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a Gallery title" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Birthday">Birthday</SelectItem>
+                <SelectItem value="Anniversary	">Anniversary </SelectItem>
+                <SelectItem value="Conference">Conference</SelectItem>
+              </SelectContent>
+            </Select>
+       
+          <div>
+
             <Button onClick={openAdd} className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Add Image
             </Button>
           </div>
+          </div>
+             </div>
         </div>
 
         <Card>
-         
+
           <CardContent>
-            {/* {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
-            {error && <div className="p-4 text-sm text-red-500">{error}</div>} */}
+
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-24">Preview</TableHead>
                     <TableHead>Title</TableHead>
-                    
+
                     <TableHead className="w-36">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -190,13 +222,13 @@ if (submitting) {
                         </div>
                       </TableCell>
                       <TableCell>{item.title}</TableCell>
-                      {/* <TableCell className="truncate max-w-xs">{item.image}</TableCell> */}
+
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item)}>
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="destructive" onClick={() => handleDelete(item._id)}>
+                          <Button variant="destructive" onClick={() => setDeleteId(item._id)}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
@@ -256,10 +288,7 @@ if (submitting) {
                         </Button>
                       </div>
                       <div className="mt-3 text-xs text-gray-500">{form.fileName || 'No file selected'}</div>
-                      <div className="mt-3">
-                        <label className="block text-sm font-medium mb-1">Or paste image URL</label>
-                        <Input value={form.image} onChange={(e) => setForm(prev => ({ ...prev, image: e.target.value }))} placeholder="https://..." />
-                      </div>
+
                     </div>
                   </div>
 
@@ -274,7 +303,7 @@ if (submitting) {
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSave}>{editingId ? 'Update' : 'Save'}</Button>
+                    <Button disabled={submitting} onClick={handleSave}> {submitting ? 'Saving...' : (editingId ? 'Update' : 'Save')}</Button>
                   </div>
                 </div>
               </CardContent>
@@ -282,6 +311,20 @@ if (submitting) {
           </div>
         </div>
       )}
+
+      <Newdeletemodel
+        deleteId={deleteId}
+        setDeleteId={setDeleteId}
+        endpoint="/gallery"
+        onSuccess={fetchItems}
+      />
+
+      <NewPagination
+        total={pagination.total}
+        limit={pagination.limit}
+        currentPage={pagination.page}
+        onPageChange={handlePageChange}
+      />
     </div>
   )
 }

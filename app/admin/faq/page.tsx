@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from 'react'
-import Header from '@/dashbord/common/Header'
 import {
   Table,
   TableBody,
@@ -17,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Trash2, Edit, Plus } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
+import NewPagination from '@/dashbord/common/Newpagination'
 interface FaqItem {
   _id?: string
   id?: string | number
@@ -26,25 +26,38 @@ interface FaqItem {
   createdAt?: Date
 }
 import {ArrowLeft} from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
-const TITLE_OPTIONS = ['General', 'Cancellation', 'Booking', 'Payment']
+const TITLE_OPTIONS = ['General', 'Cancellation', 'Premits', 'Catering']
 
 export default function Page() {
-  const [items, setItems] = useState<FaqItem[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState<{ title: string; question: string; answer: string }>({ title: '', question: '', answer: '' })
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [items, setItems] = useState<FaqItem[]>([])
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 })
+  const [form, setForm] = useState<{ title: string; question: string; answer: string }>({
+    title: '',
+    question: '',
+    answer: ''
+  })
 
   const fetchItems = async () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await axiosInstance.get('/faqs')
-      // backend may return { data: [...] } or [...]
-      const data = res.data?.data ?? res.data ?? []
+      const res = await axiosInstance.get(`/faqs?page=${pagination.page}&limit=${pagination.limit}&title=${form.title}`)
+      const data = res.data?.data ?? []
       setItems(data)
+      setPagination(prev => ({ ...prev, total: res.data?.pagination?.total || 0 }))
     } catch (err: any) {
       setError(err?.message || 'Failed to fetch faqs')
     } finally {
@@ -54,7 +67,7 @@ export default function Page() {
 
   useEffect(() => {
     fetchItems()
-  }, [])
+  }, [pagination.page, form.title])
 
   const openAdd = () => {
     setEditingId(null)
@@ -97,6 +110,10 @@ export default function Page() {
     }
   }
 
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }))
+  }
+
   return (
     <>
     
@@ -111,10 +128,27 @@ export default function Page() {
             </div>
           </div>
           <div>
+            <div className=' flex gap-2'>
+              <Select
+              onValueChange={(value) => { setForm(prev => ({ ...prev, title: value })); }
+              }
+              value={form.title}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select a FAQ category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="General">General</SelectItem>
+                <SelectItem value="Cancellation">Cancellation</SelectItem>
+                <SelectItem value="Catering">Catering</SelectItem>
+                 <SelectItem value="Premits">Premits</SelectItem>
+              </SelectContent>
+            </Select>
             <Button onClick={openAdd} className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Add FAQ
             </Button>
+          </div>
           </div>
         </div>
 
@@ -135,20 +169,20 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map(item => (
+                  {items.map((item, idx) => (
                     <TableRow key={(item._id ?? item.id) as string}>
-                      <TableCell>{items.indexOf(item)+1}</TableCell>
+                      <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.title}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.question}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.answer}</TableCell>
-                       <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
+                      <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex items-center gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item as FaqItem)}>
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="destructive" onClick={() => handleDelete(item._id ?? item.id as any)}>
-                            <Trash2 className="w-2 h-2"  />
+                          <Button variant="destructive" onClick={() => setDeleteId(String(item._id ?? item.id))}>
+                            <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -206,17 +240,26 @@ export default function Page() {
           </div>
         </div>
       )}
+
+      <DeleteModel
+        deleteId={deleteId}
+        setDeleteId={setDeleteId}
+        deleting={loading}
+        onConfirm={async () => {
+          if (deleteId) {
+            await handleDelete(deleteId)
+            setDeleteId(null)
+          }
+        }}
+      />
     </div>
-    <DeleteModel
-      deleteId={editingId}
-      setDeleteId={setEditingId}
-      deleting={loading}
-      onConfirm={async () => {
-        if (editingId) {
-          await handleDelete(editingId)
-          setIsOpen(false)
-        }
-      }}
+ <NewPagination
+      total={pagination.total}
+      limit={pagination.limit}
+      currentPage={pagination.page}
+      onPageChange={handlePageChange}
+
+     
     />
     </>
   )

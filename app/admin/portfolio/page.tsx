@@ -1,10 +1,11 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { X, Trash2, Pencil, Upload } from 'lucide-react'
+import { X, Trash2, Pencil, Upload, ArrowLeft } from 'lucide-react'
 import axiosInstance from '../../config/axiosInstance'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
+import { useRouter } from 'next/navigation'
 const PortfolioForm = () => {
     const [open, setOpen] = useState(false)
     const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const PortfolioForm = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [touched, setTouched] = useState<Record<string, boolean>>({})
+    const router = useRouter()
     const [portfolioItems, setPortfolioItems] = useState<Array<{
         id: string
         title: string
@@ -147,7 +149,7 @@ const PortfolioForm = () => {
                 // Demo: Add to local state
                 // For reflect changes in UI we can re-fetch from server or update locally
                 await fetchPortfolioItems()
-                
+
                 // Reset form
                 setFormData({ title: '', description: '', image: null })
                 setImagePreview(null)
@@ -161,7 +163,7 @@ const PortfolioForm = () => {
         }
     }
 
-  
+
 
     const closeModal = () => {
         setOpen(false)
@@ -171,13 +173,20 @@ const PortfolioForm = () => {
         setTouched({})
         setErrors({})
     }
-const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
     return (
         <div className="min-h-screen bg-white dark:bg-black p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-black dark:text-white">Portfolio</h1>
+                <div className="mb-6 flex    gap-4 items-center justify-between">
+                    
+                        <div className=' flex  justify-center items-center gap-4' >
+                            <ArrowLeft className="h-6 w-6 cursor-pointer " onClick={() => router.back()} />
+                            <div className=' flex flex-col '>
+                                <h1 className="text-3xl font-bold text-black dark:text-white">Portfolio</h1>
+                                <h2 className="text-sm text-gray-500 dark:text-gray-400">Manage your portfolio items here</h2>
+                            </div></div>
+                    
                     <button
                         onClick={() => { setEditingItem(null); setFormData({ title: '', description: '', image: null }); setImagePreview(null); setOpen(true) }}
                         className="px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition"
@@ -192,16 +201,16 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                         <div className="bg-white dark:bg-black rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-gray-700">
                             <div className="sticky top-0    bg-white dark:bg-black p-6">
                                 <div className="flex items-center justify-between">
-                                            <h2 className="text-xl font-bold text-black dark:text-white">{editingItem ? 'Edit Portfolio Item' : 'Add Portfolio Item'}</h2>
+                                    <h2 className="text-xl font-bold text-black dark:text-white">{editingItem ? 'Edit Portfolio Item' : 'Add Portfolio Item'}</h2>
                                     <button
                                         onClick={() => setOpen(false)}
                                         className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                     >
                                         <X className="w-5 h-5" />
                                     </button>
-                            </div>
+                                </div>
 
-                                        {editingItem ? 'Update' : 'Save'}
+                                {editingItem ? 'Update' : 'Save'}
                                 {/* Title Field */}
                                 <div>
                                     <label className="block text-sm font-medium text-black dark:text-white mb-2">
@@ -245,7 +254,7 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                     <label className="block text-sm font-medium text-black dark:text-white mb-2">
                                         Image
                                     </label>
-                                    
+
                                     {imagePreview ? (
                                         <div className="relative">
                                             <div className="relative rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800">
@@ -347,9 +356,9 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white w-24">Image</th>
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Title</th>
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Description</th>
-                                              <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Date</th>
-                                                  <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Add Image</th>
-                                                    <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">See Preview</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Date</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">Add Image</th>
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-black dark:text-white">See Preview</th>
                                             <th className="px-4 py-3 text-right text-sm font-semibold text-black dark:text-white w-20">Actions</th>
                                         </tr>
                                     </thead>
@@ -357,11 +366,10 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                         {portfolioItems.map((item, idx) => (
                                             <tr
                                                 key={item._id ?? item.id ?? idx}
-                                                className={`border-b border-gray-300 dark:border-gray-700 ${
-                                                    idx % 2 === 0
+                                                className={`border-b border-gray-300 dark:border-gray-700 ${idx % 2 === 0
                                                         ? 'bg-gray-50 dark:bg-gray-900'
                                                         : 'bg-white dark:bg-black'
-                                                } hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
+                                                    } hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
                                             >
                                                 <td className="px-4 py-3">
                                                     <img
@@ -376,15 +384,15 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                                 <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
                                                     {item.description}
                                                 </td>
-                                                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                                                <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
                                                     {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
                                                 </td>
-                                                 <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                                                     <Link href={`${"/admin/portfolio-image/" + item._id}`}><Button variant="outline" size="sm" >Add Image or View existing image </Button></Link>
+                                                <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                                                    <Link href={`${"/admin/portfolio-image/" + item._id}`}><Button variant="outline" size="sm" >Add Image or View existing image </Button></Link>
                                                 </td>
 
-                                                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
-                                                     <Link href={`${"/admin/preview/" + item._id}`}><Button variant="outline" size="sm" >See Preview</Button></Link>
+                                                <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate">
+                                                    <Link href={`${"/admin/preview/" + item._id}`}><Button variant="outline" size="sm" >See Preview</Button></Link>
                                                 </td>
                                                 <td className=" ">
                                                     <button
@@ -405,7 +413,7 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                                                     </button>
                                                     <button
                                                         onClick={() => setDeleteId(item._id || item.id)}
-                                                        
+
                                                         className="inline-flex items-center cursor-pointer justify-center p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 rounded transition"
                                                         title="Delete"
                                                     >
@@ -421,7 +429,7 @@ const [deleteId, setDeleteId] = useState<string | null>(null);
                     </div>
                 </div>
             </div>
-            <Newdeletemodel  endpoint='/portfolio' deleteId={deleteId} setDeleteId={setDeleteId}  onSuccess={fetchPortfolioItems}/>
+            <Newdeletemodel endpoint='/portfolio' deleteId={deleteId} setDeleteId={setDeleteId} onSuccess={fetchPortfolioItems} />
         </div>
     )
 }

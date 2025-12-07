@@ -490,7 +490,7 @@ export default function AboutUsAdminDashboard() {
                   <Input
                     value={sections.hero.title}
                     onChange={(e) => handleHeroChange('title', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Section title"
                     required
                   />
@@ -501,7 +501,7 @@ export default function AboutUsAdminDashboard() {
                   <Input
                     value={sections.hero.mainTitle}
                     onChange={(e) => handleHeroChange('mainTitle', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Main title"
                     required
                   />
@@ -512,7 +512,7 @@ export default function AboutUsAdminDashboard() {
                   <Textarea
                     value={sections.hero.description}
                     onChange={(e) => handleHeroChange('description', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
                     placeholder="Hero description"
                     required
                   />
@@ -523,7 +523,7 @@ export default function AboutUsAdminDashboard() {
                   <Input
                     value={sections.hero.cta}
                     onChange={(e) => handleHeroChange('cta', e.target.value)}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="CTA text"
                     required
                   />
@@ -551,7 +551,7 @@ export default function AboutUsAdminDashboard() {
                         <Input
                           value={img.url}
                           onChange={(e) => handleHeroImageChange(img.id, e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                           placeholder="Image URL"
                           required
                         />
@@ -585,7 +585,7 @@ export default function AboutUsAdminDashboard() {
                   <Input
                     value={sections.missionTitle}
                     onChange={(e) => setSections(prev => ({ ...prev, missionTitle: e.target.value }))}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                     placeholder="Section title (e.g., Mission & Vision)"
                   />
                 </div>
@@ -595,7 +595,7 @@ export default function AboutUsAdminDashboard() {
                   <Textarea
                     value={sections.missionDescription}
                     onChange={(e) => setSections(prev => ({ ...prev, missionDescription: e.target.value }))}
-                    className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
+                    className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[120px]"
                     placeholder="Write the mission and vision here"
                   />
                 </div>
@@ -604,14 +604,14 @@ export default function AboutUsAdminDashboard() {
                     <Input
                       value={item.title}
                       onChange={(e) => handleMissionChange(item.id, 'title', e.target.value)}
-                      className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                      className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                       placeholder="Title (e.g., Our Mission)"
                       required
                     />
                     <Textarea
                       value={item.description}
                       onChange={(e) => handleMissionChange(item.id, 'description', e.target.value)}
-                      className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[100px]"
+                      className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[100px]"
                       placeholder="Mission description"
                       required
                     />
@@ -639,7 +639,7 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.whatWeBelieveTitle ?? ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, whatWeBelieveTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., What We Believe)"
                 />
                 {sections.whatWeBelieve.map((item) => (
@@ -650,7 +650,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.icon}
                             onChange={(e) => handleBeliefChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                             required
@@ -658,7 +658,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.title}
                             onChange={(e) => handleBeliefChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Belief title"
                             required
                           />
@@ -666,7 +666,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleBeliefChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Belief description"
                           required
                         />
@@ -706,7 +706,7 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.sustainabilityTitle ?? ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Sustainability)"
                 />
                 {sections.theOcMethod.map((item) => (
@@ -717,14 +717,14 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.number}
                             onChange={(e) => handleMethodChange(item.id, 'number', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Number (01-06)"
                             required
                           />
                           <Input
                             value={item.title}
                             onChange={(e) => handleMethodChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
                             placeholder="Step title"
                             required
                           />
@@ -732,7 +732,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleMethodChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Step description"
                           required
                         />
@@ -773,7 +773,7 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.sustainabilityTitle ?? ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Sustainability)"
                 />
                 {sections.sustainability.map((item) => (
@@ -784,7 +784,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.icon}
                             onChange={(e) => handleSustainabilityChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                             required
@@ -792,7 +792,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.title}
                             onChange={(e) => handleSustainabilityChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Initiative title"
                             required
                           />
@@ -800,7 +800,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleSustainabilityChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Initiative description"
                           required
                         />
@@ -844,14 +844,14 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={tech.icon}
                             onChange={(e) => handleTechnologyItemChange(tech.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                           />
                           <Input
                             value={tech.title}
                             onChange={(e) => handleTechnologyItemChange(tech.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
                             placeholder="Title"
                           />
                         </div>
@@ -859,7 +859,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={tech.description}
                           onChange={(e) => handleTechnologyItemChange(tech.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[80px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[80px]"
                           placeholder="Description"
                         />
 
@@ -878,7 +878,7 @@ export default function AboutUsAdminDashboard() {
                                 <Input
                                   value={pt.point}
                                   onChange={(e) => handleTechnologyPointChange(tech.id, pt.id, e.target.value)}
-                                  className="flex-1 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                                  className="flex-1 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                                   placeholder="Key point"
                                   required
                                 />
@@ -921,7 +921,7 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.budgetsTitle ?? ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSections(prev => ({ ...prev, budgetsTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Budgets)"
                 />
                 {sections.budgets.map((item) => (
@@ -932,7 +932,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.icon}
                             onChange={(e) => handleBudgetChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                             required
@@ -940,7 +940,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.title}
                             onChange={(e) => handleBudgetChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Package title"
                             required
                           />
@@ -948,14 +948,14 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleBudgetChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Lead Time: 4 to 8 weeks"
                           required
                         />
                         <Textarea
                           value={item.details}
                           onChange={(e) => handleBudgetChange(item.id, 'details', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Package details (full description)"
                           required
                         />
