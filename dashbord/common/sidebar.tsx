@@ -30,6 +30,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { useDispatch ,useSelector } from "react-redux"
+import { AppDispatch } from "@/app/redux/store"
+import { fetchServiceTypes,} from '@/app/redux/slices/serviceTypesSlice'
+
 import {
   Home,
   Calendar,
@@ -46,9 +50,7 @@ import {
   Moon,
   Sun,
   Monitor,
-  MenuIcon,
-  X,
-  Palette,
+
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -130,41 +132,55 @@ const navigationItems = [
 ]
 
 function UserProfile() {
-  const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-  const [data, setData] = useState<{ name: string; email: string }>({
-    name: "",
-    email: "",
-  })
-  const router = useRouter()
-
-  const handlelogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken")
-      router.push("/login")
-    }
-  }
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  const [data, setData] = useState<{ name: string; email: string }>({ name: "", email: "" });
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes);
+ 
+const [serviceTypes, setServiceTypes] = useState<any[]>([]);
 
   React.useEffect(() => {
-    setMounted(true)
+    setServiceTypes(serviceTypesState.items);
+  }, [serviceTypesState.items]);
+
+  React.useEffect(() => {
+    setMounted(true);
     const fetchUserData = async () => {
       try {
-        const userRes = await axiosInstance.get("/users/me")
-        setData(userRes.data.user)
+        const userRes = await axiosInstance.get("/users/me");
+        setData(userRes.data.user);
       } catch (error: any) {
-        console.error("Error fetching user profile:", error)
+        console.error("Error fetching user profile:", error);
         if (error?.response?.status === 401) {
-          localStorage.removeItem("authToken")
-          router.push("/login")
+          localStorage.removeItem("authToken");
+          router.push("/login");
         }
       }
+    };
+    fetchUserData();
+  }, [router]);
+
+  React.useEffect(() => {
+    if (serviceTypesState.items.length === 0) {
+      dispatch(fetchServiceTypes());
     }
-    fetchUserData()
-  }, [router])
+  }, [dispatch, serviceTypesState.items.length]);
 
   if (!mounted) {
-    return null
+    return null;
   }
+
+  const handlelogout = async () => {
+    try {
+      await axiosInstance.post('/auth/logout');
+      localStorage.removeItem('authToken');
+      router.push('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -309,6 +325,9 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const [eventTypesList, setEventTypesList] = React.useState<any[]>([])
   const pathname = usePathname()
 
+  // Get service types from Redux state
+  const serviceTypesListRedux = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes.items);
+
   React.useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredItems(navigationItems)
@@ -397,7 +416,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                           item={item}
                           isActive={isActive}
                           eventTypesList={eventTypesList}
-                          serviceTypesList={serviceTypesList}
+                          serviceTypesList={serviceTypesListRedux}
                         />
                       </SidebarMenuItem>
                     )

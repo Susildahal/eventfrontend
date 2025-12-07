@@ -13,7 +13,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Trash2, Edit, Plus, ArrowLeft, MoreVertical } from 'lucide-react'
-import axiosInstance from '@/app/config/axiosInstance'
+import { useSelector, useDispatch } from 'react-redux'
+import { AppDispatch } from '@/app/redux/store';
+import { fetchServiceTypes, addServiceType, updateServiceType, deleteServiceType } from '@/app/redux/slices/serviceTypesSlice'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -25,32 +27,16 @@ interface EventType {
 }
 
 export default function servicetypesPage() {
-  const [items, setItems] = useState<EventType[]>([])
+  const dispatch = useDispatch<AppDispatch>();
+  const { items, loading, error } = useSelector((state: { serviceTypes: { items: EventType[]; loading: boolean; error: string | null } }) => state.serviceTypes)
   const [isOpen, setIsOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<{ name: string }>({ name: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const fetchItems = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await axiosInstance.get('/servicetypes')
-      // backend may return { data: [...] } or [...]
-      const data = res.data?.data ?? res.data ?? []
-      setItems(data)
-    } catch (err: any) {
-      setError(err?.message || 'Failed to fetch event types')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
-    fetchItems()
-  }, [])
+    dispatch(fetchServiceTypes())
+  }, [dispatch])
 
   const openAdd = () => {
     setEditingId(null)
@@ -66,33 +52,16 @@ export default function servicetypesPage() {
 
   const handleSave = async () => {
     if (!form.name.trim()) return
-    try {
-      setLoading(true)
-      const payload = { name: form.name }
-      if (editingId) {
-        await axiosInstance.put(`/servicetypes/${editingId}`, payload)
-      } else {
-        await axiosInstance.post('/servicetypes', payload)
-      }
-      await fetchItems()
-      setIsOpen(false)
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || 'Save failed')
-    } finally {
-      setLoading(false)
+    if (editingId) {
+      dispatch(updateServiceType({ id: editingId, name: form.name }))
+    } else {
+      dispatch(addServiceType(form.name))
     }
+    setIsOpen(false)
   }
 
-  const handleDelete = async (id: string | number) => {
-    const previous = items
-    setItems(prev => prev.filter(i => (i._id ?? i.id) !== id))
-    try {
-      await axiosInstance.delete(`/servicetypes/${id}`)
-      setDeleteId(null)
-    } catch {
-      setItems(previous)
-      setError('Delete failed')
-    }
+  const handleDelete = (id: string | number) => {
+    dispatch(deleteServiceType(String(id)));
   }
 
   return (
@@ -130,36 +99,38 @@ export default function servicetypesPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {items.map((item, idx) => (
+                    {items.map((item: EventType, idx: number) => (
                       <TableRow key={(item._id ?? item.id) as string}>
                         <TableCell>{idx + 1}</TableCell>
                         <TableCell>{item.name}</TableCell>
                         <TableCell className="truncate max-w-xs">
                           {item.createdAt ? new Date(item.createdAt).toLocaleString() : '-'}
                         </TableCell>
-                      <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                  <Button variant="ghost" size="sm">
-                                                    <MoreVertical className="w-4 h-4 rotate-90" />
-                                                  </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                  <DropdownMenuItem onClick={() => openEdit(item)}>
-                                                    <Edit className="w-4 h-4 mr-2" />
-                                                    Edit
-                                                  </DropdownMenuItem>
-                                                  <DropdownMenuItem
-                                                    onClick={() => {
-                                                      setDeleteId((item._id ?? item.id) as string)
-                                                      setEditingId((item._id ?? item.id) as string)
-                                                    }}
-                                                    className="text-red-600 dark:text-red-400"
-                                                  >
-                                                    <Trash2 className="w-4 h-4 mr-2" />
-                                                    Delete
-                                                  </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                              </DropdownMenu>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreVertical className="w-4 h-4 rotate-90" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEdit(item)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setDeleteId((item._id ?? item.id) as string);
+                                  setEditingId((item._id ?? item.id) as string);
+                                }}
+                                className="text-red-600 dark:text-red-400"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

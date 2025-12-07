@@ -134,7 +134,7 @@ export default function Page() {
               }
               value={form.title}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger >
                 <SelectValue placeholder="Select a FAQ category" />
               </SelectTrigger>
               <SelectContent>
