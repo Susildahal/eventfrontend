@@ -30,9 +30,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { useDispatch ,useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "@/app/redux/store"
-import { fetchServiceTypes,} from '@/app/redux/slices/serviceTypesSlice'
+import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
 
 import {
   Home,
@@ -50,7 +50,6 @@ import {
   Moon,
   Sun,
   Monitor,
-
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -103,7 +102,6 @@ const navigationItems = [
     icon: Settings,
     href: "/admin/service-types",
   },
-
   {
     title: "Create Account",
     icon: Users,
@@ -132,55 +130,55 @@ const navigationItems = [
 ]
 
 function UserProfile() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  const [data, setData] = useState<{ name: string; email: string }>({ name: "", email: "" });
-  const router = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
-  const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes);
- 
-const [serviceTypes, setServiceTypes] = useState<any[]>([]);
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = React.useState(false)
+  const [data, setData] = useState<{ name: string; email: string }>({ name: "", email: "" })
+  const router = useRouter()
+  const dispatch = useDispatch<AppDispatch>()
+  const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
+
+  const [serviceTypes, setServiceTypes] = useState<any[]>([])
 
   React.useEffect(() => {
-    setServiceTypes(serviceTypesState.items);
-  }, [serviceTypesState.items]);
+    setServiceTypes(serviceTypesState.items)
+  }, [serviceTypesState.items])
 
   React.useEffect(() => {
-    setMounted(true);
+    setMounted(true)
     const fetchUserData = async () => {
       try {
-        const userRes = await axiosInstance.get("/users/me");
-        setData(userRes.data.user);
+        const userRes = await axiosInstance.get("/users/me")
+        setData(userRes.data.user)
       } catch (error: any) {
-        console.error("Error fetching user profile:", error);
+        console.error("Error fetching user profile:", error)
         if (error?.response?.status === 401) {
-          localStorage.removeItem("authToken");
-          router.push("/login");
+          localStorage.removeItem("authToken")
+          router.push("/login")
         }
       }
-    };
-    fetchUserData();
-  }, [router]);
+    }
+    fetchUserData()
+  }, [router])
 
   React.useEffect(() => {
     if (serviceTypesState.items.length === 0) {
-      dispatch(fetchServiceTypes());
+      dispatch(fetchServiceTypes())
     }
-  }, [dispatch, serviceTypesState.items.length]);
+  }, [dispatch, serviceTypesState.items.length])
 
   if (!mounted) {
-    return null;
+    return null
   }
 
   const handlelogout = async () => {
     try {
-      await axiosInstance.post('/auth/logout');
-      localStorage.removeItem('authToken');
-      router.push('/login');
+      await axiosInstance.post('/auth/logout')
+      localStorage.removeItem('authToken')
+      router.push('/login')
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error('Error logging out:', error)
     }
-  };
+  }
 
   return (
     <DropdownMenu>
@@ -252,59 +250,62 @@ function NavItem({
   // Check if Event Types dropdown item is active
   if (item.title === "Event Types" && eventTypesList.length > 0) {
     return (
-      <SidebarMenuButton asChild>
-        <DropdownMenu>
+      <DropdownMenu>
+        <SidebarMenuButton asChild>
           <DropdownMenuTrigger asChild>
-            <button className={`flex w-full items-center gap-2 px-0 ${
-              pathname.includes("/eventsdashbord") ? "text-primary font-semibold" : ""
+            <button className={`flex w-full items-center gap-2 ${
+              pathname.includes("/events-types") ? "text-primary font-semibold" : ""
             }`}>
               <Icon className="h-4 w-4 flex-shrink-0" />
-              <span className="flex-1 text-left text-sm">{item.title}</span>
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              <span className="flex-1 text-left">{item.title}</span>
+              <ChevronDown className="h-3 w-3 text-muted-foreground ml-auto" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
-            {eventTypesList.map((et: any) => (
-              <DropdownMenuItem key={et._id || et.id || et.name} asChild>
-                <Link href={`/admin/eventsdashbord?id=${et._id || et.id}`}>
-                  {et.name}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuButton>
+        </SidebarMenuButton>
+        <DropdownMenuContent align="start" side="right" className="w-56">
+          <DropdownMenuItem asChild>
+            <Link href="/admin/events-types">Manage Event Types</Link>
+          </DropdownMenuItem>
+          {eventTypesList.map((et: any) => (
+            <DropdownMenuItem key={et._id || et.id || et.name} asChild>
+              <Link href={`/admin/eventsdashbord?id=${et._id || et.id}`}>
+                {et.name}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
   // Check if Service Types dropdown item is active
   if (item.title === "Service Types" && serviceTypesList.length > 0) {
     return (
-      <SidebarMenuButton asChild>
-        <DropdownMenu>
+      <DropdownMenu>
+        <SidebarMenuButton asChild>
           <DropdownMenuTrigger asChild>
-            <button className={`flex w-full items-center gap-2 px-0 ${
+            <button className={`flex w-full items-center gap-2 ${
               pathname.includes("/service") ? "text-primary font-semibold" : ""
             }`}>
               <Icon className="h-4 w-4 flex-shrink-0" />
-              <span className="flex-1 text-left text-sm">{item.title}</span>
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
+              <span className="flex-1 text-left">{item.title}</span>
+              <ChevronDown className="h-3 w-3 text-muted-foreground ml-auto" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
-            <DropdownMenuItem asChild>
-              <Link href="/admin/service-types">Add new service</Link>
+        </SidebarMenuButton>
+        <DropdownMenuContent align="start" side="right" className="w-56">
+          <DropdownMenuItem asChild>
+            <Link href="/admin/service-types">Add new service</Link>
+          </DropdownMenuItem>
+          {serviceTypesList.map((st: any) => (
+            <DropdownMenuItem key={st._id || st.id || st.name} asChild>
+              <Link href={`/admin/service?id=${st._id || st.id}`}>
+                {st.name}
+              </Link>
             </DropdownMenuItem>
-            {serviceTypesList.map((st: any) => (
-              <DropdownMenuItem key={st._id || st.id || st.name} asChild>
-                <Link href={`/admin/service?id=${st._id || st.id}`}>
-                  {st.name}
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuButton>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
@@ -326,7 +327,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const pathname = usePathname()
 
   // Get service types from Redux state
-  const serviceTypesListRedux = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes.items);
+  const serviceTypesListRedux = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes.items)
 
   React.useEffect(() => {
     if (searchQuery.trim() === "") {
