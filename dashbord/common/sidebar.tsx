@@ -29,7 +29,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import {
   Home,
   Calendar,
@@ -48,6 +48,7 @@ import {
   Monitor,
   MenuIcon,
   X,
+  Palette,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -94,25 +95,13 @@ const navigationItems = [
     title: "Event Types",
     icon: Calendar,
     href: "/admin/events-types",
-    children: [
-      { title: "Add New Event Type", href: "/admin/events-types" },
-      { title: "Dummy Item", href: "/admin/events-types/dummy" },
-    ],
   },
   {
     title: "Service Types",
     icon: Settings,
     href: "/admin/service-types",
-    children: [
-      { title: "Add New Service Type", href: "/admin/service-types" },
-      { title: "Dummy Item", href: "/admin/service-types/dummy" },
-    ],
   },
-  {
-    title: "Service",
-    icon: Mail,
-    href: "/admin/service",
-  },
+
   {
     title: "Create Account",
     icon: Users,
@@ -132,6 +121,11 @@ const navigationItems = [
     title: "About Image",
     icon: BarChart3,
     href: "/admin/aboutimage",
+  },
+  {
+    title: "Portfolio",
+    icon: BarChart3,
+    href: "/admin/portfolio",
   },
 ]
 
@@ -227,23 +221,27 @@ function UserProfile() {
 
 function NavItem({
   item,
-  isCollapsed,
+  isActive,
   eventTypesList,
   serviceTypesList,
 }: {
   item: any
-  isCollapsed: boolean
+  isActive: boolean
   eventTypesList: any[]
   serviceTypesList: any[]
 }) {
   const Icon = item.icon
+  const pathname = usePathname()
 
+  // Check if Event Types dropdown item is active
   if (item.title === "Event Types" && eventTypesList.length > 0) {
     return (
       <SidebarMenuButton asChild>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 px-0">
+            <button className={`flex w-full items-center gap-2 px-0 ${
+              pathname.includes("/eventsdashbord") ? "text-primary font-semibold" : ""
+            }`}>
               <Icon className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1 text-left text-sm">{item.title}</span>
               <ChevronDown className="h-3 w-3 text-muted-foreground" />
@@ -263,12 +261,15 @@ function NavItem({
     )
   }
 
+  // Check if Service Types dropdown item is active
   if (item.title === "Service Types" && serviceTypesList.length > 0) {
     return (
       <SidebarMenuButton asChild>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 px-0">
+            <button className={`flex w-full items-center gap-2 px-0 ${
+              pathname.includes("/service") ? "text-primary font-semibold" : ""
+            }`}>
               <Icon className="h-4 w-4 flex-shrink-0" />
               <span className="flex-1 text-left text-sm">{item.title}</span>
               <ChevronDown className="h-3 w-3 text-muted-foreground" />
@@ -291,32 +292,9 @@ function NavItem({
     )
   }
 
-  if (item.children && item.children.length > 0) {
-    return (
-      <SidebarMenuButton asChild>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 px-0">
-              <Icon className="h-4 w-4 flex-shrink-0" />
-              <span className="flex-1 text-left text-sm">{item.title}</span>
-              <ChevronDown className="h-3 w-3 text-muted-foreground" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="right">
-            {item.children.map((child: any) => (
-              <DropdownMenuItem key={child.title} asChild>
-                <Link href={child.href}>{child.title}</Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuButton>
-    )
-  }
-
   return (
     <SidebarMenuButton asChild>
-      <Link href={item.href}>
+      <Link href={item.href} className={isActive ? "text-primary font-semibold" : ""}>
         <Icon className="h-4 w-4" />
         <span>{item.title}</span>
       </Link>
@@ -329,7 +307,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const [filteredItems, setFilteredItems] = React.useState(navigationItems)
   const [serviceTypesList, setServiceTypesList] = React.useState<any[]>([])
   const [eventTypesList, setEventTypesList] = React.useState<any[]>([])
-  const [isCollapsed, setIsCollapsed] = React.useState(false)
+  const pathname = usePathname()
 
   React.useEffect(() => {
     if (searchQuery.trim() === "") {
@@ -354,11 +332,13 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
         if (!mounted) return
 
         if (svcRes.status === "fulfilled") {
-          setServiceTypesList(svcRes.value.data?.data ?? svcRes.value.data ?? [])
+          const svcData = svcRes.value.data?.data ?? svcRes.value.data ?? []
+          setServiceTypesList(Array.isArray(svcData) ? svcData : [])
         }
 
         if (evtRes.status === "fulfilled") {
-          setEventTypesList(evtRes.value.data?.data ?? evtRes.value.data ?? [])
+          const evtData = evtRes.value.data?.data ?? evtRes.value.data ?? []
+          setEventTypesList(Array.isArray(evtData) ? evtData : [])
         }
       } catch (e) {
         console.error("Unexpected error fetching sidebar lists", e)
@@ -409,16 +389,19 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredItems.length > 0 ? (
-                  filteredItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <NavItem
-                        item={item}
-                        isCollapsed={isCollapsed}
-                        eventTypesList={eventTypesList}
-                        serviceTypesList={serviceTypesList}
-                      />
-                    </SidebarMenuItem>
-                  ))
+                  filteredItems.map((item) => {
+                    const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+                    return (
+                      <SidebarMenuItem key={item.title}>
+                        <NavItem
+                          item={item}
+                          isActive={isActive}
+                          eventTypesList={eventTypesList}
+                          serviceTypesList={serviceTypesList}
+                        />
+                      </SidebarMenuItem>
+                    )
+                  })
                 ) : (
                   <div className="px-3 py-2 text-sm text-muted-foreground group-data-[state=collapsed]:hidden">
                     No results found
@@ -436,7 +419,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <Link href="/admin/settings">
+                    <Link href="/admin/settings" className={pathname === "/admin/settings" ? "text-primary font-semibold" : ""}>
                       <Settings className="h-4 w-4" />
                       <span className="group-data-[state=collapsed]:hidden">Settings</span>
                     </Link>
