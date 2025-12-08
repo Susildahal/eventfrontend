@@ -33,6 +33,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "@/app/redux/store"
 import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
+import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
 
 import {
   Home,
@@ -50,6 +51,8 @@ import {
   Moon,
   Sun,
   Monitor,
+  Menu,
+  X,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
@@ -57,16 +60,12 @@ import Link from "next/link"
 import axiosInstance from "@/app/config/axiosInstance"
 
 const navigationItems = [
-  {
-    title: "Dashboard",
-    icon: Home,
-    href: "/admin/dashboard",
-  },
-  {
-    title: "Events",
-    icon: Calendar,
-    href: "/admin/events",
-  },
+  // {
+  //   title: "Dashboard",
+  //   icon: Home,
+  //   href: "/admin/dashboard",
+  // },
+
   {
     title: "Users",
     icon: Users,
@@ -137,11 +136,16 @@ function UserProfile() {
   const dispatch = useDispatch<AppDispatch>()
   const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
 
+
   const [serviceTypes, setServiceTypes] = useState<any[]>([])
 
   React.useEffect(() => {
     setServiceTypes(serviceTypesState.items)
   }, [serviceTypesState.items])
+
+  const [eventTypes, setEventTypes] = useState<EventType[]>([])
+
+
 
   React.useEffect(() => {
     setMounted(true)
@@ -183,16 +187,16 @@ function UserProfile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors">
-          <Avatar className="h-9 w-9">
+        <button className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors group-data-[state=collapsed]:justify-center">
+          <Avatar className="h-9 w-9 flex-shrink-0">
             <AvatarImage src="https://github.com/shadcn.png" alt="User" />
             <AvatarFallback>{data.name?.charAt(0) || ""}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-1 flex-col items-start text-sm group-data-[state=collapsed]:hidden">
+          <div className="flex flex-1 flex-col items-start text-sm hidden group-data-[state=expanded]:flex">
             <span className="font-semibold">{data.name}</span>
             <span className="text-xs text-muted-foreground">{data.email}</span>
           </div>
-          <ChevronDown className="h-4 w-4 text-muted-foreground group-data-[state=collapsed]:hidden" />
+          <ChevronDown className="h-4 w-4 text-muted-foreground hidden group-data-[state=expanded]:block" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" side="top">
@@ -236,19 +240,19 @@ function UserProfile() {
 function NavItem({
   item,
   isActive,
-  eventTypesList,
-  serviceTypesList,
+  eventTypes = [],
+  serviceTypesList = [],
 }: {
   item: any
   isActive: boolean
-  eventTypesList: any[]
-  serviceTypesList: any[]
+  eventTypes?: any[]
+  serviceTypesList?: any[]
 }) {
   const Icon = item.icon
   const pathname = usePathname()
 
   // Check if Event Types dropdown item is active
-  if (item.title === "Event Types" && eventTypesList.length > 0) {
+  if (item.title === "Event Types" && eventTypes.length > 0) {
     return (
       <DropdownMenu>
         <SidebarMenuButton asChild>
@@ -264,12 +268,12 @@ function NavItem({
         </SidebarMenuButton>
         <DropdownMenuContent align="start" side="right" className="w-56">
           <DropdownMenuItem asChild>
-            <Link href="/admin/events-types">Manage Event Types</Link>
+            <Link href="/admin/events-types">Add  New Event</Link>
           </DropdownMenuItem>
-          {eventTypesList.map((et: any) => (
+          {eventTypes.map((et: EventType ,index) => (
             <DropdownMenuItem key={et._id || et.id || et.name} asChild>
               <Link href={`/admin/eventsdashbord?id=${et._id || et.id}`}>
-                {et.name}
+                <span>{index + 1}.</span> {et.name}
               </Link>
             </DropdownMenuItem>
           ))}
@@ -297,10 +301,10 @@ function NavItem({
           <DropdownMenuItem asChild>
             <Link href="/admin/service-types">Add new service</Link>
           </DropdownMenuItem>
-          {serviceTypesList.map((st: any) => (
+          {serviceTypesList.map((st: any ,index) => (
             <DropdownMenuItem key={st._id || st.id || st.name} asChild>
               <Link href={`/admin/service?id=${st._id || st.id}`}>
-                {st.name}
+               <span>{index + 1}.</span>  {st.name}
               </Link>
             </DropdownMenuItem>
           ))}
@@ -311,7 +315,14 @@ function NavItem({
 
   return (
     <SidebarMenuButton asChild>
-      <Link href={item.href} className={isActive ? "text-primary font-semibold" : ""}>
+      <Link
+        href={item.href}
+        className={
+          isActive
+            ? "text-primary dark:font-extrabold font-semibold"
+            : ""
+        }
+      >
         <Icon className="h-4 w-4" />
         <span>{item.title}</span>
       </Link>
@@ -322,10 +333,19 @@ function NavItem({
 export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = React.useState("")
   const [filteredItems, setFilteredItems] = React.useState(navigationItems)
-  const [serviceTypesList, setServiceTypesList] = React.useState<any[]>([])
-  const [eventTypesList, setEventTypesList] = React.useState<any[]>([])
+  const [eventTypesList, setEventTypes] = useState<EventType[]>([])
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
+  const router = useRouter()
+  const dispatch = useDispatch<AppDispatch>()
+  const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes);
   const pathname = usePathname()
-
+    React.useEffect(() => {
+    if (eventTypesState.items.length === 0) {
+      dispatch(fetchEventTypes())
+    }
+    setEventTypes(eventTypesState.items)
+  }, [dispatch, eventTypesState.items.length])
+  
   // Get service types from Redux state
   const serviceTypesListRedux = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes.items)
 
@@ -340,55 +360,26 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
     }
   }, [searchQuery])
 
-  React.useEffect(() => {
-    let mounted = true
-    const fetchLists = async () => {
-      try {
-        const [svcRes, evtRes] = await Promise.allSettled([
-          axiosInstance.get("/servicetypes"),
-          axiosInstance.get("/eventtypes"),
-        ])
 
-        if (!mounted) return
-
-        if (svcRes.status === "fulfilled") {
-          const svcData = svcRes.value.data?.data ?? svcRes.value.data ?? []
-          setServiceTypesList(Array.isArray(svcData) ? svcData : [])
-        }
-
-        if (evtRes.status === "fulfilled") {
-          const evtData = evtRes.value.data?.data ?? evtRes.value.data ?? []
-          setEventTypesList(Array.isArray(evtData) ? evtData : [])
-        }
-      } catch (e) {
-        console.error("Unexpected error fetching sidebar lists", e)
-      }
-    }
-
-    fetchLists()
-    return () => {
-      mounted = false
-    }
-  }, [])
 
   return (
     <SidebarProvider defaultOpen={true}>
       <Sidebar collapsible="icon">
-        <SidebarHeader>
-          <Link href="/admin/dashboard" className="flex items-center gap-2 px-4 py-3 hover:opacity-80 transition-opacity">
+        <SidebarHeader className="flex items-center justify-center group-data-[state=collapsed]:px-2">
+          <div className="flex w-full items-center gap-2 px-4 py-3 hover:opacity-80 transition-opacity group-data-[state=collapsed]:px-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground flex-shrink-0">
-              <Calendar className="h-5 w-5" />
+              <img src="/logo.png" alt="EventHub Logo" className="h-5 w-5" />
             </div>
-            <div className="flex flex-col group-data-[state=collapsed]:hidden">
+            <div className="flex flex-col hidden group-data-[state=expanded]:flex">
               <span className="text-lg font-semibold">EventHub</span>
               <span className="text-xs text-muted-foreground">Admin Panel</span>
             </div>
-          </Link>
+          </div>
         </SidebarHeader>
 
         <SidebarContent>
           <SidebarGroup>
-            <div className="px-3 py-2 group-data-[state=collapsed]:hidden">
+            <div className="px-3 py-2 hidden group-data-[state=expanded]:block">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <SidebarInput
@@ -403,7 +394,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel className="group-data-[state=collapsed]:hidden">
+            <SidebarGroupLabel className="hidden group-data-[state=expanded]:block">
               Navigation
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -416,14 +407,14 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                         <NavItem
                           item={item}
                           isActive={isActive}
-                          eventTypesList={eventTypesList}
+                          eventTypes={eventTypesList}
                           serviceTypesList={serviceTypesListRedux}
                         />
                       </SidebarMenuItem>
                     )
                   })
                 ) : (
-                  <div className="px-3 py-2 text-sm text-muted-foreground group-data-[state=collapsed]:hidden">
+                  <div className="px-3 py-2 text-sm text-muted-foreground hidden group-data-[state=expanded]:block">
                     No results found
                   </div>
                 )}
@@ -432,7 +423,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel className="group-data-[state=collapsed]:hidden">
+            <SidebarGroupLabel className="hidden group-data-[state=expanded]:block">
               Settings
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -441,7 +432,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                   <SidebarMenuButton asChild>
                     <Link href="/admin/settings" className={pathname === "/admin/settings" ? "text-primary font-semibold" : ""}>
                       <Settings className="h-4 w-4" />
-                      <span className="group-data-[state=collapsed]:hidden">Settings</span>
+                      <span className="hidden group-data-[state=expanded]:inline">Settings</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -457,21 +448,25 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <SidebarTrigger className="hover:bg-sidebar-accent" />
+          <SidebarTrigger
+            className="hover:bg-sidebar-accent flex items-center justify-center"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            {isSidebarOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+          </SidebarTrigger  >
           <div className="flex flex-1 items-center justify-between">
-            <Breadcrumb
-              items={[
-                { title: "Home", href: "/" },
-                { title: "Dashboard" },
-              ]}
-            />
-            <div className="flex items-center gap-2">
+         
+            <div className="flex items-center  absolute right-2 justify-end gap-2">
               <ThemeDropdown />
             </div>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
-          {children}
+          {children} 
         </div>
       </SidebarInset>
     </SidebarProvider>
@@ -517,3 +512,11 @@ function ThemeDropdown() {
     </DropdownMenu>
   )
 }
+
+// Type for event types
+export type EventType = {
+  _id?: string;
+  id?: string | number;
+  name: string;
+  createdAt?: Date;
+};

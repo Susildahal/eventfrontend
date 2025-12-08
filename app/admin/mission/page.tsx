@@ -5,13 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { HeroForm, MissionVisionForm, BeliefsForm, TechnologyForm } from './MissionFormComponents';
 import type { Sections, HeroSection, MissionVisionItem, BeliefItem, MethodItem, SustainabilityItem, TechnologyItem, BudgetItem } from './types';
-
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 export default function AboutUsAdminDashboard() {
+  const router = useRouter();
   const [sections, setSections] = useState<Sections>({
     hero: {
       title: '',
@@ -47,11 +49,11 @@ export default function AboutUsAdminDashboard() {
         details: 'Designed for elegance and intimacy with flexible scaling options.'
       }
     ]
-      ,
-      missionTitle: '',
-      missionDescription: '',
-      visionTitle: '',
-      visionDescription: ''
+    ,
+    missionTitle: '',
+    missionDescription: '',
+    visionTitle: '',
+    visionDescription: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -66,12 +68,12 @@ export default function AboutUsAdminDashboard() {
       try {
         const res = await axiosInstance.get('/about');
         let data = res.data?.data ?? res.data;
-        
+
         // Handle array response from backend (takes first item)
         if (Array.isArray(data) && data.length > 0) {
           data = data[0];
         }
-        
+
         if (data && typeof data === 'object') {
           // Flatten hero object if it exists as nested structure
           const processedData = { ...data };
@@ -84,7 +86,7 @@ export default function AboutUsAdminDashboard() {
               images: data.images || data.hero.images || []
             };
           }
-          
+
           // Ensure technology items have points array
           if (Array.isArray(processedData.technology)) {
             processedData.technology = processedData.technology.map((tech: any) => ({
@@ -92,7 +94,7 @@ export default function AboutUsAdminDashboard() {
               points: Array.isArray(tech.points) ? tech.points : []
             }));
           }
-          
+
           setSections(prev => ({ ...prev, ...processedData }));
           // Capture id from response for PUT requests (use _id for MongoDB)
           const id = data._id ?? data.id ?? null;
@@ -354,15 +356,23 @@ export default function AboutUsAdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[var(--color-foreground)] mb-2">About Us - Admin Dashboard</h1>
-          <p className="text-[var(--color-muted-foreground)]">Events of the Century - About Us Content Management</p>
-        </div>
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+      <div className="mx-auto ">
+        <div className="mb-8 flex justify-between items-center">
+          <div className='  justify-center items-center flex gap-4'>
+           <ArrowLeft className='cursor-pointer' onClick={() => router.back()} />
+            <div className='flex flex-col'>
+              <h1 className="text-2xl font-bold text-[var(--color-foreground)] mb-2">About Us - Admin Dashboard</h1>
+              <p className="text-[var(--color-muted-foreground)]">Events of the Century - About Us Content Management</p>
+            </div>
+          </div>
 
+          <div className="mb-6 flex justify-end">
+           <Link href="/admin/aboutimage"><Button> Add Image </Button></Link>
+          </div>
+        </div>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-[var(--color-card)] border-[var(--color-border)] overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="mission">Mission & Vision</TabsTrigger>
             <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
@@ -411,7 +421,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* OC METHOD */}
           <TabsContent value="method" className="space-y-6 mt-6">
-            <Card className="flex flex-col justify-center bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className="flex flex-col justify-center border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">The OC Method</CardTitle>
@@ -427,25 +437,25 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.theOcMethodTitle ?? ''}
                   onChange={(e) => setSections(prev => ({ ...prev, theOcMethodTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., The OC Method)"
                 />
                 {sections.theOcMethod.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-3 gap-3">
                           <Input
                             value={item.number}
                             onChange={(e) => handleMethodChange(item.id, 'number', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Number (01-06)"
                             required
                           />
                           <Input
                             value={item.title}
                             onChange={(e) => handleMethodChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
                             placeholder="Step title"
                             required
                           />
@@ -453,7 +463,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleMethodChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Step description"
                           required
                         />
@@ -491,18 +501,18 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.sustainabilityTitle ?? ''}
                   onChange={(e) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Sustainability)"
                 />
                 {sections.sustainability.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <Input
                             value={item.icon}
                             onChange={(e) => handleSustainabilityChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                             required
@@ -510,7 +520,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.title}
                             onChange={(e) => handleSustainabilityChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Initiative title"
                             required
                           />
@@ -518,7 +528,7 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleSustainabilityChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Initiative description"
                           required
                         />
@@ -571,18 +581,18 @@ export default function AboutUsAdminDashboard() {
                 <Input
                   value={sections.budgetsTitle ?? ''}
                   onChange={(e) => setSections(prev => ({ ...prev, budgetsTitle: e.target.value }))}
-                  className="mt-2 bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                   placeholder="Section title (e.g., Budgets)"
                 />
                 {sections.budgets.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-2 gap-3">
                           <Input
                             value={item.icon}
                             onChange={(e) => handleBudgetChange(item.id, 'icon', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Icon emoji"
                             maxLength={2}
                             required
@@ -590,7 +600,7 @@ export default function AboutUsAdminDashboard() {
                           <Input
                             value={item.title}
                             onChange={(e) => handleBudgetChange(item.id, 'title', e.target.value)}
-                            className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
+                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
                             placeholder="Package title"
                             required
                           />
@@ -598,14 +608,14 @@ export default function AboutUsAdminDashboard() {
                         <Textarea
                           value={item.description}
                           onChange={(e) => handleBudgetChange(item.id, 'description', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Package description (short)"
                           required
                         />
                         <Textarea
                           value={item.details}
                           onChange={(e) => handleBudgetChange(item.id, 'details', e.target.value)}
-                          className="bg-[var(--color-input)] border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
+                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
                           placeholder="Package details (full description)"
                           required
                         />
@@ -627,8 +637,8 @@ export default function AboutUsAdminDashboard() {
         </Tabs>
 
         <div className="mt-8 flex justify-end gap-4">
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={loading}
             className="bg-amber-600 hover:bg-amber-700 text-white"
           >

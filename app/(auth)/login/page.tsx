@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button"
 import {
   Card,
-  CardAction,
+
   CardContent,
   CardDescription,
-  CardFooter,
+
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -15,7 +15,6 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import * as yup from "yup"
 import axiosInstance from "../../config/axiosInstance"
-import { toast, Toaster } from "sonner"
 import {Eye , EyeOff} from "lucide-react"
 import { useRouter } from "next/navigation";
 
@@ -57,14 +56,12 @@ export default function LoginPage() {
       await loginSchema.validate(formData, { abortEarly: false })
       // Form is valid, proceed with login
       const response = await axiosInstance.post("/users/login", formData)
-      toast.success("Login successful!", {
-        description: "Welcome back! Redirecting...",
-      })
+    
       console.log("Login response:", response.data)
       const  authToken = response.data.token
       localStorage.setItem("authToken", authToken)
       // Add redirect logic here if needed
-      router.push('/admin/events')
+      router.push('/admin')
     } catch (err) {
       if (err instanceof yup.ValidationError) {
         const validationErrors: { email?: string; password?: string } = {}
@@ -74,13 +71,9 @@ export default function LoginPage() {
           }
         })
         setErrors(validationErrors)
-        toast.error("Validation failed", {
-          description: "Please check your email and password.",
-        })
+      
       } else if (err instanceof Error) {
-        toast.error("Login failed", {
-          description: "Invalid credentials. Please try again.",
-        })
+       
       }
     } finally {
       setIsSubmitting(false)
@@ -93,7 +86,7 @@ export default function LoginPage() {
       // backgroundImage :url("/loginpage.jpg")
 
     }}>
-      <Toaster position="top-right" richColors />
+     
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>

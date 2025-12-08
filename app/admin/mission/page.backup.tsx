@@ -467,7 +467,7 @@ export default function AboutUsAdminDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-[var(--color-card)] border-[var(--color-border)] overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-7  border-[var(--color-border)] overflow-x-auto">
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="mission">Mission And Vision</TabsTrigger>
             <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
@@ -479,7 +479,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* HERO SECTION */}
           <TabsContent value="hero" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader>
                 <CardTitle className="text-[var(--color-foreground)]">Hero Section</CardTitle>
                 <CardDescription className="text-[var(--color-muted-foreground)]">Edit about us hero content</CardDescription>
@@ -531,7 +531,7 @@ export default function AboutUsAdminDashboard() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">Gallery Images</CardTitle>
@@ -544,7 +544,7 @@ export default function AboutUsAdminDashboard() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {sections.hero.images.map((img, idx) => (
-                  <div key={img.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={img.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Image {idx + 1} URL</label>
@@ -573,7 +573,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* MISSION VISION */}
           <TabsContent value="mission" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader>
                 <CardTitle className="text-[var(--color-foreground)]">Mission & Vision</CardTitle>
                 <CardDescription className="text-[var(--color-muted-foreground)]">Edit company mission statement</CardDescription>
@@ -600,7 +600,7 @@ export default function AboutUsAdminDashboard() {
                   />
                 </div>
                 {sections.missionVision.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <Input
                       value={item.title}
                       onChange={(e) => handleMissionChange(item.id, 'title', e.target.value)}
@@ -623,7 +623,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* WHAT WE BELIEVE */}
           <TabsContent value="beliefs" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">What We Believe</CardTitle>
@@ -643,7 +643,7 @@ export default function AboutUsAdminDashboard() {
                   placeholder="Section title (e.g., What We Believe)"
                 />
                 {sections.whatWeBelieve.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-2 gap-3">
@@ -688,7 +688,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* OC METHOD */}
           <TabsContent value="method" className="space-y-6 mt-6">
-            <Card className=" flex flex-col  justify-center bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" flex flex-col  justify-center  border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center  justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">The OC Method</CardTitle>
@@ -710,7 +710,7 @@ export default function AboutUsAdminDashboard() {
                   placeholder="Section title (e.g., Sustainability)"
                 />
                 {sections.theOcMethod.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-3 gap-3">
@@ -756,7 +756,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* SUSTAINABILITY */}
           <TabsContent value="sustainability" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">Sustainability & Respect</CardTitle>
@@ -777,7 +777,7 @@ export default function AboutUsAdminDashboard() {
                   placeholder="Section title (e.g., Sustainability)"
                 />
                 {sections.sustainability.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-2 gap-3">
@@ -822,7 +822,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* TECHNOLOGY */}
           <TabsContent value="technology" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader>
                 <CardTitle className="text-[var(--color-foreground)]">Technology & Tools</CardTitle>
                 <CardDescription className="text-[var(--color-muted-foreground)]">Manage technology section</CardDescription>
@@ -837,7 +837,7 @@ export default function AboutUsAdminDashboard() {
                 </div>
 
                 {sections.technology.map((tech) => (
-                  <div key={tech.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={tech.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-3 gap-3">
@@ -874,7 +874,7 @@ export default function AboutUsAdminDashboard() {
 
                           <div className="space-y-3">
                             {(tech.points ?? []).map((pt) => (
-                              <div key={pt.id} className="flex justify-between items-start gap-3 p-3 bg-[var(--color-card)] rounded-lg border border-[var(--color-border)]">
+                              <div key={pt.id} className="flex justify-between items-start gap-3 p-3  rounded-lg border border-[var(--color-border)]">
                                 <Input
                                   value={pt.point}
                                   onChange={(e) => handleTechnologyPointChange(tech.id, pt.id, e.target.value)}
@@ -908,7 +908,7 @@ export default function AboutUsAdminDashboard() {
 
           {/* BUDGETS & TIMELINES */}
           <TabsContent value="budgets" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+            <Card className=" border-[var(--color-border)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="text-[var(--color-foreground)]">Budgets & Timelines</CardTitle>
@@ -925,7 +925,7 @@ export default function AboutUsAdminDashboard() {
                   placeholder="Section title (e.g., Budgets)"
                 />
                 {sections.budgets.map((item) => (
-                  <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+                  <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1 space-y-3">
                         <div className="grid grid-cols-2 gap-3">

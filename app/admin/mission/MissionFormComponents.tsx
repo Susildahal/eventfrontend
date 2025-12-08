@@ -36,7 +36,7 @@ function HeroImageItem({
   const previewUrl = img.url;
 
   return (
-    <div className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+    <div className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
      
     </div>
   );
@@ -49,7 +49,7 @@ export function HeroForm({
 }: HeroFormProps) {
   return (
     <>
-      <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+      <Card className=" border-[var(--color-border)]">
         <CardHeader>
           <CardTitle className="text-[var(--color-foreground)]">Hero Section</CardTitle>
           <CardDescription className="text-[var(--color-muted-foreground)]">Edit about us hero content</CardDescription>
@@ -131,7 +131,7 @@ export function MissionVisionForm({
   , onSetVisionTitle, onSetVisionDescription
 }: MissionVisionFormProps) {
   return (
-    <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+    <Card className=" border-[var(--color-border)]">
       <CardHeader>
         <CardTitle className="text-[var(--color-foreground)]">Mission & Vision</CardTitle>
         <CardDescription className="text-[var(--color-muted-foreground)]">Edit company mission statement</CardDescription>
@@ -169,7 +169,7 @@ export function MissionVisionForm({
               />
             </div>
         {missionVision.map((item) => (
-          <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+          <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
             <Input
               value={item.title}
               onChange={(e) => onMissionChange(item.id, 'title', e.target.value)}
@@ -210,7 +210,7 @@ export function BeliefsForm({
   onSetBelieveTitle
 }: BeliefsFormProps) {
   return (
-    <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+    <Card className=" border-[var(--color-border)]">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-[var(--color-foreground)]">What We Believe</CardTitle>
@@ -230,7 +230,7 @@ export function BeliefsForm({
           placeholder="Section title (e.g., What We Believe)"
         />
         {whatWeBelieve.map((item) => (
-          <div key={item.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+          <div key={item.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
             <div className="flex justify-between items-start">
               <div className="flex-1 space-y-3">
                 <div className="grid grid-cols-2 gap-3">
@@ -298,7 +298,7 @@ export function TechnologyForm({
   onSetTechnologyTitle
 }: TechnologyFormProps) {
   return (
-    <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
+    <Card className=" border-[var(--color-border)]">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="text-[var(--color-foreground)]">Technology & Tools</CardTitle>
@@ -324,7 +324,7 @@ export function TechnologyForm({
         </div>
 
         {technology.map((tech) => (
-          <div key={tech.id} className="p-4 bg-[var(--color-card)] rounded-lg space-y-3 border border-[var(--color-border)]">
+          <div key={tech.id} className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">
             <div className="flex justify-between items-start">
               <div className="flex-1 space-y-3">
                 <div className="grid grid-cols-3 gap-3">
@@ -361,7 +361,7 @@ export function TechnologyForm({
 
                   <div className="space-y-3">
                     {(tech.points ?? []).map((pt: any) => (
-                      <div key={pt.id} className="flex justify-between items-start gap-3 p-3 bg-[var(--color-card)] rounded-lg border border-[var(--color-border)]">
+                      <div key={pt.id} className="flex justify-between items-start gap-3 p-3  rounded-lg border border-[var(--color-border)]">
                         <Input
                           value={pt.point}
                           onChange={(e) => onTechnologyPointChange(tech.id, pt.id, e.target.value)}

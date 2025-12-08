@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Trash2, Edit, Plus, ArrowLeft, MoreVertical } from 'lucide-react'
-import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import {
   DropdownMenu,
@@ -21,6 +20,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { AppDispatch } from '@/app/redux/store'
+import { useDispatch ,useSelector } from 'react-redux'
+import { fetchEventTypes ,deleteEventType ,createEventType ,updateEventType ,fetchEventTypeById , } from '@/app/redux/slices/eventTypesSlice'
+
+
 
 interface EventType {
   _id?: string
@@ -37,25 +41,18 @@ export default function EventTypesPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes);
 
-  const fetchItems = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await axiosInstance.get('/eventtypes')
-      // backend may return { data: [...] } or [...]
-      const data = res.data?.data ?? res.data ?? []
-      setItems(data)
-    } catch (err: any) {
-      setError(err?.message || 'Failed to fetch event types')
-    } finally {
-      setLoading(false)
-    }
+useEffect(() => {
+  if (eventTypesState.items.length === 0) {
+    dispatch(fetchEventTypes());
   }
+}, [dispatch, eventTypesState.items.length])
 
-  useEffect(() => {
-    fetchItems()
-  }, [])
+useEffect(() => {
+  setItems(eventTypesState.items);
+}, [eventTypesState.items]);
 
   const openAdd = () => {
     setEditingId(null)
@@ -75,11 +72,11 @@ export default function EventTypesPage() {
       setLoading(true)
       const payload = { name: form.name }
       if (editingId) {
-        await axiosInstance.put(`/eventtypes/${editingId}`, payload)
+      dispatch(updateEventType({ ...payload, _id: editingId }));  
       } else {
-        await axiosInstance.post('/eventtypes', payload)
+        dispatch(createEventType(payload));
       }
-      await fetchItems()
+   
       setIsOpen(false)
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Save failed')
@@ -92,7 +89,7 @@ export default function EventTypesPage() {
     const previous = items
     setItems(prev => prev.filter(i => (i._id ?? i.id) !== id))
     try {
-      await axiosInstance.delete(`/eventtypes/${id}`)
+dispatch(deleteEventType(id as string));
       setDeleteId(null)
     } catch {
       setItems(previous)
