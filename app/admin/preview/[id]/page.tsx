@@ -46,6 +46,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
   const initialValues = {
     name: '',
@@ -303,14 +304,14 @@ const [data, setData] = useState<any>(null);
                               className="border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
                             >
                               <Edit2 className="w-4 h-4" />
-                            </Button>
                             <Button
-                              onClick={() => setEditingId(item._id)}
+                              onClick={() => setDeleteId(item._id)}
                               variant="outline"
                               size="sm"
                               className="border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                             >
                               <Trash2 className="w-4 h-4" />
+                            </Button>
                             </Button>
                           </div>
                         </TableCell>
@@ -322,14 +323,14 @@ const [data, setData] = useState<any>(null);
             )}
           </div>
         </div>
-      </div>
       <Newdeletemodel
-        deleteId={editingId}
-        setDeleteId={setEditingId}
+        deleteId={deleteId}
+        setDeleteId={setDeleteId}
         endpoint="/preview"
         onSuccess={fetchPortfolioItems}
-
       />
+      
+    </div>
     </div>
   )
 }

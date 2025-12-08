@@ -17,12 +17,15 @@ import { Trash2, Edit, Plus ,ArrowLeft } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import { Spinner } from '@/components/ui/spinner'
 import { useRouter } from 'next/navigation'
+import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 
 interface GalleryItem {
   _id: number
   title: string
   image: string
+  
 }
+// Removed delte interface, use string | null for deleteId
 
 export default function Page() {
   const [items, setItems] = useState<GalleryItem[]>([])
@@ -33,11 +36,13 @@ export default function Page() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<{ title: string; image: string; fileName: string; customTitle?: string; file?: File | null }>({ title: '', image: '', fileName: '', customTitle: '', file: null })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const TITLE_OPTIONS = ['Anniversary', 'Birthday', 'Conference']
+
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
+  const [submittingDelete, setSubmittingDelete] = useState(false)
   const openAdd = () => {
     setEditingId(null)
     setForm({ title: '', image: '', fileName: '', customTitle: '', file: null })
@@ -153,9 +158,9 @@ export default function Page() {
     setSubmitting(false)
   }
 
-  if(loading){
-    return <div className='h-screen justify-center items-center flex '><Spinner /></div>
-  }
+  // if(loading){
+  //   return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+  // }
 
  
 
@@ -196,27 +201,34 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map(item => (
-                    <TableRow key={item._id}>
-                        
-                      <TableCell>
-                        <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
-                          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.title}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" onClick={() => openEdit(item)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="destructive" onClick={() => handleDelete(item._id)}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+                  {items.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                        Data not available
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    items.map(item => (
+                      <TableRow key={item._id}>
+                        <TableCell>
+                          <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
+                            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                          </div>
+                        </TableCell>
+                        <TableCell>{item.title}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" onClick={() => openEdit(item)}>
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button variant="destructive" onClick={() => setDeleteId(String(item._id))}>
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -291,7 +303,9 @@ export default function Page() {
                   <div className="flex justify-end gap-2">
                     <Button   variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
                     <Button onClick={handleSave} disabled={submitting}>
-                      {submitting ? 'Submitting...' : (editingId ? 'Update' : 'Save')}
+                      {loading
+                        ? (submitting ? 'Submitting...' : (editingId ? 'Update' : 'Save'))
+                        : (editingId ? 'Update' : 'Save')}
                     </Button>
                   </div>
                 </div>
@@ -300,6 +314,7 @@ export default function Page() {
           </div>
         </div>
       )}
+      <Newdeletemodel deleteId={deleteId} endpoint="/aboutimage" setDeleteId={setDeleteId} onSuccess={fetchItems} />
     </div>
   )
 }

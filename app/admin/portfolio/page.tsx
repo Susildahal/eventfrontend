@@ -16,6 +16,7 @@ const PortfolioForm = () => {
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [touched, setTouched] = useState<Record<string, boolean>>({})
+
     const router = useRouter()
     const [portfolioItems, setPortfolioItems] = useState<Array<{
         id: string
@@ -106,6 +107,10 @@ const PortfolioForm = () => {
                     }))
                 }
             }
+            setLoading(true) // Add submitting stage
+            reader.onloadend = () => {
+                setLoading(false)
+            }
             reader.readAsDataURL(file)
         }
     }
@@ -122,6 +127,8 @@ const PortfolioForm = () => {
         if (e) e.preventDefault()
         if (validateForm()) {
             try {
+                // Prepare FormData for multipart/form-data
+                setLoading(true)
                 const formDataToSend = new FormData()
                 formDataToSend.append('title', formData.title)
                 formDataToSend.append('description', formData.description)
@@ -159,6 +166,8 @@ const PortfolioForm = () => {
                 closeModal()
             } catch (err) {
                 console.error('Failed to save portfolio', err)
+            } finally {
+                setLoading(false)
             }
         }
     }
@@ -179,14 +188,14 @@ const PortfolioForm = () => {
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-6 flex    gap-4 items-center justify-between">
-                    
-                        <div className=' flex  justify-center items-center gap-4' >
-                            <ArrowLeft className="h-6 w-6 cursor-pointer " onClick={() => router.back()} />
-                            <div className=' flex flex-col '>
-                                <h1 className="text-3xl font-bold text-black dark:text-white">Portfolio</h1>
-                                <h2 className="text-sm text-gray-500 dark:text-gray-400">Manage your portfolio items here</h2>
-                            </div></div>
-                    
+
+                    <div className=' flex  justify-center items-center gap-4' >
+                        <ArrowLeft className="h-6 w-6 cursor-pointer " onClick={() => router.back()} />
+                        <div className=' flex flex-col '>
+                            <h1 className="text-3xl font-bold text-black dark:text-white">Portfolio</h1>
+                            <h2 className="text-sm text-gray-500 dark:text-gray-400">Manage your portfolio items here</h2>
+                        </div></div>
+
                     <button
                         onClick={() => { setEditingItem(null); setFormData({ title: '', description: '', image: null }); setImagePreview(null); setOpen(true) }}
                         className="px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition"
@@ -324,12 +333,13 @@ const PortfolioForm = () => {
                                 >
                                     Cancel
                                 </button>
-                                <button
-                                    onClick={(e) => handleSubmit(e)}
-                                    className="px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition"
-                                >
-                                    {editingItem ? 'Update' : 'Save'}
-                                </button>
+                            <button
+                                onClick={(e) => handleSubmit(e)}
+                                disabled={loading}
+                                className={`px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition${loading ? ' opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                               {loading ? (editingItem ? 'Updating...' : 'Saving...') : (editingItem ? 'Update' : 'Save')}
+                            </button>
                             </div>
                         </div>
                     </div>
@@ -367,8 +377,8 @@ const PortfolioForm = () => {
                                             <tr
                                                 key={item._id ?? item.id ?? idx}
                                                 className={`border-b border-gray-300 dark:border-gray-700 ${idx % 2 === 0
-                                                        ? 'bg-gray-50 dark:bg-gray-900'
-                                                        : 'bg-white dark:bg-black'
+                                                    ? 'bg-gray-50 dark:bg-gray-900'
+                                                    : 'bg-white dark:bg-black'
                                                     } hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
                                             >
                                                 <td className="px-4 py-3">

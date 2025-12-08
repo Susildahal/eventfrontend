@@ -188,8 +188,8 @@ export default function SiteSettings() {
   return (
     <>
     <Header title="Site Settings" titledesc={isEditing ? 'Edit your website information and social media links' : 'Create your website information and social media links'} />
-      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-      <div className="max-w-5xl mx-auto">
+      <div className="bg-white dark:bg-gray-900 text-gray-900  dark:text-white">
+      <div className=" mx-auto">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
