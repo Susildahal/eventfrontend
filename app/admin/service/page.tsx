@@ -5,12 +5,13 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Textarea } from '../../../components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
-import { Plus, Trash2, Save } from 'lucide-react';
+import { Plus, Trash2, Save ,ArrowLeft } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axiosInstance from '@/app/config/axiosInstance';
 import {RefreshCcw} from 'lucide-react';
 import { toast } from "react-hot-toast";
 import { Spinner } from '@/components/ui/spinner';
+
  interface CriteriaItem {
   id: number;
   label: string;
@@ -71,34 +72,20 @@ function ServicePage() {
       image: 'https://images.unsplash.com/photo-1519671482677-504be0ffec60?w=600&h=400',
       criteria: [
         { id: 1, label: '', description: '' },
-        // { id: 2, label: '', description: '' },
-        // { id: 3, label: '', description: '' },
-        // { id: 4, label: 'Layout & Flow', description: 'Draft floor plans, guest journey, bars, signage, accessible seating, green rooms' }
+       
       ]
     },
     beverageProgram: [
       { id: 1, icon: '', label: '', description: '' },
-      // { id: 2, icon: '🏖️', label: 'Beach clubs & lawn terraces', description: 'Open-air seaside and garden spaces' },
-      // { id: 3, icon: '🏠', label: 'Private homes/villas', description: 'Exclusive residential properties' },
-      // { id: 4, icon: '🛍️', label: 'Boutique bars', description: 'Intimate upscale bar venues' },
-      // { id: 5, icon: '🎨', label: 'Galleries & studios', description: 'Creative artistic spaces' },
-      // { id: 6, icon: '🏭', label: 'Warehouses', description: 'Industrial loft spaces' },
-      // { id: 7, icon: '🏨', label: 'Hotel ballrooms', description: 'Professional hotel event spaces' },
-      // { id: 8, icon: '🌳', label: 'Garden estates', description: 'Outdoor garden venues' }
+
     ],
     addOns: [
       { id: 1, title: '', description: '' },
-      // { id: 2, title: 'Accommodation blocks', description: 'Curated stays for comfort and convenience' },
-      // { id: 3, title: 'Security & crowd flow', description: 'Discrete, professional and perfectly coordinated' },
-      // { id: 4, title: 'Wayfinding signage', description: 'Elegant direction options designed for clarity' },
-      // { id: 5, title: 'Cloak & green rooms', description: 'Thoughtfully crafted for comfort and ease' }
+    
     ],
     timeline: [
       { id: 1, step: '1', title: '', duration: '' },
-      // { id: 2, step: '2', title: 'Shortlist', duration: '3-5 days' },
-      // { id: 3, step: '3', title: 'Site Tours & Holds', duration: '1 week' },
-      // { id: 4, step: '4', title: 'Contracting', duration: '2-5 days' },
-      // { id: 5, step: '5', title: 'Floor Plan & Run Sheet', duration: '1-2 weeks' }
+
     ]
   });
 
@@ -375,12 +362,15 @@ function ServicePage() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="min-h-screen ">
       <div className=" ">
         <div className="mb-8 flex justify-between items-center">
-          <div className=' flex flex-col'>
-          <h1 className="text-4xl font-bold mb-2 capitalize">{data.name || 'NA'}</h1>
+          <div className=' flex items-center gap-4'>
+            <ArrowLeft className='h-5 w-5 cursor-pointer mb-2' onClick={() => router.back()} />
+              <div className=' flex flex-col'>
+          <h1 className="text-2xl font-bold mb-2 capitalize">{data.name || 'NA'}</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage the content of the {data.name || 'NA'} - Content Management</p><span className=''> </span>
+          </div>
           </div>
 
           <div>  <RefreshCcw height={20} className='cursor-pointer'  onClick={()=>{window.location.reload()}} width={20}/></div>

@@ -60,11 +60,7 @@ import Link from "next/link"
 import axiosInstance from "@/app/config/axiosInstance"
 
 const navigationItems = [
-  // {
-  //   title: "Dashboard",
-  //   icon: Home,
-  //   href: "/admin/dashboard",
-  // },
+
 
   {
     title: "Users",
@@ -86,11 +82,7 @@ const navigationItems = [
     icon: FileText,
     href: "/admin/faq",
   },
-  {
-    title: "Events Dashboard",
-    icon: BarChart3,
-    href: "/admin/eventsdashbord",
-  },
+ 
   {
     title: "Event Types",
     icon: Calendar,
@@ -116,11 +108,7 @@ const navigationItems = [
     icon: FileText,
     href: "/admin/mission",
   },
-  {
-    title: "About Image",
-    icon: BarChart3,
-    href: "/admin/aboutimage",
-  },
+
   {
     title: "Portfolio",
     icon: BarChart3,
@@ -143,7 +131,7 @@ function UserProfile() {
     setServiceTypes(serviceTypesState.items)
   }, [serviceTypesState.items])
 
-  const [eventTypes, setEventTypes] = useState<EventType[]>([])
+
 
 
 
@@ -176,7 +164,6 @@ function UserProfile() {
 
   const handlelogout = async () => {
     try {
-      await axiosInstance.post('/auth/logout')
       localStorage.removeItem('authToken')
       router.push('/login')
     } catch (error) {

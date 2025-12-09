@@ -13,10 +13,11 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus } from 'lucide-react'
+import { Trash2, Edit, Plus  ,RefreshCcw} from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import NewPagination from '@/dashbord/common/Newpagination'
+
 interface FaqItem {
   _id?: string
   id?: string | number
@@ -42,7 +43,24 @@ export default function Page() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Clears all filters (category, question, answer) and resets to first page
+  const clearFilters = () => {
+    setForm({ title: '', question: '', answer: '' })
+    setPagination(prev => ({ ...prev, page: 1 }))
+    setError(null)
+    // Refresh list after clearing filters
+    fetchItems()
+  }
+
+  // Clears only the category/title filter and resets to first page
+  const clearTitleFilter = () => {
+    setForm(prev => ({ ...prev, title: '' }))
+    setPagination(prev => ({ ...prev, page: 1 }))
+    setError(null)
+  }
   const [items, setItems] = useState<FaqItem[]>([])
+  const [submitting, setSubmitting] = useState(false)
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 })
   const [form, setForm] = useState<{ title: string; question: string; answer: string }>({
     title: '',
@@ -53,6 +71,7 @@ export default function Page() {
   const fetchItems = async () => {
     setLoading(true)
     setError(null)
+    setSubmitting(true)
     try {
       const res = await axiosInstance.get(`/faqs?page=${pagination.page}&limit=${pagination.limit}&title=${form.title}`)
       const data = res.data?.data ?? []
@@ -62,6 +81,7 @@ export default function Page() {
       setError(err?.message || 'Failed to fetch faqs')
     } finally {
       setLoading(false)
+      setSubmitting(false)
     }
   }
 
@@ -127,8 +147,11 @@ export default function Page() {
               <p className="text-sm text-gray-500">Add, edit or remove frequently asked questions</p>
             </div>
           </div>
-          <div>
-            <div className=' flex gap-2'>
+          <div> 
+            <div className=' flex justify-center items-center gap-5'>
+           {  pagination.page!==1  || form.title &&     <p className="cursor-pointer flex gap-1 p-2 border-[1px] rounded "> clear filters {form.title}
+                       <RefreshCcw className='h-5 w-5 cursor-pointer' onClick={clearTitleFilter}  />
+</p>}
               <Select
               onValueChange={(value) => { setForm(prev => ({ ...prev, title: value })); }
               }
@@ -232,7 +255,7 @@ export default function Page() {
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSave}>{editingId ? 'Update' : 'Save'}</Button>
+                    <Button onClick={handleSave} disabled={submitting}> {submitting ? 'Saving...' : (editingId ? 'Update' : 'Save')}</Button>
                   </div>
                 </div>
               </CardContent>

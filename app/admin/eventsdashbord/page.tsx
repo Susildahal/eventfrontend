@@ -5,10 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save, Upload } from 'lucide-react';
+import { Plus, Trash2, Save, Upload ,ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface HeroContent {
   title: string;
@@ -67,6 +68,7 @@ export default function BirthdayAdminDashboard() {
   const [eventdata ,seteventData]=useState(null);
   const [isebit , setIsebit] = useState(false);
   const [editid , seteditid] = useState<any>(null);
+  const router = useRouter();
   console.log("editid:", editid)
   const fetchData = async () => {
     try {
@@ -584,10 +586,12 @@ export default function BirthdayAdminDashboard() {
   return (
     <div className="min-h-screen">
       <div className="mx-auto">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center gap-4">
+          <ArrowLeft className='h-5 w-5 cursor-pointer' onClick={() => router.back()} />
+          <div className=' flex flex-col'>
           <h1 className="text-2xl font-bold mb-2">{data?.name || 'Event'} Events </h1>
           <p className="text-gray-600 dark:text-gray-400">Events of the Century - {data?.name || 'Event'} Content Management</p>
-        
+        </div>
         </div>
 
      
@@ -661,7 +665,7 @@ export default function BirthdayAdminDashboard() {
                     {/* Hero Image Upload */}
                     <div>
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3 block">
-                        Hero Image (Max 500KB)
+                        Hero Image
                       </label>
                       <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 hover:border-amber-400 transition-colors">
                         <div className="flex flex-col items-center gap-3">
@@ -678,7 +682,7 @@ export default function BirthdayAdminDashboard() {
                             />
                           </label>
                           <p className="text-xs text-gray-500">
-                            Max 10MB upload • Automatically compressed to under 500KB
+                            Max 10MB upload •
                           </p>
                           {sections.hero.image && (
                             <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
@@ -813,7 +817,7 @@ export default function BirthdayAdminDashboard() {
                   <div>
                     <CardTitle className="text-gray-900 dark:text-white">Signature Birthday Concepts</CardTitle>
                     <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Manage birthday event concepts. Images are automatically compressed to under 500KB.
+                      Manage birthday event concepts
                     </CardDescription>
                   </div>
                   <Button onClick={addConcept} size="sm" className="bg-amber-600 hover:bg-amber-700">

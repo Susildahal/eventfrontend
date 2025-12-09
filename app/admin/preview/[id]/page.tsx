@@ -304,6 +304,7 @@ const [data, setData] = useState<any>(null);
                               className="border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
                             >
                               <Edit2 className="w-4 h-4" />
+                            </Button>
                             <Button
                               onClick={() => setDeleteId(item._id)}
                               variant="outline"
@@ -311,7 +312,6 @@ const [data, setData] = useState<any>(null);
                               className="border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
                             </Button>
                           </div>
                         </TableCell>

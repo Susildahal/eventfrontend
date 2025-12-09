@@ -376,10 +376,9 @@ const PortfolioForm = () => {
                                         {portfolioItems.map((item, idx) => (
                                             <tr
                                                 key={item._id ?? item.id ?? idx}
-                                                className={`border-b border-gray-300 dark:border-gray-700 ${idx % 2 === 0
-                                                    ? 'bg-gray-50 dark:bg-gray-900'
-                                                    : 'bg-white dark:bg-black'
-                                                    } hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
+                                                className={`border-b border-gray-300 dark:border-gray-700
+                                             
+                                                    hover:bg-gray-100 dark:hover:bg-gray-800 transition`}
                                             >
                                                 <td className="px-4 py-3">
                                                     <img

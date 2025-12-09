@@ -1,19 +1,27 @@
-'use client';
+"use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const LoginStatus = () => {
   const router = useRouter();
+
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem("authToken") : null;
+    // Prevent recheck after refresh
+    const alreadyChecked = sessionStorage.getItem("checked");
+    if (alreadyChecked) return;
+
+    const token = localStorage.getItem("authToken");
+
     if (!token) {
-      router.push("/login");
+      router.replace("/login");
+    } else {
+      router.replace("/admin");
     }
-    
-    else {
-      router.push("/admin");
-    }
-  }, [router]);
+
+    // Mark checked for this session (resets on tab close)
+    sessionStorage.setItem("checked", "true");
+  }, []);
+
   return null;
 };
 

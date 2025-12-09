@@ -116,12 +116,13 @@ export default function LoginPage() {
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  <p
+                  onClick={() => router.push("/forgotpassword")}
+                
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer text-primary"
                   >
                     Forgot your password?
-                  </a>
+                  </p>
                 </div>
                 <div className="relative">
                   <Input
