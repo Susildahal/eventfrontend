@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { toast } from 'react-hot-toast';
-import { HeroForm, MissionVisionForm, BeliefsForm, TechnologyForm } from './MissionFormComponents';
+import { HeroForm, MissionVisionForm} from './MissionFormComponents';
 import type { Sections, HeroSection, MissionVisionItem, BeliefItem, MethodItem, SustainabilityItem, TechnologyItem, BudgetItem } from './types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -20,45 +20,18 @@ export default function AboutUsAdminDashboard() {
       mainTitle: '',
       description: '',
       cta: 'Our Story',
-      images: []
+      images: [] as { id: number; url: string }[]
     },
-    missionVision: [],
-    whatWeBelieve: [],
-    theOcMethod: [],
-    theOcMethodTitle: '',
-    sustainability: [],
-    sustainabilityTitle: 'Sustainability',
-    whatWeBelieveTitle: 'What We Believe',
-    technologyTitle: 'Technology & Tools',
-    budgetsTitle: 'Budgets',
-    technology: [
-      {
-        id: 1,
-        icon: '🔧',
-        title: '',
-        description: '',
-        points: []
-      }
-    ],
-    budgets: [
-      {
-        id: 1,
-        icon: '🎪',
-        title: 'Private Events',
-        description: 'Lead Time: 4 to 8 weeks',
-        details: 'Designed for elegance and intimacy with flexible scaling options.'
-      }
-    ]
-    ,
+    missionVision: [],        // Added to satisfy Sections type
     missionTitle: '',
     missionDescription: '',
     visionTitle: '',
     visionDescription: ''
   });
 
-  const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('hero');
-  const [hasData, setHasData] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'hero' | 'mission'>('hero');
+  const [hasData, setHasData] = useState<boolean>(false);
   const [aboutId, setAboutId] = useState<string | number | null>(null);
   // removed heroFiles state – images are URL-only now
 
@@ -87,13 +60,7 @@ export default function AboutUsAdminDashboard() {
             };
           }
 
-          // Ensure technology items have points array
-          if (Array.isArray(processedData.technology)) {
-            processedData.technology = processedData.technology.map((tech: any) => ({
-              ...tech,
-              points: Array.isArray(tech.points) ? tech.points : []
-            }));
-          }
+       
 
           setSections(prev => ({ ...prev, ...processedData }));
           // Capture id from response for PUT requests (use _id for MongoDB)
@@ -161,152 +128,6 @@ export default function AboutUsAdminDashboard() {
     }));
   };
 
-  // What We Believe Handlers
-  const handleBeliefChange = (id: number, field: keyof BeliefItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      whatWeBelieve: prev.whatWeBelieve.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const addBelief = () => {
-    setSections(prev => ({
-      ...prev,
-      whatWeBelieve: [...prev.whatWeBelieve, { id: Date.now(), icon: '✨', title: '', description: '' }]
-    }));
-  };
-
-  const deleteBelief = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      whatWeBelieve: prev.whatWeBelieve.filter(item => item.id !== id)
-    }));
-  };
-
-  // OC Method Handlers
-  const handleMethodChange = (id: number, field: keyof MethodItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      theOcMethod: prev.theOcMethod.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const addMethod = () => {
-    setSections(prev => ({
-      ...prev,
-      theOcMethod: [...prev.theOcMethod, { id: Date.now(), number: '', title: '', description: '' }]
-    }));
-  };
-
-  const deleteMethod = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      theOcMethod: prev.theOcMethod.filter(item => item.id !== id)
-    }));
-  };
-
-  // Sustainability Handlers
-  const handleSustainabilityChange = (id: number, field: keyof SustainabilityItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      sustainability: prev.sustainability.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const addSustainability = () => {
-    setSections(prev => ({
-      ...prev,
-      sustainability: [...prev.sustainability, { id: Date.now(), icon: '♻️', title: '', description: '' }]
-    }));
-  };
-
-  const deleteSustainability = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      sustainability: prev.sustainability.filter(item => item.id !== id)
-    }));
-  };
-
-  // Technology Handlers
-  const handleTechnologyItemChange = (techId: number, field: 'icon' | 'title' | 'description', value: string) => {
-    setSections(prev => ({
-      ...prev,
-      technology: prev.technology.map(t => t.id === techId ? { ...t, [field]: value } : t)
-    }));
-  };
-
-  const handleTechnologyPointChange = (techId: number, pointId: number, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      technology: prev.technology.map(t =>
-        t.id === techId
-          ? { ...t, points: t.points.map(p => p.id === pointId ? { ...p, point: value } : p) }
-          : t
-      )
-    }));
-  };
-
-  const addTechnologyItem = () => {
-    setSections(prev => ({
-      ...prev,
-      technology: [...prev.technology, { id: Date.now(), icon: '', title: '', description: '', points: [{ id: Date.now() + 1, point: '' }] }]
-    }));
-  };
-
-  const deleteTechnologyItem = (techId: number) => {
-    setSections(prev => ({
-      ...prev,
-      technology: prev.technology.filter(t => t.id !== techId)
-    }));
-  };
-
-  const addTechnologyPoint = (techId: number) => {
-    setSections(prev => ({
-      ...prev,
-      technology: prev.technology.map(t =>
-        t.id === techId ? { ...t, points: [...t.points, { id: Date.now(), point: '' }] } : t
-      )
-    }));
-  };
-
-  const deleteTechnologyPoint = (techId: number, pointId: number) => {
-    setSections(prev => ({
-      ...prev,
-      technology: prev.technology.map(t =>
-        t.id === techId ? { ...t, points: t.points.filter(p => p.id !== pointId) } : t
-      )
-    }));
-  };
-
-  // Budgets Handlers
-  const handleBudgetChange = (id: number, field: keyof BudgetItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      budgets: prev.budgets.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const deleteBudget = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      budgets: prev.budgets.filter(item => item.id !== id)
-    }));
-  };
-
-  const addBudget = () => {
-    setSections(prev => ({
-      ...prev,
-      budgets: [...prev.budgets, { id: Date.now(), icon: '🎉', title: '', description: '', details: '' }]
-    }));
-  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -375,11 +196,7 @@ export default function AboutUsAdminDashboard() {
           <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="mission">Mission & Vision</TabsTrigger>
-            <TabsTrigger value="beliefs">Beliefs</TabsTrigger>
-            <TabsTrigger value="method">OC Method</TabsTrigger>
-            <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
-            <TabsTrigger value="technology">Technology</TabsTrigger>
-            <TabsTrigger value="budgets">Budgets</TabsTrigger>
+       
           </TabsList>
 
           {/* HERO SECTION */}
@@ -407,233 +224,8 @@ export default function AboutUsAdminDashboard() {
             />
           </TabsContent>
 
-          {/* WHAT WE BELIEVE */}
-          <TabsContent value="beliefs" className="space-y-6 mt-6">
-            <BeliefsForm
-              whatWeBelieveTitle={sections.whatWeBelieveTitle}
-              whatWeBelieve={sections.whatWeBelieve}
-              onBeliefChange={handleBeliefChange}
-              onAddBelief={addBelief}
-              onDeleteBelief={deleteBelief}
-              onSetBelieveTitle={(value) => setSections(prev => ({ ...prev, whatWeBelieveTitle: value }))}
-            />
-          </TabsContent>
-
-          {/* OC METHOD */}
-          <TabsContent value="method" className="space-y-6 mt-6">
-            <Card className="flex flex-col justify-center border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-[var(--color-foreground)]">The OC Method</CardTitle>
-                  <CardDescription className="text-[var(--color-muted-foreground)]">Manage methodology steps</CardDescription>
-                </div>
-                <Button onClick={addMethod} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Step
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
-                <Input
-                  value={sections.theOcMethodTitle ?? ''}
-                  onChange={(e) => setSections(prev => ({ ...prev, theOcMethodTitle: e.target.value }))}
-                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                  placeholder="Section title (e.g., The OC Method)"
-                />
-                {sections.theOcMethod.map((item) => (
-                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-3 gap-3">
-                          <Input
-                            value={item.number}
-                            onChange={(e) => handleMethodChange(item.id, 'number', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Number (01-06)"
-                            required
-                          />
-                          <Input
-                            value={item.title}
-                            onChange={(e) => handleMethodChange(item.id, 'title', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] col-span-2"
-                            placeholder="Step title"
-                            required
-                          />
-                        </div>
-                        <Textarea
-                          value={item.description}
-                          onChange={(e) => handleMethodChange(item.id, 'description', e.target.value)}
-                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
-                          placeholder="Step description"
-                          required
-                        />
-                      </div>
-                      <Button
-                        onClick={() => deleteMethod(item.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="ml-3"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* SUSTAINABILITY */}
-          <TabsContent value="sustainability" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-[var(--color-foreground)]">Sustainability & Respect</CardTitle>
-                  <CardDescription className="text-[var(--color-muted-foreground)]">Manage sustainability initiatives</CardDescription>
-                </div>
-                <Button onClick={addSustainability} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Initiative
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
-                <Input
-                  value={sections.sustainabilityTitle ?? ''}
-                  onChange={(e) => setSections(prev => ({ ...prev, sustainabilityTitle: e.target.value }))}
-                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                  placeholder="Section title (e.g., Sustainability)"
-                />
-                {sections.sustainability.map((item) => (
-                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <Input
-                            value={item.icon}
-                            onChange={(e) => handleSustainabilityChange(item.id, 'icon', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Icon emoji"
-                            maxLength={2}
-                            required
-                          />
-                          <Input
-                            value={item.title}
-                            onChange={(e) => handleSustainabilityChange(item.id, 'title', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Initiative title"
-                            required
-                          />
-                        </div>
-                        <Textarea
-                          value={item.description}
-                          onChange={(e) => handleSustainabilityChange(item.id, 'description', e.target.value)}
-                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
-                          placeholder="Initiative description"
-                          required
-                        />
-                      </div>
-                      <Button
-                        onClick={() => deleteSustainability(item.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="ml-3"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* TECHNOLOGY */}
-          <TabsContent value="technology" className="space-y-6 mt-6">
-            <TechnologyForm
-              technologyTitle={sections.technologyTitle}
-              technology={sections.technology}
-              onTechnologyItemChange={handleTechnologyItemChange}
-              onTechnologyPointChange={handleTechnologyPointChange}
-              onAddTechnologyItem={addTechnologyItem}
-              onDeleteTechnologyItem={deleteTechnologyItem}
-              onAddTechnologyPoint={addTechnologyPoint}
-              onDeleteTechnologyPoint={deleteTechnologyPoint}
-              onSetTechnologyTitle={(value) => setSections(prev => ({ ...prev, technologyTitle: value }))}
-            />
-          </TabsContent>
-
-          {/* BUDGETS & TIMELINES */}
-          <TabsContent value="budgets" className="space-y-6 mt-6">
-            <Card className="bg-[var(--color-card)] border-[var(--color-border)]">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle className="text-[var(--color-foreground)]">Budgets & Timelines</CardTitle>
-                  <CardDescription className="text-[var(--color-muted-foreground)]">Manage budget packages</CardDescription>
-                </div>
-                <Button onClick={addBudget} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Budget Item
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <label className="text-sm font-medium text-[var(--color-muted-foreground)]">Section Title</label>
-                <Input
-                  value={sections.budgetsTitle ?? ''}
-                  onChange={(e) => setSections(prev => ({ ...prev, budgetsTitle: e.target.value }))}
-                  className="mt-2 border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                  placeholder="Section title (e.g., Budgets)"
-                />
-                {sections.budgets.map((item) => (
-                  <div key={item.id} className="p-4 rounded-lg space-y-3 border border-[var(--color-border)]">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <Input
-                            value={item.icon}
-                            onChange={(e) => handleBudgetChange(item.id, 'icon', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Icon emoji"
-                            maxLength={2}
-                            required
-                          />
-                          <Input
-                            value={item.title}
-                            onChange={(e) => handleBudgetChange(item.id, 'title', e.target.value)}
-                            className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)]"
-                            placeholder="Package title"
-                            required
-                          />
-                        </div>
-                        <Textarea
-                          value={item.description}
-                          onChange={(e) => handleBudgetChange(item.id, 'description', e.target.value)}
-                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
-                          placeholder="Package description (short)"
-                          required
-                        />
-                        <Textarea
-                          value={item.details}
-                          onChange={(e) => handleBudgetChange(item.id, 'details', e.target.value)}
-                          className="border-[var(--color-border)] text-[var(--color-foreground)] placeholder-[var(--color-muted-foreground)] min-h-[70px]"
-                          placeholder="Package details (full description)"
-                          required
-                        />
-                      </div>
-                      <Button
-                        onClick={() => deleteBudget(item.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="ml-3"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
+ 
+       
         </Tabs>
 
         <div className="mt-8 flex justify-end gap-4">

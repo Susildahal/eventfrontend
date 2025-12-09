@@ -18,6 +18,7 @@ import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import NewPagination from '@/dashbord/common/Newpagination'
 
+
 interface FaqItem {
   _id?: string
   id?: string | number

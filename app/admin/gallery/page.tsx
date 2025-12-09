@@ -24,9 +24,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus, ArrowLeft } from 'lucide-react'
+import { Trash2, Edit, Plus, ArrowLeft, RefreshCcw } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
-import { Spinner } from '@/components/ui/spinner'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 import NewPagination from '@/dashbord/common/Newpagination'
 import { useRouter } from 'next/navigation'
@@ -43,7 +42,7 @@ export default function Page() {
   const [submitting, setSubmitting] = useState(false)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 })
-  const [title ,setTitle]=useState('')
+  const [title, setTitle] = useState('')
   const router = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -155,7 +154,7 @@ export default function Page() {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
 
-console.log(title)
+  console.log(title)
 
   return (
     <div>
@@ -170,33 +169,37 @@ console.log(title)
             </div>
           </div>
           <div>
-            <div className=' flex gap-3 '>
-              
-            <Select
-              onValueChange={(value) => { setTitle(value); }
-              }
-              value={title}
-            >
-              
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a Gallery title" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Birthday">Birthday</SelectItem>
-                <SelectItem value="Anniversary	">Anniversary </SelectItem>
-                <SelectItem value="Conference">Conference</SelectItem>
-              </SelectContent>
-            </Select>
-       
-          <div>
+            <div className=' flex gap-3  flex justify-center items-center'>
+              {title !== '' && <p className="cursor-pointer flex gap-1 p-2 border-[1px] rounded "> clear filters {title}
+                < RefreshCcw className='h-5 w-5 cursor-pointer' onClick={() => setTitle('')}  />
+              </p>}
 
-            <Button onClick={openAdd} className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Add Image
-            </Button>
+
+              <Select
+                onValueChange={(value) => { setTitle(value); }
+                }
+                value={title}
+              >
+
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a Gallery title" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Birthday">Birthday</SelectItem>
+                  <SelectItem value="Anniversary	">Anniversary </SelectItem>
+                  <SelectItem value="Conference">Conference</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div>
+
+                <Button onClick={openAdd} className="flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add Image
+                </Button>
+              </div>
+            </div>
           </div>
-          </div>
-             </div>
         </div>
 
         <Card>
