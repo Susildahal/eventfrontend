@@ -17,6 +17,7 @@ import { Trash2, Edit, Plus  ,RefreshCcw} from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import NewPagination from '@/dashbord/common/Newpagination'
+import { Switch } from '@/components/ui/switch'
 
 
 interface FaqItem {
@@ -26,6 +27,7 @@ interface FaqItem {
   question: string
   answer: string
   createdAt?: Date
+  status?: boolean
 }
 import {ArrowLeft} from "lucide-react"
 import {
@@ -134,6 +136,24 @@ export default function Page() {
   const handlePageChange = (newPage: number) => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
+  const handlestatuschange=async(id:string|number,status:boolean)=>{
+    try {
+      setLoading(true)
+      await axiosInstance.patch(`/faqs/${id}`, { status })
+         setItems(prevItems =>
+        prevItems.map(item =>
+          item._id === id ? { ...item, status } : item
+        )
+      )
+ 
+    }
+    catch(err:any){
+      setError(err?.response?.data?.message || err?.message || 'Status update failed')
+    }
+    finally{
+      setLoading(false)
+    }
+  }
 
   return (
     <>
@@ -188,24 +208,26 @@ export default function Page() {
                     <TableHead>Title</TableHead>
                     <TableHead>Question</TableHead>
                     <TableHead>Answer</TableHead>
+                    <TableHead>Status</TableHead>
                       <TableHead>Date</TableHead>
                     <TableHead className="w-36">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {items.map((item, idx) => (
-                    <TableRow key={(item._id ?? item.id) as string}>
+                    <TableRow key={String(item._id ?? item.id ?? idx)}>
                       <TableCell>{idx + 1}</TableCell>
                       <TableCell>{item.title}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.question}</TableCell>
                       <TableCell className="truncate max-w-xs">{item.answer}</TableCell>
+                      <TableCell><Switch checked={item.status==true}  onClick={() => handlestatuschange(item._id ?? item.id ?? '', !item.status)} /></TableCell>
                       <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item as FaqItem)}>
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button variant="destructive" onClick={() => setDeleteId(String(item._id ?? item.id))}>
+                          <Button variant="destructive" onClick={() => setDeleteId(String(item._id ?? item.id ?? ''))}>
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>

@@ -31,7 +31,7 @@ function HeroImageItem({
   onHeroImageChange: (id: number, value: string) => void;
   onDeleteHeroImage: (id: number) => void;
 }) {
-  const previewUrl = img.url;
+
 
   return (
     <div className="p-4  rounded-lg space-y-3 border border-[var(--color-border)]">

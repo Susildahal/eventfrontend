@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,8 +10,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import axiosInstance from '@/app/config/axiosInstance'
+} from "@/components/ui/alert-dialog"
+import axiosInstance from "@/app/config/axiosInstance"
 
 interface DeleteModelProps {
   deleteId: string | null
@@ -27,18 +27,31 @@ const Newdeletemodel: React.FC<DeleteModelProps> = ({
   onSuccess
 }) => {
 
+  const [loading, setLoading] = useState(false)
+
   const deleteItems = async () => {
     try {
+      setLoading(true)
       await axiosInstance.delete(`${endpoint}/${deleteId}`)
-      if (onSuccess) onSuccess()  // refresh table or data
-      setDeleteId(null)           // close modal
+
+      if (onSuccess) onSuccess()
+
+      setDeleteId(null) // close after success only
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+    <AlertDialog
+      // Prevent closing while loading
+      open={!!deleteId}
+      onOpenChange={(open) => {
+        if (!loading && !open) setDeleteId(null)
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -48,12 +61,16 @@ const Newdeletemodel: React.FC<DeleteModelProps> = ({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>
+            Cancel
+          </AlertDialogCancel>
+
           <AlertDialogAction
+            disabled={loading}
             className="bg-red-600 hover:bg-red-700"
             onClick={deleteItems}
           >
-            Delete
+            {loading ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

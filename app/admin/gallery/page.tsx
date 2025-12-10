@@ -29,12 +29,14 @@ import axiosInstance from '@/app/config/axiosInstance'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 import NewPagination from '@/dashbord/common/Newpagination'
 import { useRouter } from 'next/navigation'
+import { Switch } from '@/components/ui/switch'
 
 
 interface GalleryItem {
   _id: string
   title: string
   image: string
+  status: boolean
 }
 
 export default function Page() {
@@ -154,7 +156,19 @@ export default function Page() {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
 
-  console.log(title)
+  const handleStatusChange = async (id: string, status: boolean) => {
+    try {
+      await axiosInstance.patch(`/gallery/${id}`, { status })
+      setItems(prevItems =>
+        prevItems.map(item =>
+          item._id === id ? { ...item, status } : item
+        )
+      )
+    }
+    catch (error) {
+      console.error('Error updating status:', error)
+    }
+  }
 
   return (
     <div>
@@ -212,6 +226,7 @@ export default function Page() {
                   <TableRow>
                     <TableHead className="w-24">Preview</TableHead>
                     <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
 
                     <TableHead className="w-36">Actions</TableHead>
                   </TableRow>
@@ -225,7 +240,7 @@ export default function Page() {
                         </div>
                       </TableCell>
                       <TableCell>{item.title}</TableCell>
-
+                         <TableCell><Switch checked={item.status} onCheckedChange={(checked) => handleStatusChange(item._id, checked)} /></TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button variant="ghost" onClick={() => openEdit(item)}>

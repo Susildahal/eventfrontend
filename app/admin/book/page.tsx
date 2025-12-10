@@ -240,13 +240,13 @@ export default function BookingsDashboard() {
                 {bookings.map((booking, idx) => (
                 <tr key={booking._id} className={`border-b border-gray-100 dark:border-slate-800 ${idx % 2 === 0 ? 'bg-white dark:bg-slate-900/50' : 'bg-gray-50 dark:bg-slate-800/50'}`}>
                   <td className="px-6 py-4">
-                  <p className="font-medium text-gray-900 dark:text-white">{booking.name}</p>
+                  <p className="font-medium text-sm text-gray-900 dark:text-white">{booking.name}</p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{booking.email}</p>
                   </td>
-                  <td className="px-6 py-4 text-gray-900 dark:text-white">{booking.eventtype}</td>
-                  <td className="px-6 py-4 text-gray-900 dark:text-white">{new Date(booking.eventdate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-gray-900 dark:text-white">{booking.numberofpeople}</td>
-                  <td className="px-6 py-4 text-gray-900 dark:text-white">{booking.budget}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.eventtype}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{new Date(booking.eventdate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.numberofpeople}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.budget}</td>
                   <td className="px-6 py-4">
                   <span className={getStatusBadge(booking.status)}>{booking.status}</span>
                   </td>
