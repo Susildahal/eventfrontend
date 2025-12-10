@@ -24,27 +24,6 @@ interface Hero {
   
 }
 
-interface ServiceItem {
-  id: number;
-  icon: string;
-  title: string;
-  description: string;
-}
-
-interface ConceptItem {
-  id: number;
-  icon: string;
-  title: string;
-  image: File | string | null; // Can be File for new upload or string URL for existing
-}
-
-interface TimelineItem {
-  id: number;
-  step: string;
-  title: string;
-  description: string;
-}
-
 interface FAQItem {
   id: number;
   question: string;
@@ -53,9 +32,6 @@ interface FAQItem {
 
 interface Sections {
   hero: Hero;
-  services: ServiceItem[];
-  concepts: ConceptItem[];
-  timeline: TimelineItem[];
   faqs: FAQItem[];
 }
 
@@ -91,17 +67,7 @@ export default function BirthdayAdminDashboard() {
       ],
       image: null
     },
-    services: [
-      { id: 1, icon: '📍', title: '', description: '' },
-
-    ],
-    concepts: [
-      { id: 1, icon: '⚜️', title: '', image: null },
-    ],
-    timeline: [
-      { id: 1, step: '1', title: '', description: '' },
-  
-    ],
+    
     faqs: [
       { id: 1, question: '', answer: '' },
 
@@ -256,40 +222,8 @@ export default function BirthdayAdminDashboard() {
     }
   };
 
-  // Handle concept image upload with compression
-  const handleConceptImageUpload = async (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    setImageError(null);
-    setImageSuccess(null);
-    
-    try {
-      const compressedFile = await validateAndCompressImage(file);
-      
-      setSections(prev => ({
-        ...prev,
-        concepts: prev.concepts.map(item =>
-          item.id === id ? { ...item, image: compressedFile } : item
-        )
-      }));
-      
-      // Show success message with size info
-      const originalSizeKB = Math.round(file.size / 1024);
-      const compressedSizeKB = Math.round(compressedFile.size / 1024);
-      setImageSuccess(`✓ Image compressed from ${originalSizeKB}KB to ${compressedSizeKB}KB`);
-      
-      // Clear success message after 4 seconds
-      setTimeout(() => setImageSuccess(null), 4000);
-      
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to process image';
-      setImageError(`❌ ${errorMessage}`);
-      
-      // Clear input
-      e.target.value = '';
-    }
-  };
+
+
 
   // Validate all images before submit
   const validateAllImages = (): boolean => {
@@ -303,15 +237,7 @@ export default function BirthdayAdminDashboard() {
       }
     }
     
-    // Check concept images (only if they're File objects, not URL strings)
-    sections.concepts.forEach((concept, index) => {
-      if (concept.image && typeof concept.image !== 'string') {
-        const sizeKB = Math.round(concept.image.size / 1024);
-        if (sizeKB > 500) {
-          errors.push(`Concept "${concept.title}" image is ${sizeKB}KB (must be under 500KB)`);
-        }
-      }
-    });
+
     
     if (errors.length > 0) {
       setImageError(errors.join('\n'));
@@ -354,74 +280,8 @@ export default function BirthdayAdminDashboard() {
     }));
   };
 
-  const handleServicesChange = (id: number, field: keyof ServiceItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      services: prev.services.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
 
-  const addService = () => {
-    setSections(prev => ({
-      ...prev,
-      services: [...prev.services, { id: Date.now(), icon: '✨', title: '', description: '' }]
-    }));
-  };
 
-  const deleteService = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      services: prev.services.filter(item => item.id !== id)
-    }));
-  };
-
-  const handleConceptsChange = (id: number, field: keyof ConceptItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      concepts: prev.concepts.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const addConcept = () => {
-    setSections(prev => ({
-      ...prev,
-      concepts: [...prev.concepts, { id: Date.now(), icon: '✨', title: '', image: null }]
-    }));
-  };
-
-  const deleteConcept = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      concepts: prev.concepts.filter(item => item.id !== id)
-    }));
-  };
-
-  const handleTimelineChange = (id: number, field: keyof TimelineItem, value: string) => {
-    setSections(prev => ({
-      ...prev,
-      timeline: prev.timeline.map(item =>
-        item.id === id ? { ...item, [field]: value } : item
-      )
-    }));
-  };
-
-  const addTimeline = () => {
-    setSections(prev => ({
-      ...prev,
-      timeline: [...prev.timeline, { id: Date.now(), step: '', title: '', description: '' }]
-    }));
-  };
-
-  const deleteTimeline = (id: number) => {
-    setSections(prev => ({
-      ...prev,
-      timeline: prev.timeline.filter(item => item.id !== id)
-    }));
-  };
 
   const handleFaqChange = (id: number, field: keyof FAQItem, value: string) => {
     setSections(prev => ({
@@ -446,18 +306,6 @@ export default function BirthdayAdminDashboard() {
     }));
   };
 
-  // Helper function to convert File to base64
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        resolve(base64String);
-      };
-      reader.onerror = error => reject(error);
-    });
-  };
 
   const handleSubmit = async () => {
     // Validate images before submit
@@ -485,21 +333,9 @@ export default function BirthdayAdminDashboard() {
       formData.append('eventsid[id]', id || '');
       formData.append('eventsid[name]', data?.name || '');
       
-      // Add services
-      formData.append('services', JSON.stringify(sections.services));
-      
-      // Add concepts with images
-      sections.concepts.forEach((concept, index) => {
-        formData.append(`concepts[${index}][id]`, concept.id.toString());
-        formData.append(`concepts[${index}][icon]`, concept.icon);
-        formData.append(`concepts[${index}][title]`, concept.title);
-        if (concept.image) {
-          formData.append(`concepts[${index}][image]`, concept.image);
-        }
-      });
+   
       
       // Add timeline and faqs
-      formData.append('timeline', JSON.stringify(sections.timeline));
       formData.append('faqs', JSON.stringify(sections.faqs));
 
       // Send as multipart/form-data
@@ -557,17 +393,47 @@ export default function BirthdayAdminDashboard() {
             contents: eventData.hero?.contents || [],
             image: eventData.hero?.image || null // Set image URL from server
           },
-          services: eventData.services || [],
-          concepts: eventData.concepts?.map((c: any) => ({
-            ...c,
-            image: c.image || null // Set image URL from server
-          })) || [],
-          timeline: eventData.timeline || [],
+        
           faqs: eventData.faqs || []
+        });
+      } else {
+        // Reset to initial empty state if no data found
+        setIsebit(false);
+        seteditid(null);
+        setSections({
+          hero: {
+            title: '',
+            subtitle: '',
+            description: '',
+            contents: [
+              { title: '', description: '' },
+            ],
+            image: null
+          },
+          faqs: [
+            { id: 1, question: '', answer: '' },
+          ]
         });
       }
     } catch (error) {
       console.error('Error fetching birthday data:', error);
+      // Reset to initial empty state on error
+      setIsebit(false);
+      seteditid(null);
+      setSections({
+        hero: {
+          title: '',
+          subtitle: '',
+          description: '',
+          contents: [
+            { title: '', description: '' },
+          ],
+          image: null
+        },
+        faqs: [
+          { id: 1, question: '', answer: '' },
+        ]
+      });
     }
   }
 
@@ -600,9 +466,6 @@ export default function BirthdayAdminDashboard() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
               <TabsTrigger value="hero">Hero</TabsTrigger>
-              <TabsTrigger value="services">Services</TabsTrigger>
-              <TabsTrigger value="concepts">Concepts</TabsTrigger>
-              <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="faqs">FAQs</TabsTrigger>
             </TabsList>
 
@@ -752,212 +615,7 @@ export default function BirthdayAdminDashboard() {
               </Card>
             </TabsContent>
 
-            {/* SERVICES SECTION */}
-            <TabsContent value="services" className="space-y-6 mt-6">
-              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-gray-900 dark:text-white">What We Handle</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage birthday event services</CardDescription>
-                  </div>
-                  <Button onClick={addService} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Service
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {sections.services.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1 space-y-3">
-                          <div className="grid grid-cols-2 gap-3">
-                            <Input
-                              value={item.icon}
-                              onChange={(e) => handleServicesChange(item.id, 'icon', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
-                              placeholder="Icon emoji"
-                              maxLength={2}
-                              required
-                            />
-                            <Input
-                              value={item.title}
-                              onChange={(e) => handleServicesChange(item.id, 'title', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
-                              placeholder="Service title"
-                              required
-                            />
-                          </div>
-                          <Textarea
-                            value={item.description}
-                            onChange={(e) => handleServicesChange(item.id, 'description', e.target.value)}
-                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[70px]"
-                            placeholder="Service description"
-                            required
-                          />
-                        </div>
-                        <Button
-                          onClick={() => deleteService(item.id)}
-                          size="sm"
-                          variant="destructive"
-                          className="ml-3"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* CONCEPTS SECTION */}
-            <TabsContent value="concepts" className="space-y-6 mt-6">
-              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-gray-900 dark:text-white">Signature Birthday Concepts</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Manage birthday event concepts
-                    </CardDescription>
-                  </div>
-                  <Button onClick={addConcept} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Concept
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {sections.concepts.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
-                      <div className="flex justify-between items-start gap-3">
-                        <div className="flex-1 space-y-3">
-                          <div className="grid grid-cols-2 gap-3">
-                            <Input
-                              value={item.icon}
-                              onChange={(e) => handleConceptsChange(item.id, 'icon', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
-                              placeholder="Icon emoji"
-                              maxLength={2}
-                              required
-                            />
-                            <Input
-                              value={item.title}
-                              onChange={(e) => handleConceptsChange(item.id, 'title', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
-                              placeholder="Concept title"
-                              required
-                            />
-                          </div>
-
-                          {/* Image Upload for Concept */}
-                          <div className="space-y-2">
-                            <label className="text-xs font-medium text-gray-700 dark:text-gray-200">
-                              Concept Image (Max 500KB)
-                            </label>
-                            <label className="flex flex-col items-center gap-2 p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                              <Upload className="w-6 h-6 text-gray-400" />
-                              <span className="text-sm text-gray-600 dark:text-gray-400">
-                                Click to upload image
-                              </span>
-                              <span className="text-xs text-gray-500">
-                                JPEG, PNG, GIF, WebP • Max 10MB
-                              </span>
-                              <input
-                                type="file"
-                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                                onChange={(e) => handleConceptImageUpload(item.id, e)}
-                                className="hidden"
-                              />
-                            </label>
-                            
-                            {item.image && (
-                              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                Current: {getImageSizeInfo(item.image)}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Image Preview */}
-                          {item.image && (
-                            <div className="mt-3">
-                              <p className="text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Preview:</p>
-                              <img
-                                src={typeof item.image === 'string' ? item.image : URL.createObjectURL(item.image)}
-                                alt={item.title}
-                                className="w-full h-48 object-cover rounded border border-gray-200 dark:border-gray-700"
-                              />
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          onClick={() => deleteConcept(item.id)}
-                          size="sm"
-                          variant="destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* TIMELINE SECTION */}
-            <TabsContent value="timeline" className="space-y-6 mt-6">
-              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <div>
-                    <CardTitle className="text-gray-900 dark:text-white">Event Timeline</CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">Manage event timeline steps</CardDescription>
-                  </div>
-                  <Button onClick={addTimeline} size="sm" className="bg-amber-600 hover:bg-amber-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Step
-                  </Button>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {sections.timeline.map((item) => (
-                    <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1 space-y-3">
-                          <div className="grid grid-cols-3 gap-3">
-                            <Input
-                              value={item.step}
-                              onChange={(e) => handleTimelineChange(item.id, 'step', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
-                              placeholder="Step number"
-                              required
-                            />
-                            <Input
-                              value={item.title}
-                              onChange={(e) => handleTimelineChange(item.id, 'title', e.target.value)}
-                              className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 col-span-2"
-                              placeholder="Step title"
-                              required
-                            />
-                          </div>
-                          <Textarea
-                            value={item.description}
-                            onChange={(e) => handleTimelineChange(item.id, 'description', e.target.value)}
-                            className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[70px]"
-                            placeholder="Step description"
-                            required
-                          />
-                        </div>
-                        <Button
-                          onClick={() => deleteTimeline(item.id)}
-                          size="sm"
-                          variant="destructive"
-                          className="ml-3"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </TabsContent>
+     
 
             {/* FAQs SECTION */}
             <TabsContent value="faqs" className="space-y-6 mt-6">

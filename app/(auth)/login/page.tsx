@@ -82,10 +82,15 @@ export default function LoginPage() {
 
   return (
     <div className="flex justify-center items-center h-screen" 
-    style={{
-      // backgroundImage :url("/loginpage.jpg")
+style={{
+  backgroundImage: 'url("/loginpage.jpg")', // Use a string for the URL value
+  backgroundSize: 'cover', // Optional: Makes the image cover the whole element
+  backgroundRepeat: 'no-repeat', // Optional: Prevents the image from repeating
+  backgroundPosition: 'center' // Optional: Centers the image
+}}
+>
+  
 
-    }}>
      
       <Card className="w-full max-w-sm">
         <CardHeader>
