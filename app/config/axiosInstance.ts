@@ -4,7 +4,7 @@ import axios, { AxiosError, AxiosRequestHeaders } from "axios";
 import { toast } from "react-hot-toast";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || " http://192.168.10.79:8000/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || " https://eventsbackend-drzr.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
