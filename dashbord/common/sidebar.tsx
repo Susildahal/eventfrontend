@@ -30,11 +30,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { useDispatch, useSelector } from "react-redux"
+import { batch, useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "@/app/redux/store"
 import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
 import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
-
+import {fetchContacts} from '@/app/redux/slices/contactSlice'
 import {
   Users,
   Images,
@@ -55,13 +55,14 @@ import {
   Search,
   Menu,
   X,
- User
+ User,
+ UserCog
 
 
 } from "lucide-react";
 
+
 import { useTheme } from "next-themes"
-import Breadcrumb from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import axiosInstance from "@/app/config/axiosInstance"
 import { Button } from "@/components/ui/button"
@@ -73,11 +74,12 @@ const navigationItems = [
   { title: "FAQs", icon: HelpCircle, href: "/admin/faq" },
   { title: "Event Types", icon: CalendarCog, href: "/admin/events-types" },
   { title: "Service Types", icon: ClipboardList, href: "/admin/service-types" },
-  { title: "Create Account", icon: UserPlus, href: "/admin/register" },
   { title: "Book Now", icon: CalendarCheck, href: "/admin/book" },
   { title: "About", icon: Info, href: "/admin/mission" },
   { title: "Portfolio", icon: FolderKanban, href: "/admin/portfolio" },
+    { title: "Profile Setting", icon: UserCog, href: "/admin/profile" },
 ];
+
 
 
 function UserProfile() {
@@ -88,6 +90,10 @@ function UserProfile() {
   const dispatch = useDispatch<AppDispatch>()
   const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
 
+
+
+
+  
 
   const [serviceTypes, setServiceTypes] = useState<any[]>([])
 
@@ -357,12 +363,17 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
                     return (
                       <SidebarMenuItem key={item.title}>
+                        <div className='flex items-center gap-2'>
                         <NavItem
                           item={item}
+
                           isActive={isActive}
                           eventTypes={eventTypesList}
                           serviceTypesList={serviceTypesListRedux}
                         />
+                   
+                        </div>
+                        
                       </SidebarMenuItem>
                     )
                   })

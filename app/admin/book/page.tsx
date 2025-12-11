@@ -12,6 +12,14 @@ import Pagination from '@/dashbord/common/Pagination';
 import axiosInstance from '@/app/config/axiosInstance';
 import { MoreVertical } from 'lucide-react';
 import DeleteModel from '@/dashbord/common/DeleteModel';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 interface Booking {
   _id: string;
   name: string;
@@ -252,70 +260,35 @@ export default function BookingsDashboard() {
                   <span className={getStatusBadge(booking.status)}>{booking.status}</span>
                   </td>
                   <td className="px-6 py-4">
-                  <div className="flex items-center justify-end">
-                    {/* Dropdown actions using native <details> so no extra hooks are needed */}
-                    <details className="relative">
-                    <summary className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer">
-                      <MoreVertical className="w-4 h-4 rotate-90 text-gray-600 dark:text-gray-400" />
-                    </summary>
-
-                    <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded shadow-md z-20 overflow-hidden">
-                      <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setViewBooking(booking);
-                        const d = (e.currentTarget as HTMLElement).closest('details') as HTMLDetailsElement | null;
-                        if (d) d.open = false;
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4 rotate-90" />
+                      </Button>
+                
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setViewBooking(booking)}
                       >
-                      <Eye className="w-4 h-4 cursor-pointer" /> View
-                      </button>
-
-                      <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setEditBooking(booking);
-                        const d = (e.currentTarget as HTMLElement).closest('details') as HTMLDetailsElement | null;
-                        if (d) d.open = false;
-                      }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-800 cursor-pointer"
+                        <Eye className="mr-2 h-4 w-4" />
+                        View
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setEditBooking(booking)}
                       >
-                      <Edit2 className="w-4 h-4 " /> Edit
-                      </button>
-
-                      <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // open delete confirmation modal
-                        setDeleteId(booking._id);
-
-                        const d = (e.currentTarget as HTMLElement).closest('details') as HTMLDetailsElement | null;
-                        if (d) {
-                          // Add a one-time "click outside" listener so the menu closes when user clicks outside
-                          const handleOutsideClick = (ev: MouseEvent) => {
-                            const handleOutsideClick = (ev: MouseEvent) => {
-                            if (!d) return;
-                            const target = ev.target as Node | null;
-                            if (!target || !d.contains(target)) {
-                              d.open = false;
-                              document.removeEventListener('click', handleOutsideClick);
-                            }
-                            };
-                          };
-                          // Ensure the listener is attached after the current click, otherwise it'll close immediately
-                          setTimeout(() => document.addEventListener('click', handleOutsideClick), 0);
-                        }
-                        if (d) d.open = false;
-                      }}
-                      disabled={deleting === booking._id}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer disabled:opacity-50"
+                        <Edit2 className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setDeleteId(booking._id)}
+                        className="text-red-600"
                       >
-                      <Trash2 className="w-4 h-4" /> {deleting === booking._id ? 'Deleting...' : 'Delete'}
-                      </button>
-                    </div>
-                    </details>
-                  </div>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   </td>
                 </tr>
                 ))}

@@ -1,11 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import serviceTypesReducer from './slices/serviceTypesSlice';
 import eventTypesReducer from './slices/eventTypesSlice';
+import contactsReducer from './slices/contactSlice';
 
 const store = configureStore({
   reducer: {
     serviceTypes: serviceTypesReducer,
     eventTypes: eventTypesReducer,
+  
+    contacts: contactsReducer,
   },
 });
 

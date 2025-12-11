@@ -9,6 +9,7 @@ import { Plus, Trash2, Save, Upload ,ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
 interface HeroContent {
   title: string;
@@ -267,18 +268,22 @@ export default function EventsdashbordClient() {
         ? axiosInstance.put(`/eventsdashboard/${editid}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
+
         : axiosInstance.post('/eventsdashboard', formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
           })
       );
-      if (response.status === 200) {
-        alert('Content updated successfully!');
+      if (response.status === 400) {
+        fetchData();
+      
+       
+
       } else {
-        alert('Error updating content. Please try again.');
+     
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error submitting form. Please check console.');
+      toast.error('Error submitting form.');
     } finally {
       setLoading(false);
     }
@@ -295,6 +300,13 @@ export default function EventsdashbordClient() {
     try {
       const response = await axiosInstance.get(`/eventsdashboard/${id}`);
       const fetchedData = response.data.data;
+      if (response.status === 404){
+        setIsebit(false);
+     
+
+      }
+
+
       seteventData(fetchedData);
       if (fetchedData && fetchedData.length > 0) {
         setIsebit(true);

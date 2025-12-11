@@ -1,7 +1,8 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Header from '@/dashbord/common/Header'
-import axiosInstance from '@/app/config/axiosInstance'
+import { AppDispatch, RootState } from '@/app/redux/store'
+import { useDispatch, useSelector } from 'react-redux'
 import {
     Table,
     TableBody,
@@ -21,46 +22,26 @@ import {
 } from "@/components/ui/dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import NewPagination from '@/dashbord/common/Newpagination'
+import { fetchContacts, updateContactStatus, setPage } from '@/app/redux/slices/contactSlice'
+
 const page = () => {
-    const [contacts, setContacts] = useState([])
+    const dispatch = useDispatch<AppDispatch>()
+    const { items: contacts, loading, pagination } = useSelector((state: RootState) => state.contacts)
     const [deleteId, setDeleteId] = useState<string | null>(null)
     const [viewData, setViewData] = useState<any | null>(null)
-const [pagination, setPagination] = useState({
-    total: 0,
-    page: 1,
-    limit: 10,
-});
-const handlePageChange = (newPage: number) => {
-    setPagination((prev) => ({
-        ...prev,
-        page: newPage,
-    }));
-};
-    const fetchContacts = async () => {
-        try {
-            const response = await axiosInstance.get('/contactus', {
-                params: {
-                    page: pagination.page,
-                    limit: pagination.limit,
-                },
-            });
-            setContacts(response.data.data);
-            setPagination((prev) => ({
-                ...prev,
-                total: response.data.pagination.total,
-            }));
-        } catch (error) {
-            console.error('Error fetching contacts:', error)
-        }
+
+    const handlePageChange = (newPage: number) => {
+        dispatch(setPage(newPage))
     }
 
     useEffect(() => {
-        fetchContacts();
-    }, [pagination.page, pagination.limit]);
+        dispatch(fetchContacts({ page: pagination.page, limit: pagination.limit }))
+    }, [dispatch, pagination.page, pagination.limit])
 
-    if (!contacts) {
+    if (loading) {
         return <div className='h-screen justify-center items-center flex '><Spinner /></div>
     }
+
     if (contacts.length === 0) {
         return <div className='text-center'>No contact was found.</div>
     }
@@ -109,15 +90,11 @@ const handlePageChange = (newPage: number) => {
                             <TableCell>
                                 <Checkbox 
                                     checked={contact.status === true || contact.status === 'true'}
-                                    onCheckedChange={async (checked) => {
-                                        try {
-                                            await axiosInstance.patch(`/contactus/${contact._id}`, {
-                                                status: checked ? 'true' : 'false'
-                                            });
-                                            fetchContacts(); // Refresh the list after updating status
-                                        } catch (error) {
-                                            console.error('Error updating status:', error);
-                                        }
+                                    onCheckedChange={(checked) => {
+                                        dispatch(updateContactStatus({
+                                            id: contact._id,
+                                            status: checked ? 'true' : 'false'
+                                        }))
                                     }}
                                 />
                             </TableCell>
@@ -145,7 +122,7 @@ const handlePageChange = (newPage: number) => {
                 deleteId={deleteId}
                 endpoint="/contactus"
                 setDeleteId={setDeleteId}
-                onSuccess={fetchContacts}
+                onSuccess={() => dispatch(fetchContacts({ page: pagination.page, limit: pagination.limit }))}
             />
 
             {/* ---- View Contact Modal ---- */}

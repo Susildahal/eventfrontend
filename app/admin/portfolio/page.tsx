@@ -215,7 +215,7 @@ const PortfolioForm = () => {
         <div className="min-h-screen bg-white dark:bg-black ">
             <div className=" max-w-7xl mx-auto ">
                 {/* Header */}
-                <div className=" flex    gap-4 items-center justify-between">
+                <div className=" flex   pb-3  gap-4 items-center justify-between">
 
                     <div className=' flex  justify-center items-center gap-4' >
                         <ArrowLeft className="h-6 w-6 cursor-pointer " onClick={() => router.back()} />
@@ -426,22 +426,22 @@ const PortfolioForm = () => {
                     key={item._id}
                     className="border-b border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
-                    <TableCell className="px-4 py-3">
+                    <TableCell className="">
                         <img
                             src={item.image}
                             alt={item.title}
                             className="h-16 w-16 rounded object-cover"
                         />
                     </TableCell>
-                    <TableCell className="px-4 py-3 font-medium">{item.title}</TableCell>
-                    <TableCell className="px-4 py-3 max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.subtitle}</TableCell>
-                    <TableCell className="px-4 py-3 max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.description}</TableCell>
-                    <TableCell className="px-4 py-3 text-center">
+                    <TableCell className=" font-medium">{item.title}</TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.subtitle}</TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.description}</TableCell>
+                    <TableCell className=" text-center">
                         <Link
                             href={`/admin/preview/${item._id}`}
                             className="px-3 py-1 text-sm border rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                         >
-                            Preview
+                            See Preview
                         </Link>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-center">
@@ -449,7 +449,7 @@ const PortfolioForm = () => {
                             href={`/admin/portfolio-image/${item._id}`}
                             className="px-3 py-1 text-sm border rounded hover:bg-gray-200 dark:hover:bg-gray-700"
                         >
-                            Gallery
+                           See Gallery
                         </Link>
                     </TableCell>
                     <TableCell className="px-4 py-3 text-center">

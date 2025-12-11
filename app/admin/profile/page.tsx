@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Loader2, User } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import Header from '../../../dashbord/common/Header'
-
+import { useRouter } from 'next/navigation'
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null)
@@ -29,7 +29,7 @@ export default function ProfilePage() {
     newPassword: '',
     confirmPassword: '',
   })
-
+const router = useRouter();
   // Derive display name from email or Firebase user
   const getDisplayName = () => {
     if (user?.displayName) return user.displayName
@@ -178,9 +178,9 @@ export default function ProfilePage() {
       transition={{ duration: 0.4 }}
       className="container max-w-2xl mx-auto "
     >
-      <Card className="w-full shadow-lg">
+      <Card className="w-full ">
         <CardHeader className="flex flex-col items-center ">
-          <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+          <div className="flex items-center justify-center w-13 h-13 rounded-full bg-primary/10">
             {user?.photoURL ? (
               <img
                 src={user.photoURL}
@@ -188,7 +188,7 @@ export default function ProfilePage() {
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
-              <User className="h-8 w-8 text-primary" />
+              <User className="h-7 w-7 text-primary" />
             )}
           </div>
           <div className="text-center">
@@ -201,7 +201,7 @@ export default function ProfilePage() {
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-2">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -288,10 +288,10 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
-
+<div className=' flex gap-4'>
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 transition-colors"
+              className=" w-[50%] bg-primary hover:bg-primary/90 transition-colors"
               disabled={loading}
             >
               {loading ? (
@@ -303,6 +303,14 @@ export default function ProfilePage() {
                 'Update Profile'
               )}
             </Button>
+            
+            <Button
+            onClick={ () => router.back() }
+              type="button"
+              variant="outline"
+              className= " w-[50%] "
+              > Back</Button>
+            </div>
           </form>
         </CardContent>
       </Card>

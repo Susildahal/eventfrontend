@@ -193,12 +193,7 @@ export default function SiteSettings() {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>Site Settings</CardTitle>
-                <CardDescription>
-                  {isEditing ? 'Edit your website information and social media links' : 'Create your website information and social media links'}
-                </CardDescription>
-              </div>
+           
          
             </div>
           </CardHeader>
