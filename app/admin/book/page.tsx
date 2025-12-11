@@ -74,6 +74,7 @@ export default function BookingsDashboard() {
   const [editBooking, setEditBooking] = useState<Booking | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  
 
   // mark this as performing delete via DeleteModel modal
   const handleDeleteConfirm = async () => {
@@ -436,6 +437,7 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
   const [status, setStatus] = useState(booking.status);
   const [numberOfPeople, setNumberOfPeople] = useState(booking.numberofpeople);
   const [eventDate, setEventDate] = useState(booking.eventdate);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
     onSave(booking._id, { status, numberofpeople: numberOfPeople, eventdate: eventDate });
@@ -489,6 +491,7 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
         <Button
           onClick={async () => {
         try {
+          setLoading(true);
           const updates: BookingFormData = {
             status,
             numberofpeople: numberOfPeople,
@@ -499,10 +502,14 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
          
         } catch (error) {
        
+        } finally {
+          setLoading(false);
         }
           }}
           className="w-full "
+          disabled={loading}
         >
+          {loading ? 'Updating...' : ''}
           Update Booking
         </Button>
       </div>

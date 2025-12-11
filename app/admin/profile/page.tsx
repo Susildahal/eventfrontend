@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Eye, EyeOff, Loader2, User } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
+import Header from '../../../dashbord/common/Header'
 
 
 export default function ProfilePage() {
@@ -169,7 +170,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <motion.div
+    <>  
+    <Header title="Profile Settings" titledesc='Manage your profile' />
+      <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -304,5 +307,7 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
     </motion.div>
+    </>
+
   )
 }

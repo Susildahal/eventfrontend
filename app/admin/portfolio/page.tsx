@@ -47,6 +47,7 @@ const PortfolioForm = () => {
         _id?: string
         status?: boolean
         subtitle?: string
+
     }>>([])
     const [loading, setLoading] = useState(false)
     const [editingItem, setEditingItem] = useState<{
@@ -453,11 +454,11 @@ const PortfolioForm = () => {
                     </TableCell>
                     <TableCell className="px-4 py-3 text-center">
                         <Switch
-                            checked={item.status === true || item.status === 'true'}
+                            checked={item.status === true  }
                             onCheckedChange={async (checked) => {
                                 try {
                                     await axiosInstance.patch(`/portfolio/${item._id}`, {
-                                        status: checked ? 'true' : 'false'
+                                        status: checked ? true : false
                                     });
                                     fetchPortfolioItems();
                                 } catch (error) {
@@ -475,7 +476,7 @@ const PortfolioForm = () => {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                    <MoreVertical className="h-4 w-4 rotate-90" />
+                                    <MoreVertical className="h-4 w-4 rotate-90 cursor-pointer" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-44">
@@ -531,7 +532,7 @@ const PortfolioForm = () => {
                                     Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                    onClick={() => setDeleteId(item._id)}
+                                    onClick={() => setDeleteId(item._id ?? null)}
                                     className="text-red-600 dark:text-red-400"
                                 >
                                     Delete

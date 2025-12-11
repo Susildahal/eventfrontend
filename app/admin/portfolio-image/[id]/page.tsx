@@ -151,13 +151,7 @@ export default function Page() {
     })
     setSubmitting(false)
   }
-if (submitting) {
-    return (
-      <div className="flex items-center justify-center h-64"> 
-        <Spinner />
-      </div>
-    )
-  }
+
 
 
   const gatbyid = async (id: string) => {
@@ -202,6 +196,22 @@ if (submitting) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-center py-10">
+                        <Spinner />
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
+
+                  {!loading && items.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={2} className="text-center py-10">
+                        No images found. Click "Add Image" to get started.
+                      </TableCell>
+                    </TableRow>
+                  ) : null}
                   {items.map((item, index) => (
                     <TableRow key={item._id}>
                       <TableCell>
@@ -276,7 +286,7 @@ if (submitting) {
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                    <Button onClick={handleSave}>{editingId ? 'Update' : 'Save'}</Button>
+                    <Button  disabled={loading} onClick={handleSave}> {loading ? (editingId ? 'Update' : 'Save') : (editingId ? 'Update' : 'Save')}</Button>
                   </div>
                 </div>
               </CardContent>

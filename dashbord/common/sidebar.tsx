@@ -36,90 +36,54 @@ import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
 import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
 
 import {
-  Home,
-  Calendar,
   Users,
-  Settings,
-  BarChart3,
-  FileText,
-  Mail,
+  Images,
   Bell,
-  Search,
+  HelpCircle,
+  CalendarCog,
+  ClipboardList,
+  UserPlus,
+  CalendarCheck,
+  Info,
+  FolderKanban,
   ChevronDown,
+  Settings,
   LogOut,
-  User,
-  Moon,
   Sun,
+  Moon,
   Monitor,
+  Search,
   Menu,
   X,
-} from "lucide-react"
+ User
+
+
+} from "lucide-react";
+
 import { useTheme } from "next-themes"
 import Breadcrumb from "@/components/ui/breadcrumb"
 import Link from "next/link"
 import axiosInstance from "@/app/config/axiosInstance"
+import { Button } from "@/components/ui/button"
 
 const navigationItems = [
+  { title: "Users", icon: Users, href: "/admin/users" },
+  { title: "Gallery", icon: Images, href: "/admin/gallery" },
+  { title: "Notifications", icon: Bell, href: "/admin/contact" },
+  { title: "FAQs", icon: HelpCircle, href: "/admin/faq" },
+  { title: "Event Types", icon: CalendarCog, href: "/admin/events-types" },
+  { title: "Service Types", icon: ClipboardList, href: "/admin/service-types" },
+  { title: "Create Account", icon: UserPlus, href: "/admin/register" },
+  { title: "Book Now", icon: CalendarCheck, href: "/admin/book" },
+  { title: "About", icon: Info, href: "/admin/mission" },
+  { title: "Portfolio", icon: FolderKanban, href: "/admin/portfolio" },
+];
 
-
-  {
-    title: "Users",
-    icon: Users,
-    href: "/admin/users",
-  },
-  {
-    title: "Gallery",
-    icon: BarChart3,
-    href: "/admin/gallery",
-  },
-  {
-    title: "Notifications",
-    icon: Bell,
-    href: "/admin/contact",
-  },
-  {
-    title: "FAQs",
-    icon: FileText,
-    href: "/admin/faq",
-  },
- 
-  {
-    title: "Event Types",
-    icon: Calendar,
-    href: "/admin/events-types",
-  },
-  {
-    title: "Service Types",
-    icon: Settings,
-    href: "/admin/service-types",
-  },
-  {
-    title: "Create Account",
-    icon: Users,
-    href: "/admin/register",
-  },
-  {
-    title: "Book Now",
-    icon: Calendar,
-    href: "/admin/book",
-  },
-  {
-    title: "About",
-    icon: FileText,
-    href: "/admin/mission",
-  },
-
-  {
-    title: "Portfolio",
-    icon: BarChart3,
-    href: "/admin/portfolio",
-  },
-]
 
 function UserProfile() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const [data, setData] = useState<{ name: string; email: string }>({ name: "", email: "" })
+  const [data, setData] = useState<{ name: string; email: string; role: string }>({ name: "", email: "" , role: "" })
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
   const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
@@ -178,10 +142,12 @@ function UserProfile() {
           <Avatar className="h-9 w-9 flex-shrink-0">
             <AvatarImage src="https://github.com/shadcn.png" alt="User" />
             <AvatarFallback>{data.name?.charAt(0) || ""}</AvatarFallback>
+
           </Avatar>
           <div className="flex flex-1 flex-col items-start text-sm hidden group-data-[state=expanded]:flex">
-            <span className="font-semibold">{data.name}</span>
-            <span className="text-xs text-muted-foreground">{data.email}</span>
+            <span className="font-semibold capitalize">{data.name}</span>
+            <span className="text-xs text-muted-foreground italic">{data.email}</span>
+                  <span className="text-xs text-muted-foreground capitalize  ">{data.role}</span>
           </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground hidden group-data-[state=expanded]:block" />
         </button>
@@ -366,7 +332,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
         <SidebarContent>
           <SidebarGroup>
-            <div className="px-3 py-2 hidden group-data-[state=expanded]:block">
+            <div className=" hidden group-data-[state=expanded]:block">
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <SidebarInput
@@ -419,7 +385,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                   <SidebarMenuButton asChild>
                     <Link href="/admin/settings" className={pathname === "/admin/settings" ? "text-primary font-semibold" : ""}>
                       <Settings className="h-4 w-4" />
-                      <span className="hidden group-data-[state=expanded]:inline">Settings</span>
+                      <span className="hidden group-data-[state=expanded]:inline"> Site Settings</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -435,16 +401,17 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <SidebarTrigger
-            className="hover:bg-sidebar-accent flex items-center justify-center"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            {isSidebarOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </SidebarTrigger  >
+<SidebarTrigger >
+  <Button
+    variant="ghost"
+    size="icon"
+    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+  >
+    {isSidebarOpen ? <X /> : <Menu />}
+  </Button>
+</SidebarTrigger>
+
+
           <div className="flex flex-1 items-center justify-between">
          
             <div className="flex items-center  absolute right-2 justify-end gap-2">

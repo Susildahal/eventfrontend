@@ -4,7 +4,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { PanelLeftIcon } from "lucide-react"
-
+import { Menu, X } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -259,6 +259,8 @@ function SidebarTrigger({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar } = useSidebar()
+const { state } = useSidebar()
+  const isSidebarOpen = state === "expanded"
 
   return (
     <Button
@@ -273,8 +275,24 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+{isSidebarOpen ? (
+  <>
+    {/* MOBILE → show Menu when open */}
+    <Menu className="h-6 w-6 cursor-pointer transition-all duration-300 ease-in-out md:hidden" />
+
+    {/* DESKTOP → show X when open */}
+    <X className="h-6 w-6 cursor-pointer transition-all duration-300 ease-in-out hidden md:block" />
+  </>
+) : (
+  <>
+    {/* MOBILE → show X when closed */}
+    <X className="h-6 w-6 cursor-pointer transition-all duration-300 ease-in-out md:hidden" />
+
+    {/* DESKTOP → show Menu when closed */}
+    <Menu className="h-6 w-6 cursor-pointer transition-all duration-300 ease-in-out hidden md:block" />
+  </>
+)}
+  <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
 }

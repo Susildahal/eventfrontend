@@ -29,6 +29,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Header from "../../../dashbord/common/Header"
 import Newdeletemodel from "../../../dashbord/common/Newdeletemodel";
+import { Trash2 , SquarePen  } from "lucide-react";
 const page = () => {
   const [users, setUsers] = useState([]);
   const [editData, setEditData] = useState(null);
@@ -96,7 +97,7 @@ const page = () => {
 
                 <TableCell className="flex gap-2">
                   <Button size="sm" onClick={() => setEditData(user)}>
-                    Edit
+                    <SquarePen className="h-4 w-4" />
                   </Button>
 
                   <Button
@@ -104,7 +105,7 @@ const page = () => {
                     variant="destructive"
                     onClick={() => setDeleteId(user._id)}
                   >
-                    Delete
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </TableCell>
               </TableRow>
