@@ -26,7 +26,12 @@ export default function AboutUsAdminDashboard() {
     missionTitle: '',
     missionDescription: '',
     visionTitle: '',
-    visionDescription: ''
+    visionDescription: '',
+    whatWeBelieve: [],
+    theOcMethod: [],
+    sustainability: [],
+    technology: [],
+    budgets: []
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -192,7 +197,7 @@ export default function AboutUsAdminDashboard() {
            <Link href="/admin/aboutimage"><Button> Add Image </Button></Link>
           </div>
         </div>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'hero' | 'mission')} className="w-full">
           <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="mission">Mission & Vision</TabsTrigger>
