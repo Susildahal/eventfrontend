@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Spinner } from '@/components/ui/spinner'
 
 const PortfolioForm = () => {
     const [open, setOpen] = useState(false)
@@ -211,6 +212,11 @@ const PortfolioForm = () => {
         setErrors({})
     }
     const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    if (loading && portfolioItems.length === 0) {
+        return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+    }
+
     return (
         <div className="min-h-screen bg-white dark:bg-black ">
             <div className=" max-w-7xl mx-auto ">
@@ -440,8 +446,8 @@ const PortfolioForm = () => {
                         />
                     </TableCell>
                     <TableCell className=" font-medium">{item.title}</TableCell>
-                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.subtitle}</TableCell>
-                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.description}</TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.subtitle ?.slice(0, 20)}...</TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.description ?.slice(0, 20)}...</TableCell>
                     <TableCell className=" text-center">
                         <Link
                             href={`/admin/preview/${item._id}`}

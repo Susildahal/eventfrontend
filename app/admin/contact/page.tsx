@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
-import { Trash2, Eye } from 'lucide-react'
+import { Trash2, Eye  ,MoreVertical} from 'lucide-react'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 import { Spinner } from '@/components/ui/spinner'
 import {
@@ -23,7 +23,12 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import NewPagination from '@/dashbord/common/Newpagination'
 import { fetchContacts, updateContactStatus, setPage } from '@/app/redux/slices/contactSlice'
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 const page = () => {
     const dispatch = useDispatch<AppDispatch>()
     const { items: contacts, loading, pagination } = useSelector((state: RootState) => state.contacts)
@@ -102,16 +107,27 @@ const page = () => {
 
                             <TableCell className='flex gap-3'>
                                 {/* View Full Details */}
-                                <Eye
-                                    className="cursor-pointer hover:text-blue-600 h-6 w-6 text-blue-700"
-                                    onClick={() => setViewData(contact)}
-                                />
 
-                                {/* Delete */}
-                                <Trash2
-                                    className="cursor-pointer hover:text-red-600 h-6 w-6 text-red-700"
-                                    onClick={() => setDeleteId(contact._id)}
-                                />
+                                <DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <MoreVertical className="cursor-pointer h-6 w-6  rotate-90"/>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setViewData(contact)}>
+            <Eye className="w-4 h-4 mr-2" />
+            View Details
+        </DropdownMenuItem>
+        <DropdownMenuItem
+
+            onClick={() => setDeleteId(contact._id)}
+            className="text-red-600 dark:text-red-400"
+        >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete
+        </DropdownMenuItem>
+    </DropdownMenuContent>
+</DropdownMenu>
+                              
                             </TableCell>
                         </TableRow>
                     ))}

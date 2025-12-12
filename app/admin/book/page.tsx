@@ -12,6 +12,7 @@ import Pagination from '@/dashbord/common/Pagination';
 import axiosInstance from '@/app/config/axiosInstance';
 import { MoreVertical } from 'lucide-react';
 import DeleteModel from '@/dashbord/common/DeleteModel';
+import {Spinner} from '@/components/ui/spinner'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -131,11 +132,12 @@ export default function BookingsDashboard() {
       
       const response = await axiosInstance.get(`/bookings?${params.toString()}`);
       const serverResponse: ServerResponse = response.data;
-      setBookings(serverResponse.data);
+      setBookings(serverResponse.data || []);
       setStats(serverResponse.stats);
       setPagination(serverResponse.pagination);
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
@@ -160,6 +162,12 @@ export default function BookingsDashboard() {
   useEffect(() => {
     fetchBookings(1, statusFilter);
   }, []);
+
+
+  if (loading && bookings.length === 0) {
+    return <div className="h-screen flex items-center justify-center"><Spinner /></div>;
+  }
+
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 space-y-3">
@@ -239,6 +247,7 @@ export default function BookingsDashboard() {
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Name</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Event</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Phone</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Guests</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Budget</th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase">Status</th>
@@ -246,52 +255,91 @@ export default function BookingsDashboard() {
               </tr>
             </thead>
             <tbody>
-                {bookings.map((booking, idx) => (
-                <tr key={booking._id} className={`border-b border-gray-100 dark:border-slate-800 ${idx % 2 === 0 ? 'bg-white dark:bg-slate-900/50' : 'bg-gray-50 dark:bg-slate-800/50'}`}>
-                  <td className="px-6 py-4">
-                  <p className="font-medium text-sm text-gray-900 dark:text-white">{booking.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{booking.email}</p>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.eventtype}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{new Date(booking.eventdate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.numberofpeople}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.budget}</td>
-                  <td className="px-6 py-4">
-                  <span className={getStatusBadge(booking.status)}>{booking.status}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreVertical className="h-4 w-4 rotate-90" />
-                      </Button>
-                
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        onClick={() => setViewBooking(booking)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        View
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setEditBooking(booking)}
-                      >
-                        <Edit2 className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => setDeleteId(booking._id)}
-                        className="text-red-600"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+              {bookings.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-8 h-8 text-gray-400 dark:text-gray-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          No Bookings Found
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {statusFilter 
+                            ? `No ${statusFilter.toLowerCase()} bookings available at the moment.`
+                            : 'No bookings available at the moment.'}
+                        </p>
+                      </div>
+                      {statusFilter && (
+                        <Button
+                          variant="outline"
+                          onClick={clearFilter}
+                          className="mt-2"
+                        >
+                          Clear Filter
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
-                ))}
+              ) : (
+                bookings.map((booking, idx) => (
+                  <tr key={booking._id} className={`border-b border-gray-100 dark:border-slate-800 ${idx % 2 === 0 ? 'bg-white dark:bg-slate-900/50' : 'bg-gray-50 dark:bg-slate-800/50'}`}>
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-sm text-gray-900 dark:text-white">{booking.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{booking.email}</p>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.eventtype}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{new Date(booking.eventdate).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.phone}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.numberofpeople}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">{booking.budget}</td>
+                    <td className="px-6 py-4">
+                      <span className={getStatusBadge(booking.status)}>{booking.status}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <MoreVertical className="h-4 w-4 rotate-90" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => setViewBooking(booking)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setEditBooking(booking)}>
+                            <Edit2 className="mr-2 h-4 w-4" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setDeleteId(booking._id)}
+                            className="text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -13,12 +13,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus  ,RefreshCcw} from 'lucide-react'
+import { Trash2, Edit, Plus  ,RefreshCcw ,MoreVertical} from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import NewPagination from '@/dashbord/common/Newpagination'
 import { Switch } from '@/components/ui/switch'
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Spinner } from '@/components/ui/spinner'
 
 interface FaqItem {
   _id?: string
@@ -155,6 +161,11 @@ export default function Page() {
     }
   }
 
+  if (loading && items.length === 0) {
+    return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+  }
+  
+
   return (
     <>
     
@@ -214,26 +225,88 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map((item, idx) => (
-                    <TableRow key={String(item._id ?? item.id ?? idx)}>
-                      <TableCell>{idx + 1}</TableCell>
-                      <TableCell>{item.title}</TableCell>
-                      <TableCell className="truncate max-w-xs">{item.question}</TableCell>
-                      <TableCell className="truncate max-w-xs">{item.answer}</TableCell>
-                      <TableCell><Switch checked={item.status==true}  onClick={() => handlestatuschange(item._id ?? item.id ?? '', !item.status)} /></TableCell>
-                      <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button variant="ghost" onClick={() => openEdit(item as FaqItem)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="destructive" onClick={() => setDeleteId(String(item._id ?? item.id ?? ''))}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                  {items.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                          <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-gray-400 dark:text-gray-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              No FAQs Found
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {form.title 
+                                ? `No ${form.title} FAQs available. Try a different category or add a new FAQ.`
+                                : 'No FAQs available at the moment. Start by adding your first FAQ.'}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            {form.title && (
+                              <Button
+                                variant="outline"
+                                onClick={clearTitleFilter}
+                                className="mt-2"
+                              >
+                                Clear Filter
+                              </Button>
+                            )}
+                            <Button
+                              onClick={openAdd}
+                              className="mt-2 flex items-center gap-2"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Add FAQ
+                            </Button>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    items.map((item, idx) => (
+                      <TableRow key={String(item._id ?? item.id ?? idx)}>
+                        <TableCell>{idx + 1}</TableCell>
+                        <TableCell>{item.title}</TableCell>
+                        <TableCell className="truncate max-w-xs">{item.question}</TableCell>
+                        <TableCell className="truncate max-w-xs">{item.answer}</TableCell>
+                        <TableCell><Switch checked={item.status==true}  onClick={() => handlestatuschange(item._id ?? item.id ?? '', !item.status)} /></TableCell>
+                        <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <MoreVertical className="cursor-pointer h-6 w-6 rotate-90" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEdit(item as FaqItem)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => setDeleteId(String(item._id ?? item.id ?? ''))}
+                                className="text-red-600 dark:text-red-400"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>

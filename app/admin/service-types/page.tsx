@@ -129,10 +129,10 @@ export default function servicetypesPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openEdit(item)}>
+                              {/* <DropdownMenuItem onClick={() => openEdit(item)}>
                                 <Edit className="w-4 h-4 mr-2" />
                                 Edit
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                               <DropdownMenuItem
                                 onClick={() => {
                                   setDeleteId((item._id ?? item.id) as string)
@@ -190,14 +190,16 @@ export default function servicetypesPage() {
                     )}
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">
+                      {/* <label className="block text-sm font-medium mb-1">
                         {!editingId ? 'Or Enter Custom Name' : 'Service Type Name'}
-                      </label>
-                      <Input
+                      </label> */}
+                      {/* <Input
                         value={form.name}
                         onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="E.g., Photography, Videography, Catering"
-                      />
+                      /> */}
+
+                      
                     </div>
 
                     <div className="flex justify-end gap-2">

@@ -24,12 +24,19 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus, ArrowLeft, RefreshCcw } from 'lucide-react'
+import { Trash2, Edit, Plus, ArrowLeft, RefreshCcw  ,MoreVertical} from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 import NewPagination from '@/dashbord/common/Newpagination'
 import { useRouter } from 'next/navigation'
 import { Switch } from '@/components/ui/switch'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Spinner } from '@/components/ui/spinner'
 
 
 interface GalleryItem {
@@ -170,6 +177,10 @@ export default function Page() {
     }
   }
 
+  if (loading && items.length === 0) {
+    return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+  }
+
   return (
     <div>
 
@@ -219,7 +230,6 @@ export default function Page() {
         <Card>
 
           <CardContent>
-
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -227,32 +237,95 @@ export default function Page() {
                     <TableHead className="w-24">Preview</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Status</TableHead>
-
                     <TableHead className="w-36">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map(item => (
-                    <TableRow key={item._id}>
-                      <TableCell>
-                        <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
-                          <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                        </div>
-                      </TableCell>
-                      <TableCell>{item.title}</TableCell>
-                         <TableCell><Switch checked={item.status} onCheckedChange={(checked) => handleStatusChange(item._id, checked)} /></TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" onClick={() => openEdit(item)}>
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="destructive" onClick={() => setDeleteId(item._id)}>
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                  {items.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-64 text-center">
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                          <div className="w-16 h-16 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-gray-400 dark:text-gray-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                              No Gallery Images Found
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {title 
+                                ? `No ${title} gallery images available. Try a different category or add a new image.`
+                                : 'No gallery images available at the moment. Start by adding your first image.'}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            {title && (
+                              <Button
+                                variant="outline"
+                                onClick={() => setTitle('')}
+                                className="mt-2"
+                              >
+                                Clear Filter
+                              </Button>
+                            )}
+                            <Button
+                              onClick={openAdd}
+                              className="mt-2 flex items-center gap-2"
+                            >
+                              <Plus className="w-4 h-4" />
+                              Add Image
+                            </Button>
+                          </div>
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : (
+                    items.map(item => (
+                      <TableRow key={item._id}>
+                        <TableCell>
+                          <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
+                            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                          </div>
+                        </TableCell>
+                        <TableCell>{item.title}</TableCell>
+                        <TableCell>
+                          <Switch checked={item.status} onCheckedChange={(checked) => handleStatusChange(item._id, checked)} />
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <MoreVertical className="cursor-pointer h-6 w-6  rotate-90" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => openEdit(item)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => setDeleteId(item._id)}
+                                className="text-red-600 dark:text-red-400"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>

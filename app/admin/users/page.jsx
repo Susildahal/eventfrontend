@@ -36,6 +36,7 @@ import * as Yup from "yup";
 import Header from "../../../dashbord/common/Header";
 import Newdeletemodel from "../../../dashbord/common/Newdeletemodel";
 import { Trash2, SquarePen, MoreVertical, Eye, EyeClosed, ChevronLeft } from "lucide-react";
+import { Spinner } from '@/components/ui/spinner'
 
 const Page = () => {
   const [users, setUsers] = useState([]);
@@ -47,14 +48,18 @@ const Page = () => {
   const [previewData, setPreviewData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formMode, setFormMode] = useState("create"); // "create" or "edit"
+  const [loading, setLoading] = useState(false);
 
   // Fetch Users
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/users");
       setUsers(response.data.data);
     } catch (error) {
       console.log("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,6 +80,9 @@ const Page = () => {
       console.log("Error creating user:", error);
     }
   };
+    if (loading && users.length === 0) {
+    return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+  }
 
   // Update User Handler
   const handleUpdate = async (values) => {
@@ -109,6 +117,8 @@ const Page = () => {
       console.log("Error updating status:", error);
     }
   };
+
+
 
   const PreviewModal = ({ data, onEdit, onConfirm, onCancel, isCreateMode }) => (
     <Dialog open={!!previewData} onOpenChange={onCancel}>

@@ -160,10 +160,10 @@ export default function EventTypesPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => openEdit(item)}>
+                              {/* <DropdownMenuItem onClick={() => openEdit(item)}>
                                 <Edit className="w-4 h-4 mr-2" />
                                 Edit
-                              </DropdownMenuItem>
+                              </DropdownMenuItem> */}
                               <DropdownMenuItem
                                 onClick={() => {
                                   setDeleteId((item._id ?? item.id) as string)
@@ -219,7 +219,7 @@ export default function EventTypesPage() {
                         </Select>
                       </div>
                     )}
-
+{/* 
                     <div>
                       <label className="block text-sm font-medium mb-1">
                         {!editingId ? 'Or Enter Custom Name' : 'Event Type Name'}
@@ -229,7 +229,7 @@ export default function EventTypesPage() {
                         onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
                         placeholder="E.g., Wedding, Corporate, Birthday"
                       />
-                    </div>
+                    </div> */}
 
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" onClick={() => setIsOpen(false)}>

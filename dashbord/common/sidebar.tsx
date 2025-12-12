@@ -211,7 +211,7 @@ function UserProfile() {
     <DialogHeader>
       <DialogTitle>Log out</DialogTitle>
       <DialogDescription>
-        Are you sure you want to log out?
+        Are you sure you want to log out {data.name} ?
       </DialogDescription>
     </DialogHeader>
 

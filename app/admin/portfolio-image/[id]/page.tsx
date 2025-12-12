@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation'
 
 
 
+
 interface GalleryItem {
   _id: number
    id: string
@@ -163,6 +164,10 @@ export default function Page() {
       return null;
     }
   };
+
+ if (loading && items.length === 0) {
+    return <div className='h-screen justify-center items-center flex '><Spinner /></div>
+  }
   return (
     <div>
 

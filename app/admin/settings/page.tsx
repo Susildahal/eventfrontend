@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
 import axiosInstance from '../../config/axiosInstance'
 import Header from '@/dashbord/common/Header';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function SiteSettings() {
   const [loading, setLoading] = useState(false);
@@ -182,6 +183,13 @@ export default function SiteSettings() {
       setLoading(false);
     }
   };
+  if (fetchingData) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner />
+      </div>
+    )
+  }
 
 
 
@@ -200,10 +208,10 @@ export default function SiteSettings() {
           <CardContent>
             {fetchingData ? (
               <div className="flex items-center justify-center py-12">
-                <div className="text-center">
+                {/* <div className="text-center">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   <p className="mt-4 text-gray-600">Loading settings...</p>
-                </div>
+                </div> */}
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
