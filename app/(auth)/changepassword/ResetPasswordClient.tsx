@@ -56,10 +56,10 @@ const ResetPasswordClient = () => {
         }
     };
 
-    
+
     return (
         <div className="w-full min-h-screen flex items-center justify-center  px-4">
-            <div className="w-full max-w-md p-8 shadow-lg rounded-xl border">
+            <div className="w-full max-w-md p-8 shadow-lg rounded-xl dark:bg-slate-900 border">
                 <h2 className="text-2xl font-bold mb-6 text-center">Reset Password</h2>
 
                 <Formik
@@ -136,14 +136,14 @@ const ResetPasswordClient = () => {
                 </Formik>
                 <div className=' pt-4'>
                     <Link href="/login">
-  <Button
-                             variant='outline'
-                                className="w-full py-5 text-[16px]"
-                            >
-                              Back
-                            </Button>
+                        <Button
+                            variant='outline'
+                            className="w-full py-5 text-[16px]"
+                        >
+                            Back
+                        </Button>
                     </Link>
-                            </div>
+                </div>
             </div>
         </div>
     );

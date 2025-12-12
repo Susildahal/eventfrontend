@@ -36,6 +36,15 @@ import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
 import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
 import {fetchContacts} from '@/app/redux/slices/contactSlice'
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import {
   Users,
   Images,
   Bell,
@@ -85,7 +94,7 @@ const navigationItems = [
 function UserProfile() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const [data, setData] = useState<{ name: string; email: string; role: string }>({ name: "", email: "" , role: "" })
+  const [data, setData] = useState<{ name: string; email: string; role: string , profilePicture: string }>({ name: "", email: "" , role: "", profilePicture: "" })
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
   const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
@@ -146,7 +155,7 @@ function UserProfile() {
       <DropdownMenuTrigger asChild>
         <button className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors group-data-[state=collapsed]:justify-center">
           <Avatar className="h-9 w-9 flex-shrink-0">
-            <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+            <AvatarImage src={data.profilePicture} alt="User" />
             <AvatarFallback>{data.name?.charAt(0) || ""}</AvatarFallback>
 
           </Avatar>
@@ -187,10 +196,38 @@ function UserProfile() {
           />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-600" onClick={handlelogout}>
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
-        </DropdownMenuItem>
+ <Dialog>
+  <DialogTrigger asChild>
+    <DropdownMenuItem 
+      className="text-red-600 cursor-pointer"
+      onSelect={(e) => e.preventDefault()}
+    >
+      <LogOut className="mr-2 h-4 w-4" />
+      <span>Log out</span>
+    </DropdownMenuItem>
+  </DialogTrigger>
+
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Log out</DialogTitle>
+      <DialogDescription>
+        Are you sure you want to log out?
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="flex justify-end gap-3 mt-4">
+      <Button variant="outline">Cancel</Button>
+
+      <Button
+        className="bg-red-600 text-white hover:bg-red-700"
+        onClick={handlelogout} // 👉 You manage logout here
+      >
+        Log out
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -446,6 +483,10 @@ function ThemeDropdown() {
   if (!mounted) return null
 
   return (
+    <>
+
+
+ 
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center rounded-md px-2 py-1 hover:bg-sidebar-accent transition-colors">
@@ -475,6 +516,9 @@ function ThemeDropdown() {
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
+
+       <UserProfile />
+    </>
   )
 }
 

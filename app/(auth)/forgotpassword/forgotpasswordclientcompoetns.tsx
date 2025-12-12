@@ -41,7 +41,7 @@ const ClientCompoetns = () => {
   return (
     <div>
         <div className="flex min-h-screen flex-col items-center justify-center  px-4">
-        <div className="w-full max-w-md  rounded-lg shadow-md p-6">
+        <div className="w-full max-w-md  rounded-lg dark:bg-slate-800 shadow-md p-6">
             <h2 className="text-2xl font-semibold mb-6 text-center">Forgot Password</h2>
             <Formik
             initialValues={inatioanlValues}

@@ -233,163 +233,169 @@ const PortfolioForm = () => {
                 </div>
 
                 {/* Modal */}
-                {open && (
-                    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white dark:bg-black rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-gray-700">
-                            <div className="sticky top-0    bg-white dark:bg-black p-6">
-                                <div className="flex items-center justify-between">
-                                    <h2 className="text-xl font-bold text-black dark:text-white">{editingItem ? 'Edit Portfolio Item' : 'Add Portfolio Item'}</h2>
-                                    <button
-                                        onClick={() => setOpen(false)}
-                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                    >
-                                        <X className="w-5 h-5" />
-                                    </button>
-                                </div>
+            {open && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-neutral-700">
 
-                                {editingItem ? 'Update' : 'Save'}
-                                {/* Title Field */}
-                                <div>
-                                    <label className="block text-sm font-medium text-black dark:text-white mb-2">
-                                        Title
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="title"
-                                        value={formData.title}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('title')}
-                                        placeholder="Enter portfolio title"
-                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
-                                    />
-                                    {errors.title && touched.title && (
-                                        <div className="text-red-600 dark:text-red-400 text-sm mt-2">{errors.title}</div>
-                                    )}
-                                </div>
-                                  <div>
-                                    {/* Subtitle Field */}
-                                    <label className="block text-sm font-medium text-black dark:text-white mb-2">
-                                        Subtitle
-                                    </label>
-                                    <textarea
-                                        name="subtitle"
-                                        value={formData.subtitle}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('subtitle')}
-                                        placeholder="Enter portfolio subtitle"
-                                        rows={4}
-                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
-                                    />
-                                    {errors.subtitle && touched.subtitle && (
-                                        <div className="text-red-600 dark:text-red-400 text-sm mt-2">{errors.subtitle}</div>
-                                    )}
-                                </div>
+      {/* Header */}
+      <div className="sticky top-0 bg-white dark:bg-neutral-900 p-5 border-b border-gray-200 dark:border-neutral-700">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-black dark:text-white">
+            {editingItem ? "Edit Portfolio Item" : "Add Portfolio Item"}
+          </h2>
 
-                                {/* Description Field */}
-                                <div>
-                                    <label className="block text-sm font-medium text-black dark:text-white mb-2">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleInputChange}
-                                        onBlur={() => handleBlur('description')}
-                                        placeholder="Enter portfolio description"
-                                        rows={4}
-                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400"
-                                    />
-                                    {errors.description && touched.description && (
-                                        <div className="text-red-600 dark:text-red-400 text-sm mt-2">{errors.description}</div>
-                                    )}
-                                </div>
+          <button
+            onClick={() => setOpen(false)}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-                                {/* Image Upload Field */}
-                                <div>
-                                    <label className="block text-sm font-medium text-black dark:text-white mb-2">
-                                        Image
-                                    </label>
+      {/* Body */}
+      <div className="p-6 space-y-6">
 
-                                    {imagePreview ? (
-                                        <div className="relative">
-                                            <div className="relative rounded-lg overflow-hidden border-2 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800">
-                                                <img
-                                                    src={imagePreview}
-                                                    alt="Preview"
-                                                    className="w-full h-64 object-cover"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={removeImage}
-                                                    className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full transition"
-                                                >
-                                                    <X className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">Click the X button to remove and upload a different image</p>
-                                        </div>
-                                    ) : (
-                                        <div
-                                            className="flex justify-center px-6 py-10 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition cursor-pointer bg-gray-50 dark:bg-gray-900"
-                                            onDrop={(e) => {
-                                                e.preventDefault()
-                                                const file = e.dataTransfer.files[0]
-                                                handleImageUpload(file)
-                                            }}
-                                            onDragOver={(e) => e.preventDefault()}
-                                        >
-                                            <div className="space-y-2 text-center">
-                                                <Upload className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
-                                                <div className="flex text-sm text-gray-600 dark:text-gray-400 justify-center gap-1">
-                                                    <label
-                                                        htmlFor="file-upload"
-                                                        className="relative cursor-pointer font-medium text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300"
-                                                    >
-                                                        <span>Upload a file</span>
-                                                        <input
-                                                            id="file-upload"
-                                                            name="image"
-                                                            type="file"
-                                                            accept="image/*"
-                                                            className="sr-only"
-                                                            onChange={(e) => {
-                                                                const file = e.target.files?.[0]
-                                                                if (file) {
-                                                                    handleImageUpload(file)
-                                                                }
-                                                            }}
-                                                        />
-                                                    </label>
-                                                    <p>or drag and drop</p>
-                                                </div>
-                                                <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 10MB</p>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {errors.image && touched.image && (
-                                        <div className="text-red-600 dark:text-red-400 text-sm mt-2">{errors.image}</div>
-                                    )}
-                                </div>
-                            </div>
+        {/* Title */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Title
+          </label>
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            onBlur={() => handleBlur("title")}
+            placeholder="Enter portfolio title"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+          />
+          {errors.title && touched.title && (
+            <p className="text-red-500 text-xs">{errors.title}</p>
+          )}
+        </div>
 
-                            <div className="sticky bottom-0  dark:border-gray-700 bg-white dark:bg-black p-6 flex justify-end gap-2">
-                                <button
-                                    onClick={() => setOpen(false)}
-                                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-black dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900 transition font-medium"
-                                >
-                                    Cancel
-                                </button>
-                            <button
-                                onClick={(e) => handleSubmit(e)}
-                                disabled={loading}
-                                className={`px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition${loading ? ' opacity-50 cursor-not-allowed' : ''}`}
-                            >
-                               {loading ? (editingItem ? 'Updating...' : 'Saving...') : (editingItem ? 'Update' : 'Save')}
-                            </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+        {/* Subtitle */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Subtitle
+          </label>
+          <textarea
+            name="subtitle"
+            value={formData.subtitle}
+            onChange={handleInputChange}
+            onBlur={() => handleBlur("subtitle")}
+            placeholder="Enter portfolio subtitle"
+            rows={3}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+          />
+          {errors.subtitle && touched.subtitle && (
+            <p className="text-red-500 text-xs">{errors.subtitle}</p>
+          )}
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            onBlur={() => handleBlur("description")}
+            placeholder="Enter portfolio description"
+            rows={4}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+          />
+          {errors.description && touched.description && (
+            <p className="text-red-500 text-xs">{errors.description}</p>
+          )}
+        </div>
+
+        {/* Image Upload */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Image
+          </label>
+
+          {imagePreview ? (
+            <div className="relative">
+              <div className="rounded-lg border border-gray-300 dark:border-neutral-700 overflow-hidden shadow-md">
+                <img src={imagePreview} alt="Preview" className="w-full h-64 object-cover" />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 pt-2">
+                Click the X to remove and upload a new image
+              </p>
+            </div>
+          ) : (
+            <div
+              className="flex flex-col items-center justify-center gap-2 px-6 py-12 border-2 border-dashed border-gray-300 dark:border-neutral-700 rounded-lg cursor-pointer bg-gray-50 dark:bg-neutral-800"
+              onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                handleImageUpload(file);
+              }}
+              onDragOver={(e) => e.preventDefault()}
+            >
+              <Upload className="h-10 w-10 text-gray-400 dark:text-gray-500" />
+              <label className="cursor-pointer font-medium text-black dark:text-white">
+                Upload a file
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImageUpload(file);
+                  }}
+                />
+              </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                PNG, JPG, GIF (max 10MB)
+              </p>
+            </div>
+          )}
+
+          {errors.image && touched.image && (
+            <p className="text-red-500 text-xs">{errors.image}</p>
+          )}
+        </div>
+
+      </div>
+
+      {/* Footer */}
+      <div className="sticky bottom-0 p-5 bg-white dark:bg-neutral-900 border-t border-gray-200 dark:border-neutral-700 flex justify-end gap-3">
+        <button
+          onClick={() => setOpen(false)}
+          className="px-4 py-2 border border-gray-300 dark:border-neutral-600 text-black dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className={`px-5 py-2 rounded-lg text-white dark:text-black bg-black dark:bg-white hover:opacity-90 transition ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {loading ? (editingItem ? "Updating..." : "Saving...") : editingItem ? "Update" : "Save"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
                 {/* Portfolio Table */}
            <div className="bg-white dark:bg-black rounded-lg shadow border border-gray-300 dark:border-gray-700">

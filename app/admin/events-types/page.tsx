@@ -20,11 +20,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { AppDispatch } from '@/app/redux/store'
-import { useDispatch ,useSelector } from 'react-redux'
-import { fetchEventTypes ,deleteEventType ,createEventType ,updateEventType ,fetchEventTypeById , } from '@/app/redux/slices/eventTypesSlice'
-
-
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchEventTypes, deleteEventType, createEventType, updateEventType, fetchEventTypeById } from '@/app/redux/slices/eventTypesSlice'
 
 interface EventType {
   _id?: string
@@ -32,6 +37,8 @@ interface EventType {
   name: string
   createdAt?: Date
 }
+
+const PRESET_EVENT_TYPES = ['Birthday', 'Beach and pool', 'Branch Launch', 'Night Music', 'Custom']
 
 export default function EventTypesPage() {
   const [items, setItems] = useState<EventType[]>([])
@@ -42,17 +49,23 @@ export default function EventTypesPage() {
   const [error, setError] = useState<string | null>(null)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const dispatch = useDispatch<AppDispatch>()
-  const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes);
+  const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes)
 
-useEffect(() => {
-  if (eventTypesState.items.length === 0) {
-    dispatch(fetchEventTypes());
-  }
-}, [dispatch, eventTypesState.items.length])
+  useEffect(() => {
+    if (eventTypesState.items.length === 0) {
+      dispatch(fetchEventTypes())
+    }
+  }, [dispatch, eventTypesState.items.length])
 
-useEffect(() => {
-  setItems(eventTypesState.items);
-}, [eventTypesState.items]);
+  useEffect(() => {
+    setItems(eventTypesState.items)
+  }, [eventTypesState.items])
+
+  // Get already added event types
+  const addedEventNames = items.map(item => item.name)
+  
+  // Get available presets (not yet added)
+  const availablePresets = PRESET_EVENT_TYPES.filter(preset => !addedEventNames.includes(preset))
 
   const openAdd = () => {
     setEditingId(null)
@@ -72,11 +85,11 @@ useEffect(() => {
       setLoading(true)
       const payload = { name: form.name }
       if (editingId) {
-      dispatch(updateEventType({ ...payload, _id: editingId }));  
+        dispatch(updateEventType({ ...payload, _id: editingId }))
       } else {
-        dispatch(createEventType(payload));
+        dispatch(createEventType(payload))
       }
-   
+
       setIsOpen(false)
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Save failed')
@@ -89,7 +102,7 @@ useEffect(() => {
     const previous = items
     setItems(prev => prev.filter(i => (i._id ?? i.id) !== id))
     try {
-dispatch(deleteEventType(id as string));
+      dispatch(deleteEventType(id as string))
       setDeleteId(null)
     } catch {
       setItems(previous)
@@ -100,7 +113,7 @@ dispatch(deleteEventType(id as string));
   return (
     <>
       <div>
-        <div className=" mx-auto">
+        <div className="mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <ArrowLeft className="h-5 w-5 cursor-pointer" onClick={() => window.history.back()} />
@@ -181,13 +194,36 @@ dispatch(deleteEventType(id as string));
                 <CardHeader>
                   <CardTitle>{editingId ? 'Edit Event Type' : 'Add Event Type'}</CardTitle>
                   <CardDescription>
-                    {editingId ? 'Update the event type name' : 'Add a new event type'}
+                    {editingId ? 'Update the event type name' : 'Add a new event type or select from presets'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    {!editingId && (
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Select from Presets</label>
+                        <Select value="" onValueChange={(value) => setForm(prev => ({ ...prev, name: value }))}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose an event type..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {PRESET_EVENT_TYPES.map(preset => (
+                              <SelectItem key={preset} value={preset} disabled={addedEventNames.includes(preset)}>
+                                <span className={addedEventNames.includes(preset) ? 'text-gray-400' : ''}>
+                                  {preset}
+                                  {addedEventNames.includes(preset) ? ' (Already added)' : ''}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
                     <div>
-                      <label className="block text-sm font-medium mb-1">Name</label>
+                      <label className="block text-sm font-medium mb-1">
+                        {!editingId ? 'Or Enter Custom Name' : 'Event Type Name'}
+                      </label>
                       <Input
                         value={form.name}
                         onChange={(e) => setForm(prev => ({ ...prev, name: e.target.value }))}
