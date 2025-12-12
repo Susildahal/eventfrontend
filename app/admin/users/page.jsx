@@ -70,6 +70,7 @@ const Page = () => {
   // Create User Handler
   const handleCreate = async (values, { resetForm }) => {
     try {
+      setLoading(true);
       await axiosInstance.post("/users/register", values);
       resetForm();
       setCreateOpen(false);
@@ -78,6 +79,8 @@ const Page = () => {
       fetchUsers();
     } catch (error) {
       console.log("Error creating user:", error);
+    } finally {
+      setLoading(false);
     }
   };
     if (loading && users.length === 0) {
@@ -169,8 +172,8 @@ const Page = () => {
             <ChevronLeft className="h-4 w-4" />
             Edit
           </Button>
-          <Button onClick={onConfirm}>
-            {isCreateMode ? "Create User" : "Save Changes"}
+          <Button disabled={loading} className ={loading ? "opacity-50 cursor-not-allowed" : ""} onClick={onConfirm}>
+            {loading ? "Submitting..." : (isCreateMode ? "Create User" : "Save Changes")}
           </Button>
         </div>
       </DialogContent>

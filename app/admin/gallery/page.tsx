@@ -394,7 +394,7 @@ export default function Page() {
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-                    <Button disabled={submitting} onClick={handleSave}> {submitting ? 'Saving...' : (editingId ? 'Update' : 'Save')}</Button>
+                    <Button disabled={submitting} onClick={handleSave} className={`${submitting ? "opacity-50 cursor-not-allowed" : ""}`}> {submitting ? 'Saving...' : (editingId ? 'Update' : 'Save')}</Button>
                   </div>
                 </div>
               </CardContent>

@@ -203,20 +203,20 @@ function UserProfile() {
       onSelect={(e) => e.preventDefault()}
     >
       <LogOut className="mr-2 h-4 w-4" />
-      <span>Log out</span>
+      <span >Log out</span>
     </DropdownMenuItem>
   </DialogTrigger>
 
   <DialogContent>
     <DialogHeader>
-      <DialogTitle>Log out</DialogTitle>
+      <DialogTitle >Log out</DialogTitle>
       <DialogDescription>
         Are you sure you want to log out {data.name} ?
       </DialogDescription>
     </DialogHeader>
 
     <div className="flex justify-end gap-3 mt-4">
-      <Button variant="outline">Cancel</Button>
+      <Button variant="outline" >Cancel</Button>
 
       <Button
         className="bg-red-600 text-white hover:bg-red-700"
