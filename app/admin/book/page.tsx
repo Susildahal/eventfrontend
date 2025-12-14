@@ -13,12 +13,13 @@ import axiosInstance from '@/app/config/axiosInstance';
 import { MoreVertical } from 'lucide-react';
 import DeleteModel from '@/dashbord/common/DeleteModel';
 import {Spinner} from '@/components/ui/spinner'
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { fetchBookings, updateBooking, deleteBooking } from '@/app/redux/slices/bookingsSlice';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 interface Booking {
@@ -65,20 +66,10 @@ interface ServerResponse {
 }
 
 export default function BookingsDashboard() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [stats, setStats] = useState<StatsData>({
-    totalCancelled: 0,
-    totalPending: 0,
-    totalCompleted: 0,
-    totalConfirmed: 0
-  });
-  const [pagination, setPagination] = useState<PaginationData>({
-    total: 0,
-    page: 1,
-    limit: 10
-  });
+  const dispatch = useDispatch<AppDispatch>();
+  const { items: bookings, stats, pagination, loading } = useSelector((state: RootState) => state.bookings);
+  
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [viewBooking, setViewBooking] = useState<Booking | null>(null);
   const [editBooking, setEditBooking] = useState<Booking | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
@@ -90,9 +81,7 @@ export default function BookingsDashboard() {
     if (!deleteId) return;
     try {
       setDeleting(deleteId);
-      await axiosInstance.delete(`/bookings/${deleteId}`);
-      // Refresh list and stats after delete
-      await fetchBookings(pagination.page, statusFilter);
+      await dispatch(deleteBooking(deleteId)).unwrap();
       setDeleteId(null);
       alert('Booking deleted successfully');
     } catch (error) {
@@ -103,11 +92,13 @@ export default function BookingsDashboard() {
     }
   };
 
-  const handleUpdate = (id: string, updates: BookingFormData) => {
-    setBookings(prev =>
-      prev.map(b => (b._id === id ? { ...b, ...updates } : b))
-    );
-    setEditBooking(null);
+  const handleUpdate = async (id: string, updates: BookingFormData) => {
+    try {
+      await dispatch(updateBooking({ id, updates })).unwrap();
+      setEditBooking(null);
+    } catch (error) {
+      console.error('Failed to update booking:', error);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -118,50 +109,24 @@ export default function BookingsDashboard() {
     if (status === 'Cancelled') return `${baseClass} bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400`;
     return `${baseClass} bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400`;
   };
-  const fetchBookings = async (page: number = 1, status: string = '') => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: pagination.limit.toString()
-      });
-      
-      if (status) {
-        params.append('status', status);
-      }
-      
-      const response = await axiosInstance.get(`/bookings?${params.toString()}`);
-      const serverResponse: ServerResponse = response.data;
-      setBookings(serverResponse.data || []);
-      setStats(serverResponse.stats);
-      setPagination(serverResponse.pagination);
-    } catch (error) {
-      console.error('Failed to fetch bookings:', error);
-      setBookings([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handlePageChange = (page: number) => {
-    fetchBookings(page, statusFilter);
+    dispatch(fetchBookings({ page, limit: pagination.limit, status: statusFilter }));
   };
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
-    setPagination(prev => ({ ...prev, page: 1 })); // Reset to first page when filtering
-    fetchBookings(1, status);
+    dispatch(fetchBookings({ page: 1, limit: pagination.limit, status }));
   };
 
   const clearFilter = () => {
     setStatusFilter('');
-    setPagination(prev => ({ ...prev, page: 1 }));
-    fetchBookings(1, '');
+    dispatch(fetchBookings({ page: 1, limit: pagination.limit }));
   };
 
   useEffect(() => {
-    fetchBookings(1, statusFilter);
-  }, []);
+    dispatch(fetchBookings({ page: 1, limit: 10 }));
+  }, [dispatch]);
 
 
   if (loading && bookings.length === 0) {
@@ -460,8 +425,20 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
   const [eventDate, setEventDate] = useState(booking.eventdate);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    onSave(booking._id, { status, numberofpeople: numberOfPeople, eventdate: eventDate });
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      const updates: BookingFormData = {
+        status,
+        numberofpeople: numberOfPeople,
+        eventdate: new Date(eventDate).toISOString(),
+      };
+      await onSave(booking._id, updates);
+    } catch (error) {
+      console.error('Failed to update booking:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -505,35 +482,16 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
       </div>
 
       <div className="flex  gap-3 justify-center items-center">
-        <Button variant="outline" onClick={onCancel} >
+        <Button variant="outline" onClick={onCancel} disabled={loading}>
           Cancel
         </Button>
-        <div>
         <Button
-          onClick={async () => {
-        try {
-          setLoading(true);
-          const updates: BookingFormData = {
-            status,
-            numberofpeople: numberOfPeople,
-            eventdate: new Date(eventDate).toISOString(),
-          };
-          await axiosInstance.put(`/bookings/${booking._id}`, updates);
-          onSave(booking._id, updates);
-         
-        } catch (error) {
-       
-        } finally {
-          setLoading(false);
-        }
-          }}
-          className="w-full "
+          onClick={handleSubmit}
+          className="w-full"
           disabled={loading}
         >
-          {loading ? 'Updating...' : ''}
-          Update Booking
+          {loading ? 'Updating...' : 'Update Booking'}
         </Button>
-      </div>
       </div>
       
     </div>

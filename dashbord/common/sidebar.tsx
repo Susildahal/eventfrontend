@@ -28,13 +28,17 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { batch, useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { AppDispatch } from "@/app/redux/store"
 import { fetchServiceTypes } from '@/app/redux/slices/serviceTypesSlice'
 import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
-import {fetchContacts} from '@/app/redux/slices/contactSlice'
+import { fetchProfile } from '@/app/redux/slices/profileSlicer'
+import { fetchContacts } from '@/app/redux/slices/contactSlice'
+import { fetchBookings } from '@/app/redux/slices/bookingsSlice'
+import { RootState } from "@/app/redux/store"
+
 import {
   Dialog,
   DialogContent,
@@ -51,7 +55,7 @@ import {
   HelpCircle,
   CalendarCog,
   ClipboardList,
-  UserPlus,
+
   CalendarCheck,
   Info,
   FolderKanban,
@@ -65,7 +69,8 @@ import {
   Menu,
   X,
  User,
- UserCog
+ UserCog,
+  Loader2,
 
 
 } from "lucide-react";
@@ -73,7 +78,6 @@ import {
 
 import { useTheme } from "next-themes"
 import Link from "next/link"
-import axiosInstance from "@/app/config/axiosInstance"
 import { Button } from "@/components/ui/button"
 
 const navigationItems = [
@@ -94,15 +98,12 @@ const navigationItems = [
 function UserProfile() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
-  const [data, setData] = useState<{ name: string; email: string; role: string , profilePicture: string }>({ name: "", email: "" , role: "", profilePicture: "" })
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
   const serviceTypesState = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes)
-
-
-
-
   
+  // Get user from Redux instead of local state
+  const { data: user, loading: reduxLoading } = useSelector((state: RootState) => state.profile)
 
   const [serviceTypes, setServiceTypes] = useState<any[]>([])
 
@@ -110,26 +111,16 @@ function UserProfile() {
     setServiceTypes(serviceTypesState.items)
   }, [serviceTypesState.items])
 
-
-
-
-
   React.useEffect(() => {
     setMounted(true)
-    const fetchUserData = async () => {
-      try {
-        const userRes = await axiosInstance.get("/users/me")
-        setData(userRes.data.user)
-      } catch (error: any) {
-        console.error("Error fetching user profile:", error)
-        if (error?.response?.status === 401) {
-          localStorage.removeItem("authToken")
-          router.push("/login")
-        }
-      }
+  }, [])
+
+  // Fetch profile from Redux if not loaded
+  React.useEffect(() => {
+    if (mounted && !user && !reduxLoading) {
+      dispatch(fetchProfile())
     }
-    fetchUserData()
-  }, [router])
+  }, [mounted, user, reduxLoading, dispatch])
 
   React.useEffect(() => {
     if (serviceTypesState.items.length === 0) {
@@ -150,19 +141,39 @@ function UserProfile() {
     }
   }
 
+  // Show loading state
+  if (!user || reduxLoading) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <Loader2 className="animate-spin h-5 w-5" />
+      </div>
+    )
+  }
+
+  // Format profile picture
+  const getProfilePicture = () => {
+    if (!user.profilePicture) return undefined
+    if (user.profilePicture.startsWith('data:')) {
+      return user.profilePicture
+    } else if (user.profilePicture.startsWith('http')) {
+      return user.profilePicture
+    } else {
+      return `data:image/jpeg;base64,${user.profilePicture}`
+    }
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex w-full items-center justify-center gap-3 rounded-lg px-3 py-2 hover:bg-sidebar-accent transition-colors group-data-[state=collapsed]:justify-center">
           <Avatar className="h-9 w-9 flex-shrink-0">
-            <AvatarImage src={data.profilePicture} alt="User" />
-            <AvatarFallback>{data.name?.charAt(0) || ""}</AvatarFallback>
-
+            <AvatarImage src={getProfilePicture()} alt="User" />
+            <AvatarFallback>{user.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
           </Avatar>
           <div className="flex flex-1 flex-col items-start text-sm hidden group-data-[state=expanded]:flex">
-            <span className="font-semibold capitalize">{data.name}</span>
-            <span className="text-xs text-muted-foreground italic">{data.email}</span>
-                  <span className="text-xs text-muted-foreground capitalize  ">{data.role}</span>
+            <span className="font-semibold capitalize">{user.name}</span>
+            <span className="text-xs text-muted-foreground italic">{user.email}</span>
+            <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
           </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground hidden group-data-[state=expanded]:block" />
         </button>
@@ -196,38 +207,36 @@ function UserProfile() {
           />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
- <Dialog>
-  <DialogTrigger asChild>
-    <DropdownMenuItem 
-      className="text-red-600 cursor-pointer"
-      onSelect={(e) => e.preventDefault()}
-    >
-      <LogOut className="mr-2 h-4 w-4" />
-      <span >Log out</span>
-    </DropdownMenuItem>
-  </DialogTrigger>
+        <Dialog>
+          <DialogTrigger asChild>
+            <DropdownMenuItem 
+              className="text-red-600 cursor-pointer"
+              onSelect={(e) => e.preventDefault()}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DialogTrigger>
 
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle >Log out</DialogTitle>
-      <DialogDescription>
-        Are you sure you want to log out {data.name} ?
-      </DialogDescription>
-    </DialogHeader>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Log out</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to log out {user.name}?
+              </DialogDescription>
+            </DialogHeader>
 
-    <div className="flex justify-end gap-3 mt-4">
-      <Button variant="outline" >Cancel</Button>
-
-      <Button
-        className="bg-red-600 text-white hover:bg-red-700"
-        onClick={handlelogout} // 👉 You manage logout here
-      >
-        Log out
-      </Button>
-    </div>
-  </DialogContent>
-</Dialog>
-
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="outline">Cancel</Button>
+              <Button
+                className="bg-red-600 text-white hover:bg-red-700"
+                onClick={handlelogout}
+              >
+                Log out
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -238,11 +247,15 @@ function NavItem({
   isActive,
   eventTypes = [],
   serviceTypesList = [],
+  unreadCount = 0,
+  pendingBookings = 0,
 }: {
   item: any
   isActive: boolean
   eventTypes?: any[]
   serviceTypesList?: any[]
+  unreadCount?: number
+  pendingBookings?: number
 }) {
   const Icon = item.icon
   const pathname = usePathname()
@@ -320,7 +333,19 @@ function NavItem({
         }
       >
         <Icon className="h-4 w-4" />
-        <span>{item.title}</span>
+        <span className="flex items-center gap-2">
+          {item.title}
+          {item.title === "Notifications" && unreadCount > 0 && (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+          {item.title === "Book Now" && pendingBookings > 0 && (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[10px] font-bold text-white">
+              {pendingBookings > 99 ? '99+' : pendingBookings}
+            </span>
+          )}
+        </span>
       </Link>
     </SidebarMenuButton>
   )
@@ -335,12 +360,29 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>()
   const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes);
   const pathname = usePathname()
-    React.useEffect(() => {
+  
+  // Get unread count from contacts
+  const unreadCount = useSelector((state: RootState) => state.contacts?.unreadCount || 0)
+  
+  // Get pending bookings count
+  const pendingBookings = useSelector((state: RootState) => state.bookings?.stats?.totalPending || 0)
+  
+  React.useEffect(() => {
     if (eventTypesState.items.length === 0) {
       dispatch(fetchEventTypes())
     }
     setEventTypes(eventTypesState.items)
   }, [dispatch, eventTypesState.items.length])
+  
+  // Fetch contacts to get unread count
+  React.useEffect(() => {
+    dispatch(fetchContacts({ page: 1, limit: 1 }))
+  }, [dispatch])
+  
+  // Fetch bookings to get pending count
+  React.useEffect(() => {
+    dispatch(fetchBookings({ page: 1, limit: 1 }))
+  }, [dispatch])
   
   // Get service types from Redux state
   const serviceTypesListRedux = useSelector((state: { serviceTypes: { items: any[] } }) => state.serviceTypes.items)
@@ -355,8 +397,6 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
       setFilteredItems(filtered)
     }
   }, [searchQuery])
-
-
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -401,16 +441,15 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                     return (
                       <SidebarMenuItem key={item.title}>
                         <div className='flex items-center gap-2'>
-                        <NavItem
-                          item={item}
-
-                          isActive={isActive}
-                          eventTypes={eventTypesList}
-                          serviceTypesList={serviceTypesListRedux}
-                        />
-                   
+                          <NavItem
+                            item={item}
+                            isActive={isActive}
+                            eventTypes={eventTypesList}
+                            serviceTypesList={serviceTypesListRedux}
+                            unreadCount={unreadCount}
+                            pendingBookings={pendingBookings}
+                          />
                         </div>
-                        
                       </SidebarMenuItem>
                     )
                   })
@@ -449,19 +488,17 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-<SidebarTrigger >
-  <Button
-    variant="ghost"
-    size="icon"
-    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-  >
-    {isSidebarOpen ? <X /> : <Menu />}
-  </Button>
-</SidebarTrigger>
-
+          <SidebarTrigger >
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X /> : <Menu />}
+            </Button>
+          </SidebarTrigger>
 
           <div className="flex flex-1 items-center justify-between">
-         
             <div className="flex items-center  absolute right-2 justify-end gap-2">
               <ThemeDropdown />
             </div>
@@ -478,46 +515,98 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 function ThemeDropdown() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const dispatch = useDispatch<AppDispatch>()
+  const router = useRouter()
+  
+  // Get user from Redux
+  const { data: user, loading: reduxLoading } = useSelector((state: RootState) => state.profile)
 
   React.useEffect(() => setMounted(true), [])
+  
+  // Fetch profile if not loaded
+  React.useEffect(() => {
+    if (mounted && !user && !reduxLoading) {
+      dispatch(fetchProfile())
+    }
+  }, [mounted, user, reduxLoading, dispatch])
+
   if (!mounted) return null
+
+  // Format profile picture
+  const getProfilePicture = () => {
+    if (!user?.profilePicture) return undefined
+    if (user.profilePicture.startsWith('data:')) {
+      return user.profilePicture
+    } else if (user.profilePicture.startsWith('http')) {
+      return user.profilePicture
+    } else {
+      return `data:image/jpeg;base64,${user.profilePicture}`
+    }
+  }
 
   return (
     <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center rounded-md px-2 py-1 hover:bg-sidebar-accent transition-colors">
+            {theme === "dark" ? (
+              <Moon className="h-5 w-5 text-muted-foreground" />
+            ) : (
+              <Sun className="h-5 w-5 text-muted-foreground" />
+            )}
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuLabel>Theme</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={() => setTheme("light")}>
+              <Sun className="mr-2 h-4 w-4" />
+              <span>Light</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <Moon className="mr-2 h-4 w-4" />
+              <span>Dark</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme("system")}>
+              <Monitor className="mr-2 h-4 w-4" />
+              <span>System</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-
- 
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="flex items-center rounded-md px-2 py-1 hover:bg-sidebar-accent transition-colors">
-          {theme === "dark" ? (
-            <Moon className="h-5 w-5 text-muted-foreground" />
-          ) : (
-            <Sun className="h-5 w-5 text-muted-foreground" />
-          )}
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuLabel>Theme</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => setTheme("light")}>
-            <Sun className="mr-2 h-4 w-4" />
-            <span>Light</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("dark")}>
-            <Moon className="mr-2 h-4 w-4" />
-            <span>Dark</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("system")}>
-            <Monitor className="mr-2 h-4 w-4" />
-            <span>System</span>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-
-       <UserProfile />
+      {/* User Profile Dropdown in Header */}
+      {user && !reduxLoading && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-sidebar-accent transition-colors">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={getProfilePicture()} alt="User" />
+                <AvatarFallback>{user.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
+              </Avatar>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium capitalize">{user.name}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+                <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/admin/profile")}>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/admin/settings")}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </>
   )
 }

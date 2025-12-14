@@ -132,6 +132,10 @@ const Page = () => {
 
         <div className="grid grid-cols-2 gap-6 py-4">
           <div className="space-y-4">
+              <div>
+              <p className="text-sm text-gray-500">Image</p>
+              <p className="text-base font-medium"> <img src={data?.profilePicture} alt={data?.name} className="h-10 w-10 rounded-full" /></p>
+            </div>
             <div>
               <p className="text-sm text-gray-500">Name</p>
               <p className="text-base font-medium">{data?.name}</p>
@@ -199,6 +203,7 @@ const Page = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Index</TableHead>
+              <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
@@ -214,6 +219,13 @@ const Page = () => {
             {users.map((user, index) => (
               <TableRow key={user._id}>
                 <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <img
+                    src={user.profilePicture || "/default-profile.png"}
+                    alt={user.name}
+                    className="h-10 w-10 rounded-full"
+                  />
+                </TableCell>
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
@@ -405,6 +417,7 @@ const Page = () => {
                 role: editData?.role || "",
                 address: editData?.address || "",
                 phone: editData?.phone || "",
+                profilePicture: editData?.profilePicture || "",
                 password: "",
               }}
               enableReinitialize
@@ -670,6 +683,16 @@ const Page = () => {
             </DialogHeader>
             {details && (
               <div className="space-y-2">
+                <div>
+                  <p className="text-sm text-gray-500">Image</p>
+                  <p className="text-base font-medium">
+                    <img
+                      src={details.profilePicture || "/default-profile.png"}
+                      alt={details.name}
+                      className="h-10 w-10 rounded-full"
+                    />
+                  </p>
+                </div>
                 <p>
                   <strong>Name:</strong> {details.name}
                 </p>

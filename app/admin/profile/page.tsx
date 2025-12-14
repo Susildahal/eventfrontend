@@ -11,14 +11,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import axiosInstance from '@/app/config/axiosInstance'
 import Header from '../../../dashbord/common/Header'
 import { useRouter } from 'next/navigation'
+import { AppDispatch, RootState } from '@/app/redux/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchProfile, updateProfile, updatePassword } from '@/app/redux/slices/profileSlicer'
+
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const { data: user, loading: reduxLoading } = useSelector((state: RootState) => state.profile)
+  
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [profileImage, setProfileImage] = useState<string | null>(null)
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null)
   const [activeTab, setActiveTab] = useState('details')
+
+  
   const [profileData, setProfileData] = useState({
     name: '',
     email: '',
@@ -45,48 +53,38 @@ export default function ProfilePage() {
 
   const router = useRouter()
 
+  // Fetch profile on component mount
   useEffect(() => {
-    let mounted = true
-    const fetchUser = async () => {
-      try {
-        const res = await axiosInstance.get('users/me')
-        const resp = res.data
-        const profile = resp?.user ?? resp?.data ?? resp?.profile ?? resp
+    if (!user) {
+      dispatch(fetchProfile())
+    }
+  }, [dispatch, user])
 
-        if (!mounted) return
-        setUser(profile)
-        setProfileData({
-          name: profile?.name || '',
-          email: profile?.email || '',
-          phone: profile?.phone || '',
-          address: profile?.address || '',
-          role: profile?.role || 'user',
-          status: profile?.status ?? true,
-          profilePicture: profile?.profilePicture || '',
-        })
+  // Update local state when user data changes
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        name: user?.name || '',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        address: user?.address || '',
+        role: user?.role || 'user',
+        status: user?.status ?? true,
+        profilePicture: user?.profilePicture || '',
+      })
 
-        // Handle profile picture display
-        if (profile?.profilePicture) {
-          if (profile.profilePicture.startsWith('data:')) {
-            // Already a data URL
-            setProfileImage(profile.profilePicture)
-          } else if (profile.profilePicture.startsWith('http')) {
-            // It's a URL
-            setProfileImage(profile.profilePicture)
-          } else {
-            // It's base64 without the data URL prefix
-            setProfileImage(`data:image/jpeg;base64,${profile.profilePicture}`)
-          }
+      // Handle profile picture display
+      if (user?.profilePicture) {
+        if (user.profilePicture.startsWith('data:')) {
+          setProfileImage(user.profilePicture)
+        } else if (user.profilePicture.startsWith('http')) {
+          setProfileImage(user.profilePicture)
+        } else {
+          setProfileImage(`data:image/jpeg;base64,${user.profilePicture}`)
         }
-      } catch (err) {
-        // ignore - user may not be authenticated
       }
     }
-    fetchUser()
-    return () => {
-      mounted = false
-    }
-  }, [])
+  }, [user])
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -211,39 +209,30 @@ export default function ProfilePage() {
         formData.append('profilePicture', profileImageFile, profileImageFile.name)
       }
 
-      const res = await axiosInstance.put(`/users/profile/${user?._id || ''}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+      // Dispatch Redux action
+      const resultAction = await dispatch(updateProfile({ 
+        userId: user?._id || '', 
+        formData 
+      }))
 
-      const updatedUser = res.data?.data ?? res.data?.user ?? res.data?.profile ?? res.data
-      if (updatedUser) {
-        setUser(updatedUser)
+      if (updateProfile.fulfilled.match(resultAction)) {
+        const updatedUser = resultAction.payload
         
         // Update profile image from server response
         if (updatedUser?.profilePicture) {
           if (updatedUser.profilePicture.startsWith('data:')) {
             setProfileImage(updatedUser.profilePicture)
           } else if (updatedUser.profilePicture.startsWith('http')) {
-            // If it's a URL
             setProfileImage(updatedUser.profilePicture)
           } else {
-            // If it's base64 without prefix
             setProfileImage(`data:image/jpeg;base64,${updatedUser.profilePicture}`)
           }
         }
         
-        setProfileData({
-          name: updatedUser?.name || '',
-          email: updatedUser?.email || '',
-          phone: updatedUser?.phone || '',
-          address: updatedUser?.address || '',
-          role: updatedUser?.role || 'user',
-          status: updatedUser?.status ?? true,
-          profilePicture: '',
-        })
         setProfileImageFile(null)
+      } else {
+        const errorMessage = resultAction.payload as string || 'Failed to update profile'
+        setErrors(prev => ({ ...prev, name: errorMessage }))
       }
     } catch (error: any) {
       console.error('Profile update error:', error)
@@ -267,22 +256,42 @@ export default function ProfilePage() {
         password: passwordData.newPassword,
       }
 
-      await axiosInstance.put(`/users/updatepassword/${user?._id || ''}`, payload)
+      // Dispatch Redux action for password update
+      const resultAction = await dispatch(updatePassword({
+        userId: user?._id || '',
+        passwordData: payload
+      }))
 
-      // Clear password fields
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      })
+      if (updatePassword.fulfilled.match(resultAction)) {
+        // Clear password fields on success
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        })
+        setErrors({
+          name: '',
+          email: '',
+          phone: '',
+          address: '',
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        })
+      } else {
+        const errorMessage = resultAction.payload as string || 'Failed to update password'
+        setErrors(prev => ({ ...prev, currentPassword: errorMessage }))
+      }
     } catch (error: any) {
       console.error('Password update error:', error)
+      const errorMessage = error.response?.data?.message || 'Failed to update password'
+      setErrors(prev => ({ ...prev, currentPassword: errorMessage }))
     } finally {
       setLoading(false)
     }
   }
 
-  if (!user) {
+  if (!user || reduxLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />

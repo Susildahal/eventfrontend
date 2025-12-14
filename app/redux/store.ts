@@ -2,13 +2,16 @@ import { configureStore } from '@reduxjs/toolkit';
 import serviceTypesReducer from './slices/serviceTypesSlice';
 import eventTypesReducer from './slices/eventTypesSlice';
 import contactsReducer from './slices/contactSlice';
+import profileReducer from './slices/profileSlicer'; 
+import bookingsReducer from './slices/bookingsSlice';
 
 const store = configureStore({
   reducer: {
     serviceTypes: serviceTypesReducer,
     eventTypes: eventTypesReducer,
-  
     contacts: contactsReducer,
+    profile: profileReducer,
+    bookings: bookingsReducer,
   },
 });
 

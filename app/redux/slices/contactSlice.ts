@@ -16,6 +16,7 @@ interface ContactsState {
   items: Contact[];
   loading: boolean;
   error: string | null;
+  unreadCount: number;
   pagination: {
     total: number;
     page: number;
@@ -27,6 +28,7 @@ const initialState: ContactsState = {
   items: [],
   loading: false,
   error: null,
+  unreadCount: 0,
   pagination: {
     total: 0,
     page: 1,
@@ -45,6 +47,7 @@ export const fetchContacts = createAsyncThunk(
       });
       return {
         data: response.data.data || [],
+        unread: response.data.unread || 0,
         pagination: response.data.pagination || { total: 0 },
       };
     } catch (error: any) {
@@ -98,6 +101,7 @@ const contactSlice = createSlice({
       .addCase(fetchContacts.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload.data;
+        state.unreadCount = action.payload.unread;
         state.pagination.total = action.payload.pagination.total;
       })
       .addCase(fetchContacts.rejected, (state, action) => {
@@ -107,7 +111,17 @@ const contactSlice = createSlice({
       .addCase(updateContactStatus.fulfilled, (state, action) => {
         const index = state.items.findIndex((item) => item._id === action.payload.id);
         if (index !== -1) {
+          const wasUnread = state.items[index].status === false || state.items[index].status === 'false';
+          const isNowRead = action.payload.status === 'true' || action.payload.status === true.toString();
+          
           state.items[index].status = action.payload.status;
+          
+          // Update unread count
+          if (wasUnread && isNowRead) {
+            state.unreadCount = Math.max(0, state.unreadCount - 1);
+          } else if (!wasUnread && !isNowRead) {
+            state.unreadCount += 1;
+          }
         }
       })
       .addCase(deleteContact.fulfilled, (state, action) => {
