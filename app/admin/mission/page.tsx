@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {Save, ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
-import { toast } from 'react-hot-toast';
+
 import { HeroForm, MissionVisionForm} from './MissionFormComponents';
 import type { Sections, HeroSection, MissionVisionItem, } from './types';
 import Link from 'next/link';
@@ -167,13 +167,11 @@ export default function AboutUsAdminDashboard() {
         const returnedId = normalized._id ?? normalized.id ?? aboutId;
         if (returnedId) setAboutId(returnedId);
         setHasData(true);
-        toast.success(`About Us content ${hasData ? 'updated' : 'created'} successfully!`);
       }
     } catch (error: any) {
       console.error('Error:', error);
       console.error('Error response:', error.response?.data);
       const msg = error.response?.data?.message || error.message || 'Error submitting form';
-      toast.error(msg);
     } finally {
       setLoading(false);
     }
