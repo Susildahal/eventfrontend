@@ -8,7 +8,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
       <Toaster
-        position="center-bottom"
+        position="bottom-center"
         toastOptions={{
           duration: 2000,
           style: {
