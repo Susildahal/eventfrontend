@@ -446,10 +446,10 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
       <div>
         <Label>Status</Label>
         <Select value={status} onValueChange={setStatus}>
-          <SelectTrigger className="mt-2">
+          <SelectTrigger className="mt-2 w-full">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className='w-full'>
             <SelectItem value="Pending">Pending</SelectItem>
             <SelectItem value="Confirmed">Confirmed</SelectItem>
             <SelectItem value="Cancelled">Cancelled</SelectItem>
@@ -482,12 +482,12 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
       </div>
 
       <div className="flex  gap-3 justify-center items-center">
-        <Button variant="outline" onClick={onCancel} disabled={loading}>
+        <Button variant="outline" className='w-[50%]' onClick={onCancel} disabled={loading}>
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
-          className="w-full"
+          className="w-[50%]"
           disabled={loading}
         >
           {loading ? 'Updating...' : 'Update Booking'}

@@ -8,24 +8,49 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
       <Toaster
-        position="bottom-center"
+        position="center-bottom"
         toastOptions={{
+          duration: 2000,
           style: {
             background: "#ffffff",
             color: "#1f2937",
-            padding: "14px 18px",
-            borderRadius: "10px",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            fontSize: "15px",
-            fontWeight: 500,
+            padding: "12px 16px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+            fontSize: "14px",
+            fontWeight: "500",
+            cursor: "pointer",
+ 
           },
           success: {
-            style: { borderLeft: "6px solid #22c55e" },
-            iconTheme: { primary: "#22c55e", secondary: "#ffffff" },
+            style: {
+              background: "#10b981",
+              color: "#ffffff",
+            },
+            iconTheme: {
+              primary: "#ffffff",
+              secondary: "#10b981",
+            },
           },
           error: {
-            style: { borderLeft: "6px solid #ef4444" },
-            iconTheme: { primary: "#ef4444", secondary: "#ffffff" },
+            style: {
+              background: "#ef4444",
+              color: "#ffffff",
+            },
+            iconTheme: {
+              primary: "#ffffff",
+              secondary: "#ef4444",
+            },
+          },
+          loading: {
+            style: {
+              background: "#3b82f6",
+              color: "#ffffff",
+            },
+            iconTheme: {
+              primary: "#ffffff",
+              secondary: "#3b82f6",
+            },
           },
         }}
       />
