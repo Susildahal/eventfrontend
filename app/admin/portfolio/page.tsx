@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Newdeletemodel from '@/dashbord/common/Newdeletemodel'
 import { useRouter } from 'next/navigation'
 import { Switch } from '@/components/ui/switch'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreVertical } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
 
 import {
   Dialog,
@@ -32,12 +34,14 @@ const PortfolioForm = () => {
         title: '',
         description: '',
         subtitle: '',
-        image: null as Blob | null
+        image: null as Blob | null,
+        date: new Date(),
     })
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [touched, setTouched] = useState<Record<string, boolean>>({})
-
+const [date, setDate] = useState<Date | undefined>(new Date());
+// Log the date for debugging
     const router = useRouter()
     const [portfolioItems, setPortfolioItems] = useState<Array<{
         id: string
@@ -48,6 +52,7 @@ const PortfolioForm = () => {
         _id?: string
         status?: boolean
         subtitle?: string
+        date?: Date
 
     }>>([])
     const [loading, setLoading] = useState(false)
@@ -58,6 +63,7 @@ const PortfolioForm = () => {
         description: string
         image?: string
         subtitle?: string
+        date?: Date
     } | null>(null)
 
     useEffect(() => {
@@ -91,6 +97,9 @@ const PortfolioForm = () => {
         }
         if (!formData.subtitle.trim()) {
             newErrors.subtitle = 'Subtitle is required'
+        }
+        if (!formData.date) {
+            newErrors.date = 'Date is required'
         }
 
         setErrors(newErrors)
@@ -161,6 +170,7 @@ const PortfolioForm = () => {
                 formDataToSend.append('title', formData.title)
                 formDataToSend.append('description', formData.description)
                 formDataToSend.append('subtitle', formData.subtitle)
+                formDataToSend.append('date', date ? date.toISOString() : new Date().toISOString());
                 if (formData.image) {
                     // Image is sent as binary in FormData
                     formDataToSend.append('image', formData.image)
@@ -187,7 +197,7 @@ const PortfolioForm = () => {
                 await fetchPortfolioItems()
 
                 // Reset form
-                setFormData({ title: '', description: '', image: null , subtitle: ''})
+                setFormData({ title: '', description: '', image: null , subtitle: '' , date: new Date()})
                 setImagePreview(null)
                 setTouched({})
                 setErrors({})
@@ -206,7 +216,7 @@ const PortfolioForm = () => {
     const closeModal = () => {
         setOpen(false)
         setEditingItem(null)
-        setFormData({ title: '', description: '', image: null , subtitle: ''})
+        setFormData({ title: '', description: '', image: null , subtitle: '' , date: new Date()})
         setImagePreview(null)
         setTouched({})
         setErrors({})
@@ -231,7 +241,7 @@ const PortfolioForm = () => {
                         </div></div>
 
                     <button
-                        onClick={() => { setEditingItem(null); setFormData({ title: '', description: '', image: null  , subtitle: ''}); setImagePreview(null); setOpen(true) }}
+                        onClick={() => { setEditingItem(null); setFormData({ title: '', description: '', image: null  , subtitle: '' , date: new Date()}); setImagePreview(null); setOpen(true) }}
                         className="px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition"
                     >
                         Add Portfolio Item
@@ -318,7 +328,20 @@ const PortfolioForm = () => {
             <p className="text-red-500 text-xs">{errors.description}</p>
           )}
         </div>
+        {/* Date Picker */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
+            Date
+          </label>
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            className="rounded-md border shadow-sm"
+            captionLayout="dropdown"
+          />
 
+        </div>
         {/* Image Upload */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -480,8 +503,8 @@ const PortfolioForm = () => {
                         />
                     </TableCell>
                     <TableCell className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                        {item.createdAt
-                            ? new Date(item.createdAt).toLocaleDateString()
+                        {item.date
+                            ? new Date(item.date).toLocaleDateString()
                             : "N/A"}
                     </TableCell>
                     <TableCell className="px-4 py-3 text-right">
@@ -536,6 +559,7 @@ const PortfolioForm = () => {
                                             description: item.description,
                                             subtitle: item.subtitle || '',
                                             image: null,
+                                            date: item.date || new Date(),
                                         })
                                         setImagePreview(item.image)
                                         setOpen(true)
@@ -569,3 +593,4 @@ const PortfolioForm = () => {
 }
 
 export default PortfolioForm
+

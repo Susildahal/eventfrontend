@@ -9,7 +9,6 @@ import { Plus, Trash2, Save ,ArrowLeft } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axiosInstance from '@/app/config/axiosInstance';
 import {RefreshCcw} from 'lucide-react';
-import { toast } from "react-hot-toast";
 import { Spinner } from '@/components/ui/spinner';
 
  interface CriteriaItem {
@@ -214,17 +213,14 @@ function ServicePage() {
       }
 
       if (res.status >= 200 && res.status < 300) {
-       toast.success('Content saved successfully!');
         const data = res.data
         // if backend returned created/updated resource with id, store it
         if (data && (data._id || data.id)) setExistingId(data._id || data.id)
       } else {
         console.error('Save failed', res.status, res.data);
-        toast.error('Error saving content..');
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error('Error submitting form.');
     } finally {
       setLoading(false);
     }

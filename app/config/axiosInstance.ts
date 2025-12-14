@@ -8,18 +8,23 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
+  
 });
 
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("authToken");
 
       if (token) {
         if (!config.headers) config.headers = {} as AxiosRequestHeaders;
         config.headers.Authorization = `Bearer ${token}`;
+
       }
+
     }
     return config;
   },

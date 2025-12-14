@@ -475,6 +475,7 @@ export default function ProfilePage() {
                       type={showPassword ? 'text' : 'password'}
                       value={passwordData.currentPassword}
                       onChange={handlePasswordChange}
+                      placeholder='**********'
                       required
                       className={`transition-all duration-200 focus:ring-2 focus:ring-primary ${
                         errors.currentPassword ? 'border-red-500' : ''
@@ -493,6 +494,7 @@ export default function ProfilePage() {
                       id="newPassword"
                       name="newPassword"
                       type={showPassword ? 'text' : 'password'}
+                      placeholder='**********'
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
                       minLength={6}
@@ -514,6 +516,7 @@ export default function ProfilePage() {
                       type={showPassword ? 'text' : 'password'}
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
+                      placeholder='**********'
                       minLength={6}
                       required
                       className={`transition-all duration-200 focus:ring-2 focus:ring-primary ${

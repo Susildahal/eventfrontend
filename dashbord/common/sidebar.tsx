@@ -177,7 +177,7 @@ function UserProfile() {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/admin/settings")}>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <span> Site Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
