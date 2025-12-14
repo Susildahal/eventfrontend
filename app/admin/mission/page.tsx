@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Trash2, Save, ArrowLeft } from 'lucide-react';
+import {Save, ArrowLeft } from 'lucide-react';
 import axiosInstance from '@/app/config/axiosInstance';
 import { toast } from 'react-hot-toast';
 import { HeroForm, MissionVisionForm} from './MissionFormComponents';
-import type { Sections, HeroSection, MissionVisionItem, BeliefItem, MethodItem, SustainabilityItem, TechnologyItem, BudgetItem } from './types';
+import type { Sections, HeroSection, MissionVisionItem, } from './types';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 export default function AboutUsAdminDashboard() {
