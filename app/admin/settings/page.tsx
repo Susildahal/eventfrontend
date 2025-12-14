@@ -9,13 +9,18 @@ import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Inst
 import axiosInstance from '../../config/axiosInstance'
 import Header from '@/dashbord/common/Header';
 import { Spinner } from '@/components/ui/spinner';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/app/redux/store';
+import { fetchSiteSettings, updateSiteSettings, createSiteSettings } from '@/app/redux/slices/siteSettingsSlice';
 
 export default function SiteSettings() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { data: siteData, loading: reduxLoading } = useSelector((state: RootState) => state.siteSettings);
+  
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [fetchingData, setFetchingData] = useState(true);
 
   const defaultForm = {
     siteName: '',
@@ -28,44 +33,35 @@ export default function SiteSettings() {
 
   const [formData, setFormData] = useState(defaultForm);
 
-  // Fetch existing settings from backend on mount
+  // Fetch existing settings from Redux on mount
   useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        setFetchingData(true)
-        const res = await axiosInstance.get('/settings')
-        const data = res.data?.data ?? res.data ?? null
-        if (data) {
-          const socialArray = data.socialMedia
-            ? Object.entries(data.socialMedia).map(([name, value]) => {
-                // value might be a string (legacy) or an object { url, icon }
-                if (typeof value === 'string') {
-                  return { name: value, url: value, icon: '' }
-                }
-                const objValue = value as { name?: string; url?: string; icon?: string };
-                return { name: objValue?.name ?? name, url: objValue?.url ?? '', icon: objValue?.icon ?? '' }
-              })
-            : [{ name: '', url: '', icon: '' }]
+    dispatch(fetchSiteSettings());
+  }, [dispatch]);
 
-          setFormData({
-            siteName: data.siteName || '',
-            siteDescription: data.siteDescription || '',
-            phone: data.phone || '',
-            email: data.email || '',
-            address: data.address || '',
-            socialMedia: socialArray.length ? socialArray : [{ name: '', url: '', icon: '' }],
+  // Update form data when Redux state changes
+  useEffect(() => {
+    if (siteData) {
+      const socialArray = siteData.socialMedia
+        ? Object.entries(siteData.socialMedia).map(([name, value]) => {
+            return { 
+              name: value?.name ?? name, 
+              url: value?.url ?? '', 
+              icon: value?.icon ?? '' 
+            }
           })
-          setIsEditing(true)
-        }
-      } catch (err) {
-        console.error('Error fetching settings from backend:', err)
-      } finally {
-        setFetchingData(false)
-      }
-    }
+        : [{ name: '', url: '', icon: '' }]
 
-    fetchSettings()
-  }, [])
+      setFormData({
+        siteName: siteData.siteName || '',
+        siteDescription: siteData.siteDescription || '',
+        phone: siteData.phone || '',
+        email: siteData.email || '',
+        address: siteData.address || '',
+        socialMedia: socialArray.length ? socialArray : [{ name: '', url: '', icon: '' }],
+      })
+      setIsEditing(true)
+    }
+  }, [siteData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -146,7 +142,6 @@ export default function SiteSettings() {
 
     try {
       // Convert social media array to key-value pairs (object)
-      // Build socialMedia object mapping name -> { url, icon }
       const socialMediaObj: Record<string, { name: string; url: string; icon?: string }> = {};
       formData.socialMedia.forEach(item => {
         if (item.name && item.url) {
@@ -154,7 +149,6 @@ export default function SiteSettings() {
         }
       });
 
-      // Save to backend via axios
       const settingsObj = {
         siteName: formData.siteName,
         siteDescription: formData.siteDescription,
@@ -165,25 +159,26 @@ export default function SiteSettings() {
         updatedAt: new Date().toISOString(),
       }
 
-      // Use POST for create or PUT for update if your backend supports it.
+      // Use Redux actions
       if (isEditing) {
-        await axiosInstance.put('/settings', settingsObj)
+        await dispatch(updateSiteSettings(settingsObj)).unwrap();
       } else {
-        await axiosInstance.post('/settings', settingsObj)
+        await dispatch(createSiteSettings(settingsObj)).unwrap();
       }
 
       setSuccess(true)
       setIsEditing(true)
       setTimeout(() => setSuccess(false), 5000)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save settings. Make sure Firebase is configured.';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to save settings.';
       setError(errorMessage);
       console.error('Error saving settings:', err);
     } finally {
       setLoading(false);
     }
   };
-  if (fetchingData) {
+
+  if (reduxLoading && !siteData) {
     return (
       <div className="flex items-center justify-center py-12">
         <Spinner />
@@ -206,12 +201,7 @@ export default function SiteSettings() {
             </div>
           </CardHeader>
           <CardContent>
-            {fetchingData ? (
-              <div className="flex items-center justify-center py-12">
-            
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Success Message */}
                 {success && (
                   <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -407,7 +397,6 @@ export default function SiteSettings() {
                   {loading ? 'Saving...' : (isEditing ? 'Update Settings' : 'Save Settings')}
                 </Button>
               </form>
-            )}
           </CardContent>
         </Card>
       </div>

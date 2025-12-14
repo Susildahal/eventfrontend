@@ -37,6 +37,7 @@ import { fetchEventTypes } from '@/app/redux/slices/eventTypesSlice'
 import { fetchProfile } from '@/app/redux/slices/profileSlicer'
 import { fetchContacts } from '@/app/redux/slices/contactSlice'
 import { fetchBookings } from '@/app/redux/slices/bookingsSlice'
+import { fetchSiteSettings } from '@/app/redux/slices/siteSettingsSlice'
 import { RootState } from "@/app/redux/store"
 
 import {
@@ -92,6 +93,7 @@ const navigationItems = [
   { title: "Portfolio", icon: FolderKanban, href: "/admin/portfolio" },
     { title: "Profile Setting", icon: UserCog, href: "/admin/profile" },
 ];
+
 
 
 
@@ -367,6 +369,11 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   // Get pending bookings count
   const pendingBookings = useSelector((state: RootState) => state.bookings?.stats?.totalPending || 0)
   
+  // Get site settings for site name
+  const siteSettings = useSelector((state: RootState) => state.siteSettings?.data)
+  const siteName = siteSettings?.siteName || 'EventHub'
+  console.log("Site Name:", siteName)
+
   React.useEffect(() => {
     if (eventTypesState.items.length === 0) {
       dispatch(fetchEventTypes())
@@ -382,6 +389,11 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   // Fetch bookings to get pending count
   React.useEffect(() => {
     dispatch(fetchBookings({ page: 1, limit: 1 }))
+  }, [dispatch])
+  
+  // Fetch site settings
+  React.useEffect(() => {
+    dispatch(fetchSiteSettings())
   }, [dispatch])
   
   // Get service types from Redux state
@@ -404,10 +416,10 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
         <SidebarHeader className="flex items-center justify-center group-data-[state=collapsed]:px-2">
           <div className="flex w-full items-center gap-2 px-4 py-3 hover:opacity-80 transition-opacity group-data-[state=collapsed]:px-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground flex-shrink-0">
-              <img src="/logo.png" alt="EventHub Logo" className="h-5 w-5" />
+              <img src="/logo.png" alt={`${siteName} Logo`} className="h-5 w-5" />
             </div>
             <div className="flex flex-col hidden group-data-[state=expanded]:flex">
-              <span className="text-lg font-semibold">EventHub</span>
+              <span className="text-lg font-semibold">{siteName}</span>
               <span className="text-xs text-muted-foreground">Admin Panel</span>
             </div>
           </div>
