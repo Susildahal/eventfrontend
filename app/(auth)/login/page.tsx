@@ -25,11 +25,13 @@ const loginSchema = yup.object().shape({
     .string()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
+    rememberMe: yup.boolean(),
 })
 
+import { Checkbox } from "@/components/ui/checkbox"
 export default function LoginPage() {
   const router = useRouter()
-  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [formData, setFormData] = useState({ email: "", password: "", rememberMe: false  })
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -121,7 +123,7 @@ export default function LoginPage() {
 
     try {
       await loginSchema.validate(formData, { abortEarly: false })
-      
+
       // Form is valid, proceed with login
       const response = await axiosInstance.post("/users/login", formData)
 
@@ -151,7 +153,7 @@ export default function LoginPage() {
     <div
       className="flex justify-center items-center h-screen"
       style={{
-        backgroundImage: 'url("/logo.png")',
+        backgroundImage: 'url("/loginPage.jpg")',
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
@@ -165,7 +167,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -183,7 +185,7 @@ export default function LoginPage() {
                         : ""
                   }
                 />
-                
+
                 {formData.email && (
                   <div className="mt-2 space-y-1">
                     {emailValidation.messages.map((msg, idx) => (
@@ -215,15 +217,7 @@ export default function LoginPage() {
               </div>
 
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <p
-                    onClick={() => router.push("/forgotpassword")}
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer text-primary"
-                  >
-                    Forgot your password?
-                  </p>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -252,15 +246,36 @@ export default function LoginPage() {
                 )}
               </div>
 
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="remember"
+                  checked={formData.rememberMe}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      rememberMe: Boolean(checked),
+                    }))
+                  }
+                />
+                <Label htmlFor="remember" className="text-sm">
+                  Remember me
+                </Label>
+                <p
+                  onClick={() => router.push("/forgotpassword")}
+                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer text-primary"
+                >
+                  Forgot your password?
+                </p>
+              </div>
               <Button
-                onClick={handleSubmit}
+                type="submit"
                 className="w-full"
                 disabled={isSubmitting || !emailValidation.isValid}
               >
                 {isSubmitting ? "Logging in..." : "Login"}
               </Button>
             </div>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>
