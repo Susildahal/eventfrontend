@@ -324,7 +324,7 @@ function NavItem({
         href={item.href}
         className={
           isActive
-            ? "text-primary dark:font-extrabold font-semibold"
+            ? "text-[#7A5E39] dark:font-extrabold font-semibold "
             : ""
         }
       >
@@ -500,7 +500,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent ${
-                          isActive ? "bg-accent text-accent-foreground font-semibold" : ""
+                          isActive ? "bg-accent text-[#7A5E39] font-semibold" : ""
                         }`}
                       >
                         <Icon className="h-4 w-4" />
