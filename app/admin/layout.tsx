@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Welcome to Admin Panel",
+  title: "Welcome to Events OC Admin Panel",
   description: "Admin layout for the application",
 };
 
