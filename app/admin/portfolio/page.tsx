@@ -228,7 +228,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
     }
 
     return (
-        <div className="min-h-screen bg-white dark:bg-black ">
+        <div className="min-h-screen">
             <div className=" max-w-7xl mx-auto ">
                 {/* Header */}
                 <div className=" flex   pb-3  gap-4 items-center justify-between">

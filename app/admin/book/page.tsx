@@ -74,6 +74,7 @@ export default function BookingsDashboard() {
   const [editBooking, setEditBooking] = useState<Booking | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   
 
   // mark this as performing delete via DeleteModel modal
@@ -83,6 +84,8 @@ export default function BookingsDashboard() {
       setDeleting(deleteId);
       await dispatch(deleteBooking(deleteId)).unwrap();
       setDeleteId(null);
+      // Refetch bookings to update pagination
+      await dispatch(fetchBookings({ page: currentPage, limit: pagination.limit, status: statusFilter }));
       alert('Booking deleted successfully');
     } catch (error) {
       console.error('Failed to delete booking:', error);
@@ -96,6 +99,8 @@ export default function BookingsDashboard() {
     try {
       await dispatch(updateBooking({ id, updates })).unwrap();
       setEditBooking(null);
+      // Refetch bookings to update stats and pagination if needed
+      await dispatch(fetchBookings({ page: currentPage, limit: pagination.limit, status: statusFilter }));
     } catch (error) {
       console.error('Failed to update booking:', error);
     }
@@ -111,16 +116,19 @@ export default function BookingsDashboard() {
   };
 
   const handlePageChange = (page: number) => {
+    setCurrentPage(page);
     dispatch(fetchBookings({ page, limit: pagination.limit, status: statusFilter }));
   };
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
+    setCurrentPage(1);
     dispatch(fetchBookings({ page: 1, limit: pagination.limit, status }));
   };
 
   const clearFilter = () => {
     setStatusFilter('');
+    setCurrentPage(1);
     dispatch(fetchBookings({ page: 1, limit: pagination.limit }));
   };
 
@@ -422,7 +430,11 @@ interface EditFormProps {
 function EditForm({ booking, onCancel, onSave }: EditFormProps) {
   const [status, setStatus] = useState(booking.status);
   const [numberOfPeople, setNumberOfPeople] = useState(booking.numberofpeople);
-  const [eventDate, setEventDate] = useState(booking.eventdate);
+  // Format date to YYYY-MM-DD for input field
+  const [eventDate, setEventDate] = useState(() => {
+    const date = new Date(booking.eventdate);
+    return date.toISOString().split('T')[0];
+  });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
