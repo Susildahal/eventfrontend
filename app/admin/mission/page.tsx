@@ -182,7 +182,7 @@ export default function AboutUsAdminDashboard() {
       <div className="mx-auto ">
         <div className="mb-8 flex justify-between items-center">
           <div className='  justify-center items-center flex gap-4'>
-           <ArrowLeft className='cursor-pointer' onClick={() => router.back()} />
+           <ArrowLeft className='cursor-pointer text-[#7A5E39]' onClick={() => router.back()} />
             <div className='flex flex-col'>
               <h1 className="text-2xl font-bold text-[var(--color-foreground)] mb-2">About Us - Admin Dashboard</h1>
               <p className="text-[var(--color-muted-foreground)]">Events of the Century - About Us Content Management</p>
@@ -233,7 +233,7 @@ export default function AboutUsAdminDashboard() {
           <Button
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-amber-600 hover:bg-amber-700 text-white"
+            className=""
           >
             <Save className="w-4 h-4 mr-2" />
             {loading ? 'Submitting...' : 'Submit Changes'}

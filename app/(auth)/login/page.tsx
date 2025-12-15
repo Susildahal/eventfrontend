@@ -150,134 +150,154 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="flex justify-center items-center h-screen"
-      style={{
-        backgroundImage: 'url("/loginPage.jpg")',
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-      }}
-    >
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+
+  <div
+    className="min-h-screen flex items-center justify-center bg-black relative"
+
+  >
+    {/* Black Overlay */}
+    <div className="" />
+
+    {/* Login Card */}
+
+    <Card className="relative z-10 w-full max-w-sm bg-black text-white border-[#7A5E39] ">
+
+      <CardHeader className="items-center  flex  flex-col justify-center text-center space-y-2">
+        {/* Logo */}
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="h-14 w-auto object-contain"
+        />
+
+        <div>
+          <CardTitle className="text-2xl">
+            Login to your account
+          </CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-6">
+            {/* Email */}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="text"
+                placeholder="m@example.com"
+                value={formData.email}
+                onChange={handleChange}
+                className={
+                  errors.email
+                    ? "border-red-500"
+                    : formData.email && emailValidation.isValid
+                      ? "rounded py-5 border-[#7A5E39]"
+                      : "rounded py-5 border-[#7A5E39]"
+                }
+              />
+
+              {formData.email && (
+                <div className="mt-2 space-y-1">
+                  {emailValidation.messages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 text-sm"
+                    >
+                      {msg.includes("✓") ? (
+                        <>
+                          <CheckCircle2 size={16} className="text-green-500" />
+                          <span className="text-green-600">{msg}</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle size={16} className="text-red-500" />
+                          <span className="text-red-500">{msg}</span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {errors.email && (
+                <p className="text-sm text-red-500 font-semibold">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
                 <Input
-                  id="email"
-                  type="text"
-                  placeholder="m@example.com"
-                  value={formData.email}
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
                   onChange={handleChange}
                   className={
-                    errors.email
-                      ? "border-red-500"
-                      : formData.email && emailValidation.isValid
-                        ? "border-green-500"
-                        : ""
+                    errors.password
+                      ? "border-red-500 pr-10"
+                      : "pr-10 rounded py-5 border-[#7A5E39]"
                   }
                 />
-
-                {formData.email && (
-                  <div className="mt-2 space-y-1">
-                    {emailValidation.messages.map((msg, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        {msg.includes("✓") ? (
-                          <>
-                            <CheckCircle2 size={16} className="text-green-500" />
-                            <span className="text-green-600">{msg}</span>
-                          </>
-                        ) : (
-                          <>
-                            <AlertCircle size={16} className="text-red-500" />
-                            <span className="text-red-500">{msg}</span>
-                          </>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {errors.email && (
-                  <p className="text-sm text-red-500 font-semibold">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={
-                      errors.password ? "border-red-500 pr-10" : "pr-10"
-                    }
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  >
-                    {showPassword ? (
-                      <EyeOff size={18} />
-                    ) : (
-                      <Eye size={18} />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-sm text-red-500">{errors.password}</p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="remember"
-                  checked={formData.rememberMe}
-                  onCheckedChange={(checked) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      rememberMe: Boolean(checked),
-                    }))
-                  }
-                />
-                <Label htmlFor="remember" className="text-sm">
-                  Remember me
-                </Label>
-                <p
-                  onClick={() => router.push("/forgotpassword")}
-                  className="ml-auto inline-block text-sm underline-offset-4 hover:underline cursor-pointer text-primary"
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  Forgot your password?
-                </p>
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting || !emailValidation.isValid}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </Button>
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password}
+                </p>
+              )}
             </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  )
+
+            {/* Remember me */}
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="remember"
+                checked={formData.rememberMe}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    rememberMe: Boolean(checked),
+                  }))
+                }
+              />
+              <Label htmlFor="remember" className="text-sm">
+                Remember me
+              </Label>
+
+              <p
+                onClick={() => router.push("/forgotpassword")}
+                className="ml-auto text-sm underline-offset-4 hover:underline cursor-pointer "
+              >
+                Forgot your password?
+              </p>
+            </div>
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isSubmitting || !emailValidation.isValid}
+            >
+              {isSubmitting ? "Logging in..." : "Login"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  </div>
+)
+
 }

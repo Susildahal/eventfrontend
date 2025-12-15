@@ -183,7 +183,7 @@ export default function Page() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className='flex items-center gap-4'>
-              <ArrowLeft className='h-5 w-5 cursor-pointer' onClick={() => window.history.back()} />
+              <ArrowLeft className='h-5 w-5 cursor-pointer text-[#7A5E39]' onClick={() => window.history.back()} />
               <div>
                 <h2 className="text-2xl font-semibold">FAQ</h2>
                 <p className="text-sm text-gray-500">Add, edit or remove frequently asked questions</p>
@@ -328,7 +328,7 @@ export default function Page() {
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <MoreVertical className="cursor-pointer h-6 w-6 rotate-90" />
+                                <MoreVertical className="cursor-pointer h-6 w-6 rotate-90 text-[#7A5E39]" />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => openEdit(item)}>

@@ -240,18 +240,18 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                 <div className=" flex   pb-3  gap-4 items-center justify-between">
 
                     <div className=' flex  justify-center items-center gap-4' >
-                        <ArrowLeft className="h-6 w-6 cursor-pointer " onClick={() => router.back()} />
+                        <ArrowLeft className="h-6 w-6 cursor-pointer text-[#7A5E39]" onClick={() => router.back()} />
                         <div className=' flex flex-col '>
                             <h1 className="text-2xl font-bold text-black dark:text-white">Portfolio</h1>
                             <h2 className="text-sm text-gray-500 dark:text-gray-400">Manage your portfolio items here</h2>
                         </div></div>
 
-                    <button
+                    <Button
                         onClick={() => { setEditingItem(null); setFormData({ title: '', description: '', image: null  , subtitle: '' , date: new Date()}); setImagePreview(null); setOpen(true) }}
-                        className="px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-lg font-medium transition"
+                        className=""
                     >
                         Add Portfolio Item
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Modal */}
@@ -410,22 +410,23 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 
       {/* Footer */}
       <div className="sticky bottom-0 p-5 bg-white dark:bg-neutral-900 border-t border-gray-200 dark:border-neutral-700 flex justify-end gap-3">
-        <button
+        <Button
           onClick={() => setOpen(false)}
-          className="px-4 py-2 border border-gray-300 dark:border-neutral-600 text-black dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800"
+          className=""
+          variant={"outline"}
         >
           Cancel
-        </button>
+        </Button>
 
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={loading}
-          className={`px-5 py-2 rounded-lg text-white dark:text-black bg-black dark:bg-white hover:opacity-90 transition ${
+          className={` hover:opacity-90 transition ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           {loading ? (editingItem ? "Updating..." : "Saving...") : editingItem ? "Update" : "Save"}
-        </button>
+        </Button>
       </div>
     </div>
   </div>

@@ -311,20 +311,20 @@ function ServicePage() {
     };
   }, [id]);
 
-  if(loading){
-    return(
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner className="w-12 h-12  " />
-      </div>
-    ) 
-  }
+  // if(loading){
+  //   return(
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <Spinner className="w-12 h-12  " />
+  //     </div>
+  //   ) 
+  // }
 
   return (
     <div className="min-h-screen ">
       <div className=" ">
         <div className="mb-8 flex justify-between items-center">
           <div className=' flex items-center gap-4'>
-            <ArrowLeft className='h-5 w-5 cursor-pointer mb-2' onClick={() => router.back()} />
+            <ArrowLeft className='h-5 w-5 cursor-pointer mb-2 text-[#7A5E39]' onClick={() => router.back()} />
               <div className=' flex flex-col'>
           <h1 className="text-2xl font-bold mb-2 capitalize">{data.name || 'NA'}</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage the content of the {data.name || 'NA'} - Content Management</p><span className=''> </span>
@@ -499,7 +499,7 @@ function ServicePage() {
             <Button 
               onClick={handleSubmit} 
               disabled={loading}
-              className="bg-amber-600 hover:bg-amber-700 text-white"
+              className=""
             >
               <Save className="w-4 h-4 mr-2" />
               {loading ? 'Submitting...' : 'Submit Changes'}

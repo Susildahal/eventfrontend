@@ -174,7 +174,7 @@ export default function Page() {
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-5">
-            <ArrowLeft className="w-5 h-5 cursor-pointer" onClick={() =>router.back()} />
+            <ArrowLeft className="w-5 h-5 cursor-pointer text-[#7A5E39]" onClick={() =>router.back()} />
             <div>
               <h2 className="text-2xl font-semibold">Portfolio</h2>
               <p className="text-sm text-gray-500">Add, edit or remove portfolio images for {data.title ||"N/A"}  </p>
@@ -182,7 +182,7 @@ export default function Page() {
           </div>
           <div>
             <Button onClick={openAdd} className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
+              <Plus className="w-4 h-4 " />
               Add Image
             </Button>
           </div>

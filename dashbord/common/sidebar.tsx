@@ -407,8 +407,8 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                   <img src="/logo.png" alt={`${siteName} Logo`} className="h-5 w-5" />
                 </div>
                 <div className="flex flex-col">
-                  <SheetTitle className="text-lg font-semibold">{siteName}</SheetTitle>
-                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                  <SheetTitle className="text-lg font-semibold text-[#7A5E39]">{siteName}</SheetTitle>
+                  <span className="text-xs text-muted-foreground text-[#7A5E39]">Admin Panel</span>
                 </div>
               </div>
             </SheetHeader>
@@ -573,8 +573,8 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="text-lg font-semibold">{siteName}</span>
-                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                  <span className="text-lg font-semibold text-[#7A5E39]">{siteName}</span>
+                  <span className="text-xs  text-[#7A5E39]">Admin Panel</span>
                 </motion.div>
               </div>
             </SidebarHeader>
@@ -617,7 +617,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                       >
                         {filteredItems.map((item, index) => {
                           const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
-                          return (
+                            return (
                             <motion.div
                               key={item.title}
                               initial={{ opacity: 0, x: -20 }}
@@ -625,19 +625,19 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
                               transition={{ duration: 0.3, delay: index * 0.05 }}
                             >
                               <SidebarMenuItem>
-                                <div className='flex items-center gap-2'>
-                                  <NavItem
-                                    item={item}
-                                    isActive={isActive}
-                                    eventTypes={eventTypesList}
-                                    serviceTypesList={serviceTypesListRedux}
-                                    unreadCount={unreadCount}
-                                    pendingBookings={pendingBookings}
-                                  />
-                                </div>
+                              <div className='flex items-center gap-2'>
+                                <NavItem
+                                item={item}
+                                isActive={isActive}
+                                eventTypes={eventTypesList}
+                                serviceTypesList={serviceTypesListRedux}
+                                unreadCount={unreadCount}
+                                pendingBookings={pendingBookings}
+                                />
+                              </div>
                               </SidebarMenuItem>
                             </motion.div>
-                          )
+                            )
                         })}
                       </motion.div>
                     ) : (

@@ -134,8 +134,8 @@ const [data, setData] = useState<any>(null);
         <div className="flex justify-between items-start mb-8">
           <div className="flex items-center gap-4">
             <ArrowLeft 
-              className="w-5 h-5 cursor-pointer text-black dark:text-white hover:text-gray-600 dark:hover:text-gray-400" 
-              onClick={() => router.back()} 
+              className="w-5 h-5 cursor-pointer  text-[#7A5E39]" 
+              onClick={() => router.back()}
             />
             <div>
               <h2 className="text-2xl font-semibold text-black dark:text-white">Preview</h2>
@@ -150,7 +150,7 @@ const [data, setData] = useState<any>(null);
                 onClick={() => {
                   setEditingId(null)
                 }}
-                className="flex items-center gap-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black"
+                className="flex items-center "
               >
                 <Plus className="w-4 h-4" />
                 Add Item
@@ -238,7 +238,7 @@ const [data, setData] = useState<any>(null);
                         <Button 
                           type="button" 
                           variant="outline"
-                          className="border-gray-300 dark:border-gray-600 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-900"
+                          className=""
                           onClick={handleDialogClose}
                         >
                           Cancel
@@ -247,7 +247,7 @@ const [data, setData] = useState<any>(null);
                       <Button 
                         type="submit" 
                         disabled={isSubmitting}
-                        className="bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black"
+                        className="bg-[#7A5E39] hover:bg-[#7A5E39] text-white"
                       >
                         {isSubmitting ? 'Saving...' : editingId ? 'Update' : 'Create'}
                       </Button>

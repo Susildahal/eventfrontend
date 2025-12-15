@@ -125,6 +125,7 @@ const ResetPasswordClient = () => {
 
 
                             <Button
+                                
                                 type="submit"
                                 className="w-full py-5 text-[16px]"
                             >

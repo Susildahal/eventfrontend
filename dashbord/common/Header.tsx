@@ -24,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', l
   return (
     <div className='flex items-center justify-between w-full'>
       <div className='flex items-center gap-4'>
-        <ArrowLeft className='h-5 w-5 cursor-pointer' onClick={handleBack} />
+        <ArrowLeft className='h-5 w-5 cursor-pointer text-[#7A5E39]' onClick={handleBack} />
         <div className='flex flex-col'>
           <h2 className='text-lg font-medium'>{title}</h2>
           {titledesc && <p className='text-sm text-muted-foreground'>{titledesc}</p>}

@@ -351,7 +351,7 @@ export default function EventsdashbordClient() {
     <div className="min-h-screen">
       <div className="mx-auto">
         <div className="mb-8 flex items-center gap-4">
-          <ArrowLeft className='h-5 w-5 cursor-pointer' onClick={() => router.back()} />
+          <ArrowLeft className='h-5 w-5 cursor-pointer text-[#7A5E39]' onClick={() => router.back()} />
           <div className=' flex flex-col'>
           <h1 className="text-2xl font-bold mb-2">{data?.name || 'Event'} Events </h1>
           <p className="text-gray-600 dark:text-gray-400">Events of the Century - {data?.name || 'Event'} Content Management</p>
@@ -463,7 +463,7 @@ export default function EventsdashbordClient() {
           </Tabs>
 
           <div className="mt-8 flex justify-end gap-4">
-            <Button onClick={handleSubmit} disabled={loading} className="bg-amber-600 hover:bg-amber-700 text-white"><Save className="w-4 h-4 mr-2" />{loading ? 'Submitting...' : 'Submit Changes'}</Button>
+            <Button onClick={handleSubmit} disabled={loading} className=""><Save className="w-4 h-4 mr-2" />{loading ? 'Submitting...' : 'Submit Changes'}</Button>
           </div>
         </div>
       </div>

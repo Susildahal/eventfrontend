@@ -133,7 +133,7 @@ const page = () => {
 
                                 <DropdownMenu>
   <DropdownMenuTrigger asChild>
-    <MoreVertical className="cursor-pointer h-6 w-6  rotate-90"/>
+    <MoreVertical className="cursor-pointer h-6 w-6  rotate-90 text-[#7A5E39]"/>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setViewData(contact)}>

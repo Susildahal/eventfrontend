@@ -431,7 +431,7 @@ export default function ProfilePage() {
                   <div className="pt-4 flex gap-4">
                     <Button
                       onClick={handleProfileSubmit}
-                      className="w-[50%] bg-primary hover:bg-primary/90 transition-colors"
+                      className="w-[50%] "
                       disabled={loading}
                     >
                       {loading ? (
@@ -542,7 +542,7 @@ export default function ProfilePage() {
                   <div className="pt-4 flex gap-4">
                     <Button
                       onClick={handlePasswordSubmit}
-                      className="w-[50%] bg-primary hover:bg-primary/90 transition-colors"
+                      className="w-[50%]  bg-[#7a5E39] hover:bg-[#6b4a2f] active:bg-[#5b3b24] transition-colors"
                       disabled={loading}
                     >
                       {loading ? (
