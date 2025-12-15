@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useDispatch, useSelector } from "react-redux"
@@ -49,6 +50,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 import {
   Users,
@@ -343,6 +352,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
   const [filteredItems, setFilteredItems] = React.useState(navigationItems)
   const [eventTypesList, setEventTypes] = useState<EventType[]>([])
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
   const router = useRouter()
   const dispatch = useDispatch<AppDispatch>()
   const eventTypesState = useSelector((state: { eventTypes: { items: EventType[] } }) => state.eventTypes)
@@ -387,10 +397,164 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
+      {/* Mobile Menu Sheet */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="left" className="w-[280px] sm:w-[320px] p-0 md:hidden">
+          <div className="flex h-full flex-col">
+            <SheetHeader className="border-b px-4 py-4">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <img src="/logo.png" alt={`${siteName} Logo`} className="h-5 w-5" />
+                </div>
+                <div className="flex flex-col">
+                  <SheetTitle className="text-lg font-semibold">{siteName}</SheetTitle>
+                  <span className="text-xs text-muted-foreground">Admin Panel</span>
+                </div>
+              </div>
+            </SheetHeader>
+
+            <div className="flex-1 overflow-y-auto px-4 py-4">
+              {/* Search */}
+              <div className="relative mb-4">
+                <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              {/* Navigation Items */}
+              <div className="space-y-1">
+                <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase">Navigation</p>
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item, index) => {
+                    const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
+                    const Icon = item.icon
+                    
+                    if (item.title === "Event Types" && eventTypesList.length > 0) {
+                      return (
+                        <DropdownMenu key={item.title}>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent ${
+                              pathname.includes("/events-types") ? "bg-accent text-accent-foreground font-semibold" : ""
+                            }`}>
+                              <Icon className="h-4 w-4" />
+                              <span className="flex-1 text-left">{item.title}</span>
+                              <ChevronDown className="h-3 w-3" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-56">
+                            <DropdownMenuItem asChild>
+                              <Link href="/admin/events-types" onClick={() => setIsMobileMenuOpen(false)}>
+                                Add New Event
+                              </Link>
+                            </DropdownMenuItem>
+                            {eventTypesList.map((et: EventType, idx) => (
+                              <DropdownMenuItem key={et._id || et.id || et.name} asChild>
+                                <Link href={`/admin/eventsdashbord?id=${et._id || et.id}`} onClick={() => setIsMobileMenuOpen(false)}>
+                                  <span>{idx + 1}.</span> {et.name}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )
+                    }
+
+                    if (item.title === "Service Types" && serviceTypesListRedux.length > 0) {
+                      return (
+                        <DropdownMenu key={item.title}>
+                          <DropdownMenuTrigger asChild>
+                            <button className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent ${
+                              pathname.includes("/service") ? "bg-accent text-accent-foreground font-semibold" : ""
+                            }`}>
+                              <Icon className="h-4 w-4" />
+                              <span className="flex-1 text-left">{item.title}</span>
+                              <ChevronDown className="h-3 w-3" />
+                            </button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-56">
+                            <DropdownMenuItem asChild>
+                              <Link href="/admin/service-types" onClick={() => setIsMobileMenuOpen(false)}>
+                                Add new service
+                              </Link>
+                            </DropdownMenuItem>
+                            {serviceTypesListRedux.map((st: any, idx) => (
+                              <DropdownMenuItem key={st._id || st.id || st.name} asChild>
+                                <Link href={`/admin/service?id=${st._id || st.id}`} onClick={() => setIsMobileMenuOpen(false)}>
+                                  <span>{idx + 1}.</span> {st.name}
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )
+                    }
+
+                    return (
+                      <Link
+                        key={item.title}
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent ${
+                          isActive ? "bg-accent text-accent-foreground font-semibold" : ""
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span className="flex items-center gap-2">
+                          {item.title}
+                          {item.title === "Notifications" && unreadCount > 0 && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                              {unreadCount > 99 ? '99+' : unreadCount}
+                            </span>
+                          )}
+                          {item.title === "Book Now" && pendingBookings > 0 && (
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[10px] font-bold text-white">
+                              {pendingBookings > 99 ? '99+' : pendingBookings}
+                            </span>
+                          )}
+                        </span>
+                      </Link>
+                    )
+                  })
+                ) : (
+                  <p className="px-3 py-2 text-sm text-muted-foreground">No results found</p>
+                )}
+              </div>
+
+              {/* Settings */}
+              <div className="mt-6 space-y-1">
+                <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase">Settings</p>
+                <Link
+                  href="/admin/settings"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent ${
+                    pathname === "/admin/settings" ? "bg-accent text-accent-foreground font-semibold" : ""
+                  }`}
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>Site Settings</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Mobile Footer */}
+            <div className="border-t p-4">
+              <UserProfile />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Desktop Sidebar */}
       <motion.div
         initial={false}
         animate={{ width: isSidebarOpen ? "auto" : "auto" }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="hidden md:block"
       >
         <Sidebar collapsible="icon">
           <motion.div
@@ -530,24 +694,46 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
 
       <SidebarInset>
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4">
-          <SidebarTrigger>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              asChild
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {isSidebarOpen ? <X /> : <Menu />}
-              </motion.button>
-            </Button>
-          </SidebarTrigger>
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
 
-          <div className="flex flex-1 items-center justify-between">
-            <div className="flex items-center absolute right-2 justify-end gap-2">
+          {/* Desktop Sidebar Toggle */}
+          <div className="hidden md:block">
+            <SidebarTrigger>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                asChild
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {isSidebarOpen ? <X /> : <Menu />}
+                </motion.button>
+              </Button>
+            </SidebarTrigger>
+          </div>
+
+          {/* Mobile Logo */}
+          <div className="flex md:hidden items-center gap-2 flex-1">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <img src="/logo.png" alt={`${siteName} Logo`} className="h-4 w-4" />
+            </div>
+            <span className="text-base font-semibold">{siteName}</span>
+          </div>
+
+          {/* Desktop: Right side with theme and profile */}
+          <div className="flex flex-1 items-center justify-end">
+            <div className="flex items-center gap-2">
               <ThemeDropdown />
             </div>
           </div>
