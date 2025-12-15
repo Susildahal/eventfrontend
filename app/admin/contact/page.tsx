@@ -29,6 +29,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 const page = () => {
     const dispatch = useDispatch<AppDispatch>()
     const { items: contacts, loading, pagination } = useSelector((state: RootState) => state.contacts)
@@ -79,16 +84,34 @@ const page = () => {
 
                             {/* Truncated Subject */}
                             <TableCell>
-                                {contact.subject.length > 20
-                                    ? contact.subject.substring(0, 20) + "..."
-                                    : contact.subject}
+                                <Tooltip>
+  <TooltipTrigger>
+    <span>
+      {contact.subject.length > 20
+        ? contact.subject.substring(0, 20) + "..."
+        : contact.subject}
+    </span>
+  </TooltipTrigger >
+  <TooltipContent  className='max-w-xs'>
+    {contact.subject}
+  </TooltipContent>
+</Tooltip>
                             </TableCell>
 
                             {/* Truncated Message */}
                             <TableCell>
-                                {contact.message.length > 30
-                                    ? contact.message.substring(0, 30) + "..."
-                                    : contact.message}
+                                <Tooltip>
+  <TooltipTrigger >
+    <span>
+      {contact.message.length > 30
+        ? contact.message.substring(0, 30) + "..."
+        : contact.message}
+    </span>
+  </TooltipTrigger>
+  <TooltipContent className='max-w-xs'>
+    {contact.message}
+  </TooltipContent>
+</Tooltip>
                             </TableCell>
 
                             <TableCell>{contact.phone}</TableCell>

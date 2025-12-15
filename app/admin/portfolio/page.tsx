@@ -28,6 +28,12 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Spinner } from '@/components/ui/spinner'
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 const PortfolioForm = () => {
     const [open, setOpen] = useState(false)
     const [formData, setFormData] = useState({
@@ -469,8 +475,30 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                         />
                     </TableCell>
                     <TableCell className=" font-medium">{item.title}</TableCell>
-                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.subtitle ?.slice(0, 20)}...</TableCell>
-                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">{item.description ?.slice(0, 20)}...</TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <span>
+                                    {item.subtitle ?.slice(0, 20)}...
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent className='max-w-xs'>
+                                {item.subtitle}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableCell>
+                    <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <span>
+                                    {item.description ?.slice(0, 20)}...
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent className='max-w-xs'>
+                                {item.description}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableCell>
                     <TableCell className=" text-center">
                         <Link
                             href={`/admin/preview/${item._id}`}
