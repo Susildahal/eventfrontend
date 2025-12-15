@@ -96,12 +96,12 @@ export function DynamicBreadcrumb() {
             </BreadcrumbSeparator>
             <BreadcrumbItem>
               {item.isActive ? (
-                <BreadcrumbPage className="font-semibold text-foreground">
+                <BreadcrumbPage className="font-semibold text-[#7A5E39]">
                   {item.label}
                 </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link href={item.href} className="transition-colors hover:text-foreground">
+                  <Link href={item.href} className="transition-colors hover:text-[#7A5E39]">
                     {item.label}
                   </Link>
                 </BreadcrumbLink>

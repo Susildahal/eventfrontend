@@ -24,12 +24,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           },
           success: {
             style: {
-              background: "#10b981",
+              background: "#7A5E39",
               color: "#ffffff",
             },
             iconTheme: {
               primary: "#ffffff",
-              secondary: "#10b981",
+              secondary: "#7A5E39",
             },
           },
           error: {
