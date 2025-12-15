@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
     toast.error(message);
 
     // OPTIONAL: Auto-redirect to login on 401
-    if (error.response?.status === 401 && typeof window !== "undefined") {
+    if (error.response?.status === 401 || error.response?.status === 429   && typeof window !== "undefined") {
       localStorage.removeItem("authToken");
       window.location.href = "/login";
     }
