@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail  } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
+import { IoLogoTiktok } from "react-icons/io5";
 import axiosInstance from '../../config/axiosInstance'
 import Header from '@/dashbord/common/Header';
 import { Spinner } from '@/components/ui/spinner';
@@ -117,7 +118,7 @@ export default function SiteSettings() {
       case 'link':
         return Link
         case 'TikTok':
-        return Tiktok
+        return IoLogoTiktok
       default:
         return Link
     }
@@ -368,7 +369,7 @@ export default function SiteSettings() {
                                 <option value="Globe">Globe</option>
                                 <option value="Link">Link</option>
                                 <option value="Mail">Mail</option>
-                                 <option value="TikTok">TikTok</option>
+                                <option value="TikTok">TikTok</option>
                               </select>
                               
                             </div>

@@ -39,7 +39,7 @@ interface Booking {
   status: string;
   createdAt: string;
   updatedAt: string;
-  message: string;
+  message?: string;
 }
 
 interface BookingFormData {
