@@ -128,7 +128,7 @@ const [data, setData] = useState<any>(null);
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen ">
       <div className=" mx-auto">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">

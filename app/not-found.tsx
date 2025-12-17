@@ -19,7 +19,7 @@ export default function NotFound() {
 
       <Link
         href="/"
-        className="mt-8 inline-block rounded-lg bg-blue-600 px-6 py-3 text-white font-medium shadow-md transition hover:bg-blue-700 hover:scale-105"
+        className="mt-8 inline-block rounded-lg bg-[#7A5E39] px-6 py-3 text-white font-medium shadow-md transition hover:bg-[#7A5E39] hover:scale-105"
       >
       
           Go Back Home

@@ -22,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { longFormatters } from 'date-fns';
 interface Booking {
   _id: string;
   name: string;
@@ -38,6 +39,7 @@ interface Booking {
   status: string;
   createdAt: string;
   updatedAt: string;
+  message: string;
 }
 
 interface BookingFormData {
@@ -86,10 +88,8 @@ export default function BookingsDashboard() {
       setDeleteId(null);
       // Refetch bookings to update pagination
       await dispatch(fetchBookings({ page: currentPage, limit: pagination.limit, status: statusFilter }));
-      alert('Booking deleted successfully');
     } catch (error) {
       console.error('Failed to delete booking:', error);
-      alert('Failed to delete booking. Please try again.');
     } finally {
       setDeleting(null);
     }
@@ -327,9 +327,15 @@ export default function BookingsDashboard() {
           </DialogHeader>
           {viewBooking && (
             <div className="space-y-6">
+               <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Name</p>
                 <p className="text-lg text-gray-900 dark:text-white mt-1">{viewBooking.name}</p>
+              </div>
+               <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Event Type</p>
+                <p className="text-lg text-gray-900 dark:text-white mt-1">{viewBooking.eventtype}</p>
+              </div>
               </div>
 
               <div className="grid grid-cols-2 gap-6">
@@ -343,10 +349,7 @@ export default function BookingsDashboard() {
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Event Type</p>
-                <p className="text-lg text-gray-900 dark:text-white mt-1">{viewBooking.eventtype}</p>
-              </div>
+             
 
               <div className="grid grid-cols-2 gap-6">
                 <div>
@@ -369,17 +372,23 @@ export default function BookingsDashboard() {
                   <p className="text-gray-900 dark:text-white mt-1">{viewBooking.status}</p>
                 </div>
               </div>
-
+ <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Needs</p>
                 <p className="text-gray-900 dark:text-white mt-1">{viewBooking.needs.join(', ')}</p>
               </div>
-
-              <div>
+ <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Contact Method</p>
                 <p className="text-gray-900 dark:text-white mt-1">{viewBooking.contactMethod.join(', ')}</p>
               </div>
+             
+              </div>
 
+             
+  <div className='max-h-[100px] overflow-x-hidden '>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Message</p>
+                <p className="text-gray-900 dark:text-white mt-1">{viewBooking.message}</p>
+              </div>
               <Button onClick={() => setViewBooking(null)} className="w-full">Close</Button>
             </div>
           )}
@@ -509,3 +518,5 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
     </div>
   );
 }
+
+

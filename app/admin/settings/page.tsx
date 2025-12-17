@@ -115,6 +115,9 @@ export default function SiteSettings() {
       case 'email':
         return Mail
       case 'link':
+        return Link
+        case 'TikTok':
+        return Tiktok
       default:
         return Link
     }
@@ -365,6 +368,7 @@ export default function SiteSettings() {
                                 <option value="Globe">Globe</option>
                                 <option value="Link">Link</option>
                                 <option value="Mail">Mail</option>
+                                 <option value="TikTok">TikTok</option>
                               </select>
                               
                             </div>
