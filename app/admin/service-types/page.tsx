@@ -33,7 +33,7 @@ interface EventType {
   createdAt?: Date
 }
 
-const PRESET_SERVICE_TYPES = ['Venue', 'Catering','Entertainment', 'Audio & Visual' , 'Style & Design' ,'Photographs','Floral']
+const PRESET_SERVICE_TYPES = ['Venue', 'Catering', 'Style & Design' ,'Photographs','Floral']
 
 export default function servicetypesPage() {
   const dispatch = useDispatch<AppDispatch>()
