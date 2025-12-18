@@ -13,9 +13,10 @@ interface HeaderProps {
   link?: string
   onClickLink?: () => void
   additionalActions?: React.ReactNode
+  addionaldelete?: React.ReactNode
 }
 
-const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', link = '', onClickLink, additionalActions }) => {
+const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', link = '', onClickLink, additionalActions ,addionaldelete }) => {
   const router = useRouter()
 
   const handleBack = () => {
@@ -23,7 +24,7 @@ const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', l
   }
 
   return (
-    <div className='flex items-center justify-between w-full'>
+    <div className='flex items-center justify-between w-full gap-4 flex-wrap'>
       <div className='flex items-center gap-4'>
         <ArrowLeft className='h-5 w-5 cursor-pointer text-[#7A5E39]' onClick={handleBack} />
         <div className='flex flex-col'>
@@ -32,7 +33,8 @@ const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', l
         </div>
       </div>
 
-      <div className='flex justify-end items-center gap-2'>
+      <div className='flex items-center gap-2 flex-wrap'>
+        {addionaldelete}
         {additionalActions}
         {onClickLink ? (
           <Button variant="default" size="sm" onClick={onClickLink}>

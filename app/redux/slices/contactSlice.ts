@@ -80,6 +80,19 @@ export const deleteContact = createAsyncThunk(
   }
 );
 
+export const deleteContactsBulk = createAsyncThunk(
+  'contacts/deleteBulk',
+  async (ids: string[], { rejectWithValue }) => {
+    try {
+      await axiosInstance.post(`/contactus/delete-bulk`, { ids });
+      return ids;
+    } catch (error: any) {
+      return rejectWithValue(error?.message || 'Failed to delete contacts');
+    }
+  }
+);
+
+
 // Slice
 const contactSlice = createSlice({
   name: 'contacts',
@@ -127,7 +140,12 @@ const contactSlice = createSlice({
       .addCase(deleteContact.fulfilled, (state, action) => {
         state.items = state.items.filter((item) => item._id !== action.payload);
         state.pagination.total = Math.max(0, state.pagination.total - 1);
+      })
+      .addCase(deleteContactsBulk.fulfilled, (state, action) => {
+        state.items = state.items.filter((item) => !action.payload.includes(item._id));
+        state.pagination.total = Math.max(0, state.pagination.total - action.payload.length);
       });
+
   },
 });
 
