@@ -12,9 +12,10 @@ interface HeaderProps {
   linkname?: string
   link?: string
   onClickLink?: () => void
+  additionalActions?: React.ReactNode
 }
 
-const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', link = '', onClickLink }) => {
+const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', link = '', onClickLink, additionalActions }) => {
   const router = useRouter()
 
   const handleBack = () => {
@@ -31,7 +32,8 @@ const Header: React.FC<HeaderProps> = ({ title, titledesc = '', linkname = '', l
         </div>
       </div>
 
-      <div className='flex justify-end items-end'>
+      <div className='flex justify-end items-center gap-2'>
+        {additionalActions}
         {onClickLink ? (
           <Button variant="default" size="sm" onClick={onClickLink}>
             <Plus className='mr-2 h-4 w-4' />{linkname || 'Add'}

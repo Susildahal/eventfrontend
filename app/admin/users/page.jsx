@@ -35,8 +35,9 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import Header from "../../../dashbord/common/Header";
 import Newdeletemodel from "../../../dashbord/common/Newdeletemodel";
-import { Trash2, SquarePen, MoreVertical, Eye, EyeClosed, ChevronLeft } from "lucide-react";
+import { Trash2, SquarePen, MoreVertical, Eye, EyeClosed, ChevronLeft, Download, FileDown } from "lucide-react";
 import { Spinner } from '@/components/ui/spinner'
+import NewPagination from "../../../dashbord/common/Newpagination";
 
 const Page = () => {
   const [users, setUsers] = useState([]);
@@ -49,13 +50,19 @@ const Page = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formMode, setFormMode] = useState("create"); // "create" or "edit"
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [limit] = useState(10);
 
   // Fetch Users
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get("/users");
+      const response = await axiosInstance.get(`/users?page=${page}&limit=${limit}`);
       setUsers(response.data.data);
+      setTotalItems(response.data?.pagination?.total || 0);
+      setCurrentPage(response.data?.pagination?.page || 1);
     } catch (error) {
       console.log("Error:", error);
     } finally {
@@ -64,8 +71,8 @@ const Page = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   // Create User Handler
   const handleCreate = async (values, { resetForm }) => {
@@ -76,7 +83,7 @@ const Page = () => {
       setCreateOpen(false);
       setPreviewData(null);
       setPassword(false);
-      fetchUsers();
+      fetchUsers(currentPage);
     } catch (error) {
       console.log("Error creating user:", error);
     } finally {
@@ -95,7 +102,7 @@ const Page = () => {
       setPreviewData(null);
       setIsEditing(false);
       setPassword(false);
-      fetchUsers();
+      fetchUsers(currentPage);
     } catch (error) {
       console.log("Error updating:", error);
     }
@@ -115,9 +122,179 @@ const Page = () => {
   const handleStatusChange = async (userId, newStatus) => {
     try {
       await axiosInstance.patch(`/users/updateuserstatus/${userId}`, { status: newStatus });
-      fetchUsers();
+      fetchUsers(currentPage);
     } catch (error) {
       console.log("Error updating status:", error);
+    }
+  };
+
+  // Download PDF
+  const downloadPDF = async () => {
+    try {
+      setDownloading(true);
+      
+      // Dynamic import for Next.js compatibility
+      const jsPDF = (await import('jspdf')).default;
+      const autoTable = (await import('jspdf-autotable')).default;
+      
+      // Fetch all users for PDF
+      const response = await axiosInstance.get('/users?limit=10000');
+      const allUsers = response.data.data || [];
+
+      if (allUsers.length === 0) {
+        alert('No users found to download');
+        setDownloading(false);
+        return;
+      }
+
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(20);
+      doc.setTextColor(122, 94, 57);
+      doc.text('Users Management Report', 14, 20);
+      
+      // Add metadata
+      doc.setFontSize(10);
+      doc.setTextColor(100, 100, 100);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+      doc.text(`Total Users: ${allUsers.length}`, 14, 34);
+      
+      // Add separator line
+      doc.setDrawColor(122, 94, 57);
+      doc.setLineWidth(0.5);
+      doc.line(14, 38, 196, 38);
+      
+      // Prepare table data
+      const tableData = allUsers.map((user, index) => [
+        index + 1,
+        user.name || 'N/A',
+        user.email || 'N/A',
+        (user.role || 'user').toUpperCase(),
+        user.status ? 'Active' : 'Inactive',
+        user.address || 'N/A',
+        user.phone || 'N/A',
+        new Date(user.createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+      ]);
+      
+      // Use autoTable - jspdf-autotable extends jsPDF prototype
+      autoTable(doc, {
+        head: [['#', 'Name', 'Email', 'Role', 'Status', 'Address', 'Phone', 'Joined Date']],
+        body: tableData,
+        startY: 42,
+        styles: { 
+          fontSize: 8,
+          cellPadding: 3,
+          overflow: 'linebreak',
+        },
+        headStyles: { 
+          fillColor: [122, 94, 57],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center'
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+          0: { cellWidth: 10, halign: 'center' },
+          1: { cellWidth: 25 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 15, halign: 'center' },
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 30 },
+          6: { cellWidth: 25 },
+          7: { cellWidth: 25, halign: 'center' }
+        },
+        margin: { top: 42 },
+      });
+      
+      // Add footer
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(
+          `Page ${i} of ${pageCount}`,
+          doc.internal.pageSize.width / 2,
+          doc.internal.pageSize.height - 10,
+          { align: 'center' }
+        );
+      }
+      
+      // Save PDF
+      const fileName = `users-report-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+      
+      // Success feedback
+      console.log(`PDF downloaded successfully! (${allUsers.length} users)`);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert(`Failed to generate PDF: ${error.message}. Please try again.`);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Download CSV
+  const downloadCSV = async () => {
+    try {
+      setDownloading(true);
+      // Fetch all users for CSV
+      const response = await axiosInstance.get('/users?limit=10000');
+      const allUsers = response.data.data || [];
+
+      if (allUsers.length === 0) {
+        alert('No users found to download');
+        return;
+      }
+
+      // Prepare CSV headers
+      const headers = ['#', 'Name', 'Email', 'Role', 'Status', 'Address', 'Phone', 'Created Date'];
+      
+      // Prepare CSV rows
+      const rows = allUsers.map((user, index) => [
+        index + 1,
+        user.name || 'N/A',
+        user.email || 'N/A',
+        (user.role || 'user').toUpperCase(),
+        user.status ? 'Active' : 'Inactive',
+        user.address || 'N/A',
+        user.phone || 'N/A',
+        new Date(user.createdAt).toLocaleDateString('en-US')
+      ]);
+      
+      // Convert to CSV format
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+      
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `users-export-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Success feedback
+      alert(`CSV downloaded successfully! (${allUsers.length} users)`);
+    } catch (error) {
+      console.error('Error generating CSV:', error);
+      alert('Failed to generate CSV. Please try again.');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -196,6 +373,31 @@ const Page = () => {
           setFormMode("create");
           setIsEditing(false);
         }}
+        additionalActions={
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                disabled={downloading}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                {downloading ? 'Downloading...' : 'Export Users'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={downloadPDF} disabled={downloading}>
+                <Download className="mr-2 h-4 w-4" />
+                Download as PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={downloadCSV} disabled={downloading}>
+                <FileDown className="mr-2 h-4 w-4" />
+                Download as CSV
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        }
       />
 
       <div className="pt-2">
@@ -218,7 +420,7 @@ const Page = () => {
           <TableBody>
             {users.map((user, index) => (
               <TableRow key={user._id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{(currentPage - 1) * limit + index + 1}</TableCell>
                 <TableCell>
                   <img
                     src={user.profilePicture || "/default-profile.png"}
@@ -723,8 +925,14 @@ const Page = () => {
         <Newdeletemodel
           deleteId={deleteId}
           setDeleteId={setDeleteId}
-          onSuccess={fetchUsers}
+          onSuccess={() => fetchUsers(currentPage)}
           endpoint="/users"
+        />
+        <NewPagination
+          total={totalItems}
+          limit={limit}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
         />
       </div>
     </>
