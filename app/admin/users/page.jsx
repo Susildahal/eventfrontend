@@ -53,6 +53,7 @@ const Page = () => {
   const [downloading, setDownloading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [click , setClick] = useState (false); 
   const [limit] = useState(10);
 
   // Fetch Users
@@ -363,6 +364,32 @@ const Page = () => {
 
   return (
     <>
+    {
+      click && typeof click === "string" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50" onClick={() => { setClick(false); }}>
+          <div className="relative max-w-3xl max-h-full p-4 bg-transparent" onClick={e => e.stopPropagation()}>
+            {/* Close (X) Button */}
+            <button
+
+              aria-label="Close"
+              className="absolute top-4 right-5 text-white bg-black/60 hover:bg-black/80 rounded-full p-2 z-10"
+              onClick={() => { setClick(false); }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <img
+              src={click}
+              alt="Enlarged Image"
+              className="max-h-[80vh] w-auto rounded-md shadow-lg"
+            />
+          </div>
+        </div>
+      )
+
+    }
       <Header
         title="User Management"
         titledesc="Manage all registered users and their roles"
@@ -423,6 +450,7 @@ const Page = () => {
                 <TableCell>{(currentPage - 1) * limit + index + 1}</TableCell>
                 <TableCell>
                   <img
+                  onClick={() => setClick(user.profilePicture || "/default-profile.png")}
                     src={user.profilePicture || "/default-profile.png"}
                     alt={user.name}
                     className="h-10 w-10 rounded-full"

@@ -52,6 +52,9 @@ export default function Page() {
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0 })
   const [title, setTitle] = useState('')
+  const [click, setClick] = useState<string | boolean>(false)
+  // Track current image index for modal navigation
+  const [modalIndex, setModalIndex] = useState<number | null>(null)
   const router = useRouter()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -183,6 +186,55 @@ export default function Page() {
 
   return (
     <div>
+      {
+        click && modalIndex !== null && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50" onClick={() => { setClick(false); setModalIndex(null); }}>
+            <div className="relative max-w-3xl max-h-full p-4 bg-transparent" onClick={e => e.stopPropagation()}>
+              {/* Close (X) Button */}
+              <button
+                aria-label="Close"
+                className="absolute top-4 right-5 text-white bg-black/60 hover:bg-black/80 rounded-full p-2 z-10"
+                onClick={() => { setClick(false); setModalIndex(null); }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <img src={items[modalIndex]?.image}  alt="Full Size" className="h-[500px] w-[500px] rounded" />
+              <div className='flex justify-between items-center mt-4'>
+                <Button
+                  onClick={e => {
+                    e.stopPropagation();
+                    setModalIndex((prev) => {
+                      if (prev === null) return null;
+                      const next = (prev + 1) % items.length;
+                      setClick(items[next].image);
+                      return next;
+                    });
+                  }}
+                  disabled={items.length <= 1}
+                >
+                  Next
+                </Button>
+                <Button
+                  onClick={e => {
+                    e.stopPropagation();
+                    setModalIndex((prev) => {
+                      if (prev === null) return null;
+                      const prevIdx = (prev - 1 + items.length) % items.length;
+                      setClick(items[prevIdx].image);
+                      return prevIdx;
+                    });
+                  }}
+                  disabled={items.length <= 1}
+                >
+                  Previous
+                </Button>
+              </div>
+            </div>
+          </div>
+        )
+      }
 
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
@@ -296,7 +348,10 @@ export default function Page() {
                       <TableRow key={item._id}>
                         <TableCell>
                           <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
-                            <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                            <img  onClick={() => {
+                              setClick(item.image);
+                              setModalIndex(items.findIndex(i => i._id === item._id));
+                            }}  src={item.image} alt={item.title} className="h-full w-full object-cover" />
                           </div>
                         </TableCell>
                         <TableCell>{item.title}</TableCell>

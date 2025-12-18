@@ -64,7 +64,8 @@ const [date, setDate] = useState<Date | undefined>(new Date());
     const [loading, setLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
-    const [limit] = useState(10)
+    const [limit] = useState(10)  
+    const [click , setClick] = useState<string | boolean>(false);
     const [editingItem, setEditingItem] = useState<{
         id?: string
         _id?: string
@@ -240,6 +241,26 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 
     return (
         <div className="min-h-screen">
+          {
+            click && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50" onClick={() => { setClick(false); }}>
+                <div className="relative max-w-3xl max-h-full bg-transparent border-2 rounded-2xl border-white" onClick={e => e.stopPropagation()}>
+                  {/* Close (X) Button */}
+                  <button 
+                    aria-label="Close"
+                    className="absolute top-4 right-5 text-white bg-black/60 hover:bg-black/80 rounded-full p-2 z-10"
+                    onClick={() => { setClick(false); }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                  <img src={click as string} alt="Full Size" className="max-w-full max-h-[80vh] rounded-lg shadow-lg" />
+                </div>
+              </div>
+            )
+
+          }
             <div className=" max-w-7xl mx-auto ">
                 {/* Header */}
                 <div className=" flex   pb-3  gap-4 items-center justify-between">
@@ -475,6 +496,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                 >
                     <TableCell className="">
                         <img
+                        onClick={ ()=>{ setClick(item.image)}}
                             src={item.image}
                             alt={item.title}
                             className="h-16 w-16 rounded object-cover"
