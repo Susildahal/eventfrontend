@@ -33,7 +33,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-
+import NewPagination from '@/dashbord/common/Newpagination'
 const PortfolioForm = () => {
     const [open, setOpen] = useState(false)
     const [formData, setFormData] = useState({
@@ -62,6 +62,9 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 
     }>>([])
     const [loading, setLoading] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalItems, setTotalItems] = useState(0)
+    const [limit] = useState(10)
     const [editingItem, setEditingItem] = useState<{
         id?: string
         _id?: string
@@ -73,15 +76,17 @@ const [date, setDate] = useState<Date | undefined>(new Date());
     } | null>(null)
 
     useEffect(() => {
-        fetchPortfolioItems()
-    }, [])
+        fetchPortfolioItems(currentPage)
+    }, [currentPage])
 
-    const fetchPortfolioItems = async () => {
+    const fetchPortfolioItems = async (page: number = 1) => {
         try {
             setLoading(true)
             // Replace with your actual axiosInstance call
-            const res = await axiosInstance.get('/portfolio')
+            const res = await axiosInstance.get(`/portfolio?page=${page}&limit=${limit}`)
             setPortfolioItems(res?.data?.data || [])
+            setTotalItems(res?.data?.pagination?.total || 0)
+            setCurrentPage(res?.data?.pagination?.page || 1)
         } catch (err) {
             console.error('Failed to fetch portfolio items', err)
         } finally {
@@ -480,7 +485,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                         <Tooltip>
                             <TooltipTrigger>
                                 <span>
-                                    {item.subtitle ?.slice(0, 20)}...
+                                    {item.subtitle ?.slice(0, 20)} ...
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent className='max-w-xs'>
@@ -492,7 +497,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                         <Tooltip>
                             <TooltipTrigger>
                                 <span>
-                                    {item.description ?.slice(0, 20)}...
+                                    {item.description ?.slice(0, 20)} ...
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent className='max-w-xs'>
@@ -616,7 +621,13 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 </div>
 
             </div>
-            <Newdeletemodel endpoint='/portfolio' deleteId={deleteId} setDeleteId={setDeleteId} onSuccess={fetchPortfolioItems} />
+            <Newdeletemodel endpoint='/portfolio' deleteId={deleteId} setDeleteId={setDeleteId} onSuccess={() => fetchPortfolioItems(currentPage)} />
+            <NewPagination
+                total={totalItems}
+                limit={limit}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+            />
         </div>
     )
 }
