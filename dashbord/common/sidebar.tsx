@@ -446,8 +446,8 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
-          <SidebarSeparator className="my-2 group-data-[state=collapsed]:hidden" />
-          <div className="px-2 pb-2 group-data-[state=collapsed]:hidden">
+
+          <div className="px-2 pb-2 pt-3 group-data-[state=collapsed]:hidden">
             <div className="relative">
               <Search className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               <SidebarInput
