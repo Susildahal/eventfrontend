@@ -168,7 +168,7 @@ export default function BookingsDashboard() {
         >
           <CardHeader className="py-1 px-3">
             <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              Pending <span className='font-bold text-xs'>{stats.totalPending}</span>
+              Pending <span className='font-bold text-xs text-[#be9545]'>{stats.totalPending}</span>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -179,7 +179,7 @@ export default function BookingsDashboard() {
         >
           <CardHeader className="py-1 px-3">
             <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              Confirmed <span>{stats.totalConfirmed}</span>
+              Confirmed <span className='font-bold text-xs text-[#be9545]'>{stats.totalConfirmed}</span>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -190,7 +190,7 @@ export default function BookingsDashboard() {
         >
           <CardHeader className="py-1 px-3">
             <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              Cancelled <span>{stats.totalCancelled}</span>
+              Cancelled <span className='font-bold text-xs text-[#be9545]'>{stats.totalCancelled}</span>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -201,7 +201,7 @@ export default function BookingsDashboard() {
         >
           <CardHeader className="py-1 px-3">
             <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              Completed <span>{stats.totalCompleted}</span>
+              Completed <span className='font-bold text-xs text-[#be9545]'>{stats.totalCompleted}</span>
             </CardTitle>
           </CardHeader>
         </Card>

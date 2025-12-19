@@ -292,13 +292,14 @@ function NavItem({
   const pathname = usePathname()
 
   if (item.title === "Event Types" && eventTypes.length > 0) {
+    const isEventTypesActive = pathname.startsWith("/admin/events-types") || pathname.startsWith("/admin/eventsdashbord");
     return (
       <Collapsible asChild defaultOpen={pathname.includes("/events-types")} className="group/collapsible">
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
             <SidebarMenuButton tooltip={item.title}>
               <Icon />
-              <span>{item.title}</span>
+              <span className={isEventTypesActive ? "text-[#be9545] font-semibold" : undefined}>{item.title}</span>
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
@@ -328,13 +329,14 @@ function NavItem({
   }
 
   if (item.title === "Service Types" && serviceTypesList.length > 0) {
+    const isServiceTypesActive = pathname.startsWith("/admin/service-types") || pathname.startsWith("/admin/service");
     return (
       <Collapsible asChild defaultOpen={pathname.includes("/service")} className="group/collapsible">
         <SidebarMenuItem>
           <CollapsibleTrigger asChild>
             <SidebarMenuButton tooltip={item.title}>
               <Icon />
-              <span>{item.title}</span>
+              <span className={isServiceTypesActive ? "text-[#be9545] font-semibold" : undefined}>{item.title}</span>
               <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
             </SidebarMenuButton>
           </CollapsibleTrigger>
@@ -367,7 +369,7 @@ function NavItem({
     <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
       <Link href={item.href}>
         <Icon />
-        <span>{item.title}</span>
+        <span className={isActive ? "text-[#be9545] font-semibold" : undefined}>{item.title}</span>
         {item.title === "Notifications" && unreadCount > 0 && (
           <span className="ml-auto flex h-5 w-5 items-center justify-center  mx-auto rounded-full bg-[#7A5E39] text-[10px] font-bold text-white">
             {unreadCount > 99 ? '99+' : unreadCount}
