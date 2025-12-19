@@ -77,12 +77,11 @@ import {
   CalendarCheck,
   Info,
   FolderKanban,
-  ChevronDown,
   Settings,
   LogOut,
   Sun,
   Moon,
-  Monitor,
+
   Search,
   User,
   UserCog,
