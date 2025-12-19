@@ -30,7 +30,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-// TODO: Ensure Collapsible components exist at the correct path or update the import path below if necessary.
 import {
   Collapsible,
   CollapsibleContent,
@@ -370,12 +369,12 @@ function NavItem({
         <Icon />
         <span>{item.title}</span>
         {item.title === "Notifications" && unreadCount > 0 && (
-          <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+          <span className="ml-auto flex h-5 w-5 items-center justify-center  mx-auto rounded-full bg-[#7A5E39] text-[10px] font-bold text-white">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
         {item.title === "Bookings" && pendingBookings > 0 && (
-          <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[10px] font-bold text-white">
+          <span className="ml-auto flex h-5 w-5 items-center justify-center mx-auto rounded-full bg-[#7A5E39] text-[10px] font-bold text-white">
             {pendingBookings > 99 ? '99+' : pendingBookings}
           </span>
         )}
@@ -508,7 +507,7 @@ export function AppSidebar({ children }: { children?: React.ReactNode }) {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/admin/dashbord">Dashboard</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashbord" >Dashboard</BreadcrumbLink>
                 </BreadcrumbItem>
                 {pathname !== "/admin/dashbord" && (
                   <>

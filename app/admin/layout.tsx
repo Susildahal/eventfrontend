@@ -1,8 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Montserrat } from "next/font/google";
 import "../globals.css";
 import { AppSidebar } from "@/dashbord/common/sidebar";
 
+
+
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,8 +40,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-  
+    <div className={`${montserrat.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}>
       <AppSidebar ><div className=" mt-3">{children}</div ></AppSidebar>
     </div>
   );

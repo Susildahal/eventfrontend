@@ -163,7 +163,7 @@ export default function BookingsDashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card 
-          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Pending' ? 'ring-2 ring-yellow-500' : ''}`}
+          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Confirmed' ? 'ring-2 border-[#be9545]' : ''}`}
           onClick={() => handleStatusFilter('Pending')}
         >
           <CardHeader className="py-1 px-3">
@@ -174,7 +174,7 @@ export default function BookingsDashboard() {
         </Card>
         
         <Card 
-          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Confirmed' ? 'ring-2 ring-green-500' : ''}`}
+          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Confirmed' ? 'ring-2 border-[#be9545]' : ''}`}
           onClick={() => handleStatusFilter('Confirmed')}
         >
           <CardHeader className="py-1 px-3">
@@ -185,7 +185,7 @@ export default function BookingsDashboard() {
         </Card>
         
         <Card 
-          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Cancelled' ? 'ring-2 ring-red-500' : ''}`}
+          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Cancelled' ? 'ring-2 border-[#be9545]' : ''}`}
           onClick={() => handleStatusFilter('Cancelled')}
         >
           <CardHeader className="py-1 px-3">
@@ -196,7 +196,7 @@ export default function BookingsDashboard() {
         </Card>
         
         <Card 
-          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Completed' ? 'ring-2 ring-blue-500' : ''}`}
+          className={`h-16 cursor-pointer transition-all hover:shadow-md ${statusFilter === 'Completed' ? 'ring-2 border-[#be9545]' : ''}`}
           onClick={() => handleStatusFilter('Completed')}
         >
           <CardHeader className="py-1 px-3">

@@ -308,7 +308,7 @@ export default function Page() {
                 value={title}
               >
 
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger >
                   <SelectValue placeholder="Select a Gallery title" />
                 </SelectTrigger>
                 <SelectContent>

@@ -472,7 +472,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
         No portfolio items yet. Add one to get started!
       </div>
     ) : (
-    <div className="  mx-auto overflow-x-auto">
+    <div className=" mx-auto overflow-x-auto">
     <Table className="w-full">
         <TableHeader>
             <TableRow className=" border-b border-gray-300 dark:border-gray-700">
@@ -498,10 +498,21 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                         onClick={ ()=>{ setClick(item.image)}}
                             src={item.image}
                             alt={item.title}
-                            className="h-16 w-16 rounded object-cover"
+                            className="h-16 w-16 rounded object-cover cursor-pointer"
                         />
                     </TableCell>
-                    <TableCell className=" font-medium">{item.title}</TableCell>
+                    <TableCell className="max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span>
+                                    {item.title.slice(0, 20)} ...
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent className='max-w-xs'>
+                                {item.title}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TableCell>
                     <TableCell className=" max-w-xs text-sm text-gray-600 dark:text-gray-400 truncate">
                         <Tooltip>
                             <TooltipTrigger>
