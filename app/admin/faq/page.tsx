@@ -180,7 +180,7 @@ export default function Page() {
   return (
     <TooltipProvider>
       <div>
-        <div className="max-w-7xl mx-auto">
+        <div className=" mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className='flex items-center gap-4'>
               <ArrowLeft className='h-5 w-5 cursor-pointer text-[#7A5E39]' onClick={() => window.history.back()} />

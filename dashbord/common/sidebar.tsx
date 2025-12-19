@@ -374,7 +374,7 @@ function NavItem({
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
-        {item.title === "Book Now" && pendingBookings > 0 && (
+        {item.title === "Bookings" && pendingBookings > 0 && (
           <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-yellow-500 text-[10px] font-bold text-white">
             {pendingBookings > 99 ? '99+' : pendingBookings}
           </span>
