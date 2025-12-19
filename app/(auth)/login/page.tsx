@@ -210,8 +210,8 @@ export default function LoginPage() {
                     >
                       {msg.includes("✓") ? (
                         <>
-                          <CheckCircle2 size={16} className="text-green-500" />
-                          <span className="text-green-600">{msg}</span>
+                          <CheckCircle2 size={16} className="text-[#be9545]" />
+                          <span className="text-[#be9545]">{msg}</span>
                         </>
                       ) : (
                         <>
@@ -251,7 +251,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={18} className=" text-[#be9545]" /> : <Eye  className=" text-[#be9545]" size={18} />}
                 </button>
               </div>
               {errors.password && (
