@@ -242,7 +242,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
     }
 
     return (
-        <div className="min-h-screen">
+        <div className="">
           {
             click && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50" onClick={() => { setClick(false); }}>
