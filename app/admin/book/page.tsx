@@ -303,10 +303,10 @@ export default function BookingsDashboard() {
                           });
                         }}
                       >
-                        <SelectTrigger className="w-full border-0 bg-transparent p-0 hover:bg-transparent focus:ring-0">
+                        <SelectTrigger className="w-full ">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className='w-full'>
+                        <SelectContent className='w-full '>
                           <SelectItem value="Pending">Pending</SelectItem>
                           <SelectItem value="Confirmed">Confirmed</SelectItem>
                           <SelectItem value="Cancelled">Cancelled</SelectItem>
