@@ -21,6 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { RootState } from "@/app/redux/store"
+import Header from "@/dashbord/common/Header"
 
 const DashboardPage = () => {
   const bookings = useSelector((state: RootState) => state.bookings)
@@ -82,12 +83,8 @@ const DashboardPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Dashboard
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome back! {new Date().toLocaleDateString()}
-        </p>
+     
+        <Header title="Dashboard" titledesc="Overview of key metrics and actions" />
       </div>
 
       {/* Stats */}
