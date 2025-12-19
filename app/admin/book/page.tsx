@@ -322,7 +322,7 @@ export default function BookingsDashboard() {
                       </Select>
                       {updatingStatus === booking._id && (
                         <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded">
-                          <Spinner size="sm" />
+                          <Spinner />
                         </div>
                       )}
                     </div>
