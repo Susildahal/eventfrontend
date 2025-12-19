@@ -122,7 +122,7 @@ export default function EventTypesPage() {
                 <p className="text-sm text-gray-500">Manage event types</p>
               </div>
             </div>
-            <div>s
+            <div>
               <Button onClick={openAdd} className="flex items-center gap-2">
                 <Plus className="w-4 h-4" />
                 Add Event Type

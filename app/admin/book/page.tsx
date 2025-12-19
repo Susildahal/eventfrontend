@@ -31,6 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+
 interface Booking {
   _id: string;
   name: string;
@@ -85,6 +86,7 @@ export default function BookingsDashboard() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   
 
   // mark this as performing delete via DeleteModel modal
@@ -105,12 +107,15 @@ export default function BookingsDashboard() {
 
   const handleUpdate = async (id: string, updates: BookingFormData) => {
     try {
+      setUpdatingStatus(id);
       await dispatch(updateBooking({ id, updates })).unwrap();
       setEditBooking(null);
       // Refetch bookings to update stats and pagination if needed
       await dispatch(fetchBookings({ page: currentPage, limit: pagination.limit, status: statusFilter }));
     } catch (error) {
       console.error('Failed to update booking:', error);
+    } finally {
+      setUpdatingStatus(null);
     }
   };
 
@@ -231,7 +236,7 @@ export default function BookingsDashboard() {
               <TableHead>Phone</TableHead>
               <TableHead>Guests</TableHead>
               <TableHead>Budget</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead> Change Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -293,7 +298,34 @@ export default function BookingsDashboard() {
                   <TableCell>{booking.numberofpeople}</TableCell>
                   <TableCell>{booking.budget}</TableCell>
                   <TableCell>
-                    <span className={getStatusBadge(booking.status)}>{booking.status}</span>
+                    <div className="relative">
+                      <Select
+                        disabled={updatingStatus === booking._id}
+                        value={booking.status}
+                        onValueChange={async (value) => { 
+                          await handleUpdate(booking._id, {
+                            status: value,
+                            numberofpeople: booking.numberofpeople,
+                            eventdate: booking.eventdate
+                          });
+                        }}
+                      >
+                        <SelectTrigger className="w-full border-0 bg-transparent p-0 hover:bg-transparent focus:ring-0">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className='w-full'>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="Confirmed">Confirmed</SelectItem>
+                          <SelectItem value="Cancelled">Cancelled</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {updatingStatus === booking._id && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded">
+                          <Spinner size="sm" />
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

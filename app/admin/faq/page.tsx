@@ -211,7 +211,7 @@ export default function Page() {
                 </Select>
 
                 <Button onClick={openAdd} className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" />
+                  {/* <Plus className="w-4 h-4" /> */}
                   Add FAQ
                 </Button>
               </div>

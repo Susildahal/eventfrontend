@@ -37,7 +37,7 @@ const DashboardPage = () => {
       icon: Bell,
       color: "text-red-600",
       bgColor: "bg-red-50 dark:bg-red-950/20",
-      link: "/admin/contacts"
+      link: "/admin/contact"
     },
     {
       title: "Total Users",

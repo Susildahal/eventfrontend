@@ -464,7 +464,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                 {/* Portfolio Table */}
            <div className=" rounded-lg shadow ">
 
-  <div className="p-6">
+  <div className="">
     {loading ? (
       <div className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</div>
     ) : portfolioItems.length === 0 ? (
@@ -472,7 +472,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
         No portfolio items yet. Add one to get started!
       </div>
     ) : (
-    <div className=" max-w-6xl mx-auto overflow-x-auto">
+    <div className="  mx-auto overflow-x-auto">
     <Table className="w-full">
         <TableHeader>
             <TableRow className=" border-b border-gray-300 dark:border-gray-700">
