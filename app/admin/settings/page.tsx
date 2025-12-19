@@ -4,8 +4,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { AlertCircle, CheckCircle2, Trash2, Plus, Save, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
 import { IoLogoTiktok } from "react-icons/io5";
 import Header from '@/dashbord/common/Header';
 import { Spinner } from '@/components/ui/spinner';
@@ -21,6 +24,7 @@ export default function SiteSettings() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+
   interface SocialMedia {
     name: string;
     url: string;
@@ -28,16 +32,16 @@ export default function SiteSettings() {
   }
 
   interface SiteSettingsForm {
-   siteName: string;
+    siteName: string;
     siteDescription: string;  
     phone: string;
     email: string;
     address: string;
     bookingEmail: string;
     socialMedia: SocialMedia[];
-
   }
-  const defaultForm  = {
+
+  const defaultForm: SiteSettingsForm = {
     siteName: '',
     siteDescription: '',
     phone: '',
@@ -80,7 +84,7 @@ export default function SiteSettings() {
     }
   }, [siteData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -112,31 +116,20 @@ export default function SiteSettings() {
   const getIconComponent = (name?: string) => {
     if (!name) return Link
     switch ((name || '').toLowerCase()) {
-      case 'facebook':
-        return Facebook
-      case 'twitter':
-        return Twitter
-      case 'instagram':
-        return Instagram
+      case 'facebook': return Facebook
+      case 'twitter': return Twitter
+      case 'instagram': return Instagram
       case 'linkedin':
       case 'linkdin':
-      case 'linkedIn':
-        return Linkedin
-      case 'youtube':
-        return Youtube
-      case 'github':
-        return Github
-      case 'globe':
-        return Globe
+      case 'linkedin': return Linkedin
+      case 'youtube': return Youtube
+      case 'github': return Github
+      case 'globe': return Globe
       case 'mail':
-      case 'email':
-        return Mail
-      case 'link':
-        return Link
-        case 'TikTok':
-        return IoLogoTiktok
-      default:
-        return Link
+      case 'email': return Mail
+      case 'link': return Link
+      case 'tiktok': return IoLogoTiktok
+      default: return Link
     }
   }
 
@@ -161,7 +154,6 @@ export default function SiteSettings() {
     setSuccess(false);
 
     try {
-      // Convert social media array to key-value pairs (object)
       const socialMediaObj: Record<string, { name: string; url: string; icon?: string }> = {};
       formData.socialMedia.forEach(item => {
         if (item.name && item.url) {
@@ -180,7 +172,6 @@ export default function SiteSettings() {
         bookingEmail: formData.bookingEmail,
       }
 
-      // Use Redux actions
       if (isEditing) {
         await dispatch(updateSiteSettings(settingsObj)).unwrap();
       } else {
@@ -201,241 +192,245 @@ export default function SiteSettings() {
 
   if (reduxLoading && !siteData) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center h-[50vh]">
         <Spinner />
       </div>
     )
   }
 
-
-
   return (
-    <>
-    <Header title="Site Settings" titledesc={isEditing ? 'Edit your website information and social media links' : 'Create your website information and social media links'} />
-      <div className="bg-white dark:bg-gray-900 text-gray-900  dark:text-white">
-      <div className=" mx-auto">
+    <div className="space-y-6 pb-10">
+      <Header 
+        title="Site Settings" 
+        titledesc="Manage your website's general information and social media presence." 
+      />
+
+      <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl mx-auto">
+        {/* Status Messages */}
+        {success && (
+          <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900 rounded-lg animate-in fade-in slide-in-from-top-2">
+            <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <span className="text-green-800 dark:text-green-300 font-medium">Settings saved successfully!</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900 rounded-lg animate-in fade-in slide-in-from-top-2">
+            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+            <span className="text-red-800 dark:text-red-300 font-medium">{error}</span>
+          </div>
+        )}
+
+        {/* General Information Card */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
-           
-         
-            </div>
+            <CardTitle>General Information</CardTitle>
+            <CardDescription>
+              Basic details about your website and business contact information.
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Success Message */}
-                {success && (
-                  <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <span className="text-green-800">Settings saved successfully!</span>
-                  </div>
-                )}
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="siteName">Site Name <span className="text-red-500">*</span></Label>
+                <Input
+                  id="siteName"
+                  name="siteName"
+                  value={formData.siteName}
+                  onChange={handleChange}
+                  placeholder="e.g. My Awesome Events"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="+1 (555) 000-0000"
+                />
+              </div>
+            </div>
 
-                {/* Error Message */}
-                {error && (
-                  <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                    <span className="text-red-800">{error}</span>
-                  </div>
-                )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="email">Contact Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="contact@example.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bookingEmail">Booking Notification Email</Label>
+                <Input
+                  id="bookingEmail"
+                  name="bookingEmail"
+                  type="email"
+                  value={formData.bookingEmail}
+                  onChange={handleChange}
+                  placeholder="bookings@example.com"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Notifications for new bookings will be sent here.
+                </p>
+              </div>
+            </div>
 
-                {/* Basic Information - 2 columns on laptop */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Basic Information</h3>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="siteName">Site Name *</Label>
-                      <Input
-                        id="siteName"
-                        name="siteName"
-                        type="text"
-                        value={formData.siteName}
-                        onChange={handleChange}
-                        placeholder="Enter your site name"
-                        required
-                        className="mt-2"
-                      />
-                    </div>
+            <div className="space-y-2">
+              <Label htmlFor="siteDescription">Site Description</Label>
+              <Textarea
+                id="siteDescription"
+                name="siteDescription"
+                value={formData.siteDescription}
+                onChange={handleChange}
+                placeholder="A brief description of your business..."
+                className="resize-none min-h-[80px]"
+              />
+            </div>
 
-                    <div>
-                      <Label htmlFor="siteDescription">Site Description</Label>
-                      <Input
-                        id="siteDescription"
-                        name="siteDescription"
-                        type="text"
-                        value={formData.siteDescription}
-                        onChange={handleChange}
-                        placeholder="Brief description of your site"
-                        className="mt-2"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="contact@example.com"
-                        className="mt-2"
-                      />
-                    </div>
-
-                     <div>
-                      <Label htmlFor="bookingEmail">Booking Email <span className="text-sm text-gray-500">(This is the email where you receive your booking notifications)</span></Label>
-                      <Input
-                        id="bookingEmail"
-                        name="bookingEmail"
-                        type="email"
-                        value={formData.bookingEmail}
-                        onChange={handleChange}
-                        placeholder="booking@example.com"
-                        className="mt-2"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        placeholder="+1 (555) 000-0000"
-                        className="mt-2"
-                      />
-                    </div>
-
-                    <div className="lg:col-span-2">
-                      <Label htmlFor="address">Address</Label>
-                      <Input
-                        id="address"
-                        name="address"
-                        type="text"
-                        value={formData.address}
-                        onChange={handleChange}
-                        placeholder="Your business address"
-                        className="mt-2"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Social Media Links - Key Value */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Social Media</h3>
-                    <Button
-                      type="button"
-                      onClick={addSocialMedia}
-                      variant="outline"
-                      size="sm"
-                      className="gap-1"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Social Media
-                    </Button>
-                  </div>
-
-                  <div className="space-y-3">
-                    {formData.socialMedia.map((social, index) => (
-                      <div key={index} className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-end">
-                        <div>
-                          <Label htmlFor={`social-name-${index}`}>Platform Name</Label>
-                          <Input
-                            id={`social-name-${index}`}
-                            type="text"
-                            value={social.name}
-                            onChange={(e) => handleSocialMediaChange(index, 'name', e.target.value)}
-                            placeholder="e.g., Facebook, Twitter, Instagram"
-                            className="mt-2"
-                          />
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`social-url-${index}`}>URL & Icon</Label>
-                          <div className="flex gap-3 mt-2 items-center">
-                            {/* Icon preview */}
-                            <div className="flex-shrink-0">
-                              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                {(() => {
-                                  const Icon = getIconComponent(social.icon)
-                                  return <Icon className="w-5 h-5 text-gray-600 dark:text-gray-200" />
-                                })()}
-                              </div>
-                            </div>
-
-                            {/* URL input */}
-                            <Input
-                              id={`social-url-${index}`}
-                              type="url"
-                              value={social.url}
-                              onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
-                              placeholder="https://example.com/profile"
-                              className="flex-1"
-                            />
-
-                            {/* Icon select (compact) */}
-                            <div className="flex flex-col">
-                              <Label className="sr-only" htmlFor={`social-icon-${index}`}>Icon</Label>
-                              <select
-                                id={`social-icon-${index}`}
-                                value={social.icon ?? ''}
-                                onChange={(e) => handleSocialMediaIconChange(index, e.target.value)}
-                                className="rounded-md border border-gray-200 bg-white text-gray-900 px-2 py-1 text-sm dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                                title="Choose an icon"
-                              >
-                                <option value="">Icon</option>
-                                <option value="Facebook">Facebook</option>
-                                <option value="Twitter">Twitter</option>
-                                <option value="Instagram">Instagram</option>
-                                <option value="Linkedin">Linkedin</option>
-                                <option value="Youtube">Youtube</option>
-                                <option value="Github">Github</option>
-                                <option value="Globe">Globe</option>
-                                <option value="Link">Link</option>
-                                <option value="Mail">Mail</option>
-                                <option value="TikTok">TikTok</option>
-                              </select>
-                              
-                            </div>
-
-                            {/* Remove button */}
-                            {formData.socialMedia.length > 1 && (
-                              <Button
-                                type="button"
-                                onClick={() => removeSocialMedia(index)}
-                                variant="destructive"
-                                size="icon"
-                                className="ml-1"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Submit Button */}
-                <Button 
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading ? 'Saving...' : (isEditing ? 'Update Settings' : 'Save Settings')}
-                </Button>
-              </form>
+            <div className="space-y-2">
+              <Label htmlFor="address">Physical Address</Label>
+              <Textarea
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="123 Event Street, City, Country"
+                className="resize-none min-h-[80px]"
+              />
+            </div>
           </CardContent>
         </Card>
-      </div>
+
+        {/* Social Media Card */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div className="space-y-1">
+              <CardTitle>Social Media</CardTitle>
+              <CardDescription>
+                Connect your social media profiles.
+              </CardDescription>
+            </div>
+            <Button
+              type="button"
+              onClick={addSocialMedia}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Platform
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {formData.socialMedia.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground text-sm border-2 border-dashed rounded-lg">
+                No social media profiles added yet.
+              </div>
+            )}
+            
+            {formData.socialMedia.map((social, index) => (
+              <div key={index} className="group relative grid grid-cols-1 md:grid-cols-12 gap-4 items-start p-4 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+                {/* Platform Name */}
+                <div className="md:col-span-3 space-y-2">
+                  <Label htmlFor={`social-name-${index}`} className="text-xs text-muted-foreground">Platform</Label>
+                  <Input
+                    id={`social-name-${index}`}
+                    value={social.name}
+                    onChange={(e) => handleSocialMediaChange(index, 'name', e.target.value)}
+                    placeholder="e.g. Facebook"
+                  />
+                </div>
+
+                {/* Icon Selector */}
+                <div className="md:col-span-3 space-y-2">
+                  <Label className="text-xs text-muted-foreground">Icon</Label>
+                  <div className="flex gap-2">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-md border bg-background flex items-center justify-center">
+                      {(() => {
+                        const Icon = getIconComponent(social.icon)
+                        return <Icon className="w-5 h-5 text-muted-foreground" />
+                      })()}
+                    </div>
+                    <Select
+                      value={social.icon || ''}
+                      onValueChange={(value) => handleSocialMediaIconChange(index, value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Icon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Facebook">Facebook</SelectItem>
+                        <SelectItem value="Twitter">Twitter</SelectItem>
+                        <SelectItem value="Instagram">Instagram</SelectItem>
+                        <SelectItem value="Linkedin">Linkedin</SelectItem>
+                        <SelectItem value="Youtube">Youtube</SelectItem>
+                        <SelectItem value="Github">Github</SelectItem>
+                        <SelectItem value="TikTok">TikTok</SelectItem>
+                        <SelectItem value="Globe">Globe</SelectItem>
+                        <SelectItem value="Mail">Mail</SelectItem>
+                        <SelectItem value="Link">Link</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* URL */}
+                <div className="md:col-span-5 space-y-2">
+                  <Label htmlFor={`social-url-${index}`} className="text-xs text-muted-foreground">Profile URL</Label>
+                  <Input
+                    id={`social-url-${index}`}
+                    value={social.url}
+                    onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+
+                {/* Delete Button */}
+                <div className="md:col-span-1 flex justify-end pt-8 md:pt-8">
+                  <Button
+                    type="button"
+                    onClick={() => removeSocialMedia(index)}
+                    variant="ghost"
+                    size="icon"
+                    className="text-muted-foreground hover:text-destructive"
+                    disabled={formData.socialMedia.length <= 1 && !social.name && !social.url}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Submit Action */}
+        <div className="flex justify-end pt-4">
+          <Button 
+            type="submit" 
+            disabled={loading}
+            size="lg"
+            className="min-w-[150px]"
+          >
+            {loading ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" /> Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
-    </>
   );
 }
