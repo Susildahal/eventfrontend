@@ -260,10 +260,8 @@ const [data, setData] = useState<any>(null);
         </div>
 
         {/* Portfolio Items Table */}
-        <div className="bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg shadow">
-          <div className="p-6 border-b border-gray-300 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-black dark:text-white">Portfolio Items</h3>
-          </div>
+        <div className="">
+        
 
           <div className="p-6">
             {loading ? (
@@ -276,27 +274,29 @@ const [data, setData] = useState<any>(null);
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader className="bg-gray-50 dark:bg-gray-900">
-                    <TableRow className="border-gray-300 dark:border-gray-700">
-                      <TableHead className="text-black dark:text-white">Name</TableHead>
-                      <TableHead className="text-black dark:text-white">Description</TableHead>
-                      <TableHead className="text-black dark:text-white text-center">Rating</TableHead>
-                  
-                      <TableHead className="text-black dark:text-white text-right">Actions</TableHead>
+                    <TableRow className="">
+                                            <TableHead className="">Index</TableHead>
+
+                      <TableHead className="">Name</TableHead>
+                      <TableHead className="">Description</TableHead>
+                      <TableHead className="">Rating</TableHead>
+                      <TableHead className="">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {portfolioItems.map((item, idx) => (
                       <TableRow key={item.id ?? idx} className="border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900">
+                        <TableCell className="font-medium text-black dark:text-white">{idx + 1}</TableCell>
                         <TableCell className="font-medium text-black dark:text-white">{item.name}</TableCell>
                         <TableCell className="text-gray-600 dark:text-gray-400 max-w-xs truncate">{item.description}</TableCell>
-                        <TableCell className="text-center text-black dark:text-white">
-                          <span className="inline-block bg-gray-200 dark:bg-gray-700 text-black dark:text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <TableCell className=" text-black dark:text-white">
+                          <span className="">
                             {item.star} ⭐
                           </span>
                         </TableCell>
                       
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
+                        <TableCell className="">
+                          <div className="flex gap-2">
                             <Button
                               onClick={() => handleEdit(item)}
                               variant="outline"

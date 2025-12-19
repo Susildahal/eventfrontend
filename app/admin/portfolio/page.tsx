@@ -34,6 +34,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import NewPagination from '@/dashbord/common/Newpagination'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 const PortfolioForm = () => {
     const [open, setOpen] = useState(false)
     const [formData, setFormData] = useState({
@@ -261,7 +263,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
             )
 
           }
-            <div className=" max-w-7xl mx-auto ">
+            <div className=" mx-auto ">
                 {/* Header */}
                 <div className=" flex   pb-3  gap-4 items-center justify-between">
 
@@ -283,10 +285,10 @@ const [date, setDate] = useState<Date | undefined>(new Date());
                 {/* Modal */}
             {open && (
   <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-    <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-neutral-700">
+    <div className="bg-white dark:bg-black rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-neutral-700">
 
       {/* Header */}
-      <div className="sticky top-0 bg-white dark:bg-neutral-900 p-5 border-b border-gray-200 dark:border-neutral-700">
+      <div className="sticky top-0 bg-white dark:bg-black p-5 border-b border-gray-200 dark:border-neutral-700">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-black dark:text-white">
             {editingItem ? "Edit Portfolio Item" : "Add Portfolio Item"}
@@ -309,14 +311,14 @@ const [date, setDate] = useState<Date | undefined>(new Date());
           <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
             Title
           </label>
-          <input
+          <Input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
             onBlur={() => handleBlur("title")}
             placeholder="Enter portfolio title"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+            className=""
           />
           {errors.title && touched.title && (
             <p className="text-red-500 text-xs">{errors.title}</p>
@@ -328,14 +330,14 @@ const [date, setDate] = useState<Date | undefined>(new Date());
           <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
             Subtitle
           </label>
-          <textarea
+          <Textarea
             name="subtitle"
             value={formData.subtitle}
             onChange={handleInputChange}
             onBlur={() => handleBlur("subtitle")}
             placeholder="Enter portfolio subtitle"
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+            className=""
           />
           {errors.subtitle && touched.subtitle && (
             <p className="text-red-500 text-xs">{errors.subtitle}</p>
@@ -347,14 +349,14 @@ const [date, setDate] = useState<Date | undefined>(new Date());
           <label className="text-sm font-medium text-gray-800 dark:text-gray-200">
             Description
           </label>
-          <textarea
+          <Textarea
             name="description"
             value={formData.description}
             onChange={handleInputChange}
             onBlur={() => handleBlur("description")}
             placeholder="Enter portfolio description"
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-black dark:text-white focus:ring-2 focus:ring-neutral-700 outline-none"
+            className=""
           />
           {errors.description && touched.description && (
             <p className="text-red-500 text-xs">{errors.description}</p>
@@ -460,10 +462,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
 
 
                 {/* Portfolio Table */}
-           <div className="bg-white dark:bg-black rounded-lg shadow border border-gray-300 dark:border-gray-700">
-  <div className="p-6 border-b border-gray-300 dark:border-gray-700">
-    <h2 className="text-lg font-bold text-black dark:text-white">Portfolio Items</h2>
-  </div>
+           <div className=" rounded-lg shadow ">
 
   <div className="p-6">
     {loading ? (
@@ -476,7 +475,7 @@ const [date, setDate] = useState<Date | undefined>(new Date());
     <div className=" max-w-6xl mx-auto overflow-x-auto">
     <Table className="w-full">
         <TableHeader>
-            <TableRow className="border-gray-300 dark:border-gray-700">
+            <TableRow className=" border-b border-gray-300 dark:border-gray-700">
                 <TableHead className="px-4 py-3 text-left">Image</TableHead>
                 <TableHead className="px-4 py-3 text-left">Title</TableHead>
                 <TableHead className="px-4 py-3 text-left">Subtitle</TableHead>

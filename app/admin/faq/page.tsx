@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Trash2, Edit, Plus, RefreshCcw, MoreVertical } from 'lucide-react'
+import { Trash2, Edit, ViewIcon as Plus, RefreshCcw, MoreVertical } from 'lucide-react'
 import axiosInstance from '@/app/config/axiosInstance'
 import DeleteModel from '@/dashbord/common/DeleteModel'
 import NewPagination from '@/dashbord/common/Newpagination'
@@ -218,8 +218,8 @@ export default function Page() {
             </div>
           </div>
 
-          <Card>
-            <CardContent>
+          <div>
+            <div>
               {loading && <div className="p-4 text-sm text-gray-500">Loading...</div>}
               {error && <div className="p-4 text-sm text-red-500">{error}</div>}
               <div className="overflow-x-auto">
@@ -232,7 +232,7 @@ export default function Page() {
                       <TableHead>Answer</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead className="w-36">Actions</TableHead>
+                      <TableHead >Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -289,7 +289,7 @@ export default function Page() {
                     ) : (
                       items.map((item, idx) => (
                         <TableRow key={String(item._id ?? item.id ?? idx)}>
-                          <TableCell>{idx + 1}</TableCell>
+                          <TableCell>{items.findIndex(i => i._id === item._id) + 1 + (pagination.page - 1) * pagination.limit}</TableCell>
                           <TableCell>{item.title}</TableCell>
 
                           <TableCell className="truncate max-w-xs">
@@ -325,7 +325,7 @@ export default function Page() {
 
                           <TableCell className="truncate max-w-xs">{item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</TableCell>
 
-                          <TableCell>
+                          <TableCell className=' flex justify-center '>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <MoreVertical className="cursor-pointer h-6 w-6 rotate-90 text-[#7A5E39]" />
@@ -357,8 +357,8 @@ export default function Page() {
                   </TableBody>
                 </Table>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {isOpen && (

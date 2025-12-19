@@ -189,9 +189,9 @@ export default function AboutUsAdminDashboard() {
             </div>
           </div>
 
-          <div className="mb-6 flex justify-end">
+          {/* <div className="mb-6 flex justify-end">
            <Link href="/admin/aboutimage"><Button> Add Image </Button></Link>
-          </div>
+          </div> */}
         </div>
         <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'hero' | 'mission')} className="w-full">
           <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">

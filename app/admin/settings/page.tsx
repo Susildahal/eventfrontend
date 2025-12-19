@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, CheckCircle2, Trash2, Plus, Edit2, Facebook, Twitter, Instagram, Linkedin, Youtube, Github, Globe, Link, Mail } from 'lucide-react';
 import { IoLogoTiktok } from "react-icons/io5";
-import axiosInstance from '../../config/axiosInstance'
 import Header from '@/dashbord/common/Header';
 import { Spinner } from '@/components/ui/spinner';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,17 +21,33 @@ export default function SiteSettings() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  interface SocialMedia {
+    name: string;
+    url: string;
+    icon?: string;
+  }
 
-  const defaultForm = {
+  interface SiteSettingsForm {
+   siteName: string;
+    siteDescription: string;  
+    phone: string;
+    email: string;
+    address: string;
+    bookingEmail: string;
+    socialMedia: SocialMedia[];
+
+  }
+  const defaultForm  = {
     siteName: '',
     siteDescription: '',
     phone: '',
     email: '',
     address: '',
+    bookingEmail: '',
     socialMedia: [{ name: '', url: '', icon: '' }],
   };
 
-  const [formData, setFormData] = useState(defaultForm);
+  const [formData, setFormData] = useState<SiteSettingsForm>(defaultForm);
 
   // Fetch existing settings from Redux on mount
   useEffect(() => {
@@ -58,6 +73,7 @@ export default function SiteSettings() {
         phone: siteData.phone || '',
         email: siteData.email || '',
         address: siteData.address || '',
+        bookingEmail: siteData.bookingEmail || '',
         socialMedia: socialArray.length ? socialArray : [{ name: '', url: '', icon: '' }],
       })
       setIsEditing(true)
@@ -161,6 +177,7 @@ export default function SiteSettings() {
         address: formData.address,
         socialMedia: socialMediaObj,
         updatedAt: new Date().toISOString(),
+        bookingEmail: formData.bookingEmail,
       }
 
       // Use Redux actions
@@ -263,6 +280,19 @@ export default function SiteSettings() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="contact@example.com"
+                        className="mt-2"
+                      />
+                    </div>
+
+                     <div>
+                      <Label htmlFor="bookingEmail">Booking Email <span className="text-sm text-gray-500">(This is the email where you receive your booking notifications)</span></Label>
+                      <Input
+                        id="bookingEmail"
+                        name="bookingEmail"
+                        type="email"
+                        value={formData.bookingEmail}
+                        onChange={handleChange}
+                        placeholder="booking@example.com"
                         className="mt-2"
                       />
                     </div>

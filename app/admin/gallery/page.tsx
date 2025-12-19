@@ -186,55 +186,105 @@ export default function Page() {
 
   return (
     <div>
-      {
-        click && modalIndex !== null && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-white/50" onClick={() => { setClick(false); setModalIndex(null); }}>
-            <div className="relative max-w-3xl max-h-full p-4 bg-transparent" onClick={e => e.stopPropagation()}>
-              {/* Close (X) Button */}
-              <button
-                aria-label="Close"
-                className="absolute top-4 right-5 text-white bg-black/60 hover:bg-black/80 rounded-full p-2 z-10"
-                onClick={() => { setClick(false); setModalIndex(null); }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <img src={items[modalIndex]?.image}  alt="Full Size" className="h-[500px] w-[500px] rounded" />
-              <div className='flex justify-between items-center mt-4'>
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    setModalIndex((prev) => {
-                      if (prev === null) return null;
-                      const next = (prev + 1) % items.length;
-                      setClick(items[next].image);
-                      return next;
-                    });
-                  }}
-                  disabled={items.length <= 1}
-                >
-                  Next
-                </Button>
-                <Button
-                  onClick={e => {
-                    e.stopPropagation();
-                    setModalIndex((prev) => {
-                      if (prev === null) return null;
-                      const prevIdx = (prev - 1 + items.length) % items.length;
-                      setClick(items[prevIdx].image);
-                      return prevIdx;
-                    });
-                  }}
-                  disabled={items.length <= 1}
-                >
-                  Previous
-                </Button>
-              </div>
-            </div>
-          </div>
-        )
-      }
+{click && modalIndex !== null && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+    onClick={() => {
+      setClick(false);
+      setModalIndex(null);
+    }}
+  >
+    <div
+      onClick={(e) => e.stopPropagation()}
+      className="relative w-full max-w-6xl mx-4 rounded-xl bg-white/5 border border-white/10 shadow-2xl overflow-hidden animate-fadeIn"
+    >
+      {/* Close Button */}
+      <button
+        aria-label="Close"
+        onClick={() => {
+          setClick(false);
+          setModalIndex(null);
+        }}
+        className="absolute top-3 right-3 z-20 rounded-full bg-black/60 hover:bg-black/80 p-2 text-white transition"
+      >
+        ✕
+      </button>
+
+      {/* Main Image */}
+      <div className="flex items-center justify-center p-4 bg-black">
+        <img
+          src={items[modalIndex]?.image}
+          alt="Preview"
+          className="max-h-[70vh] w-auto object-contain rounded-lg"
+        />
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between px-6 py-3 bg-black/70">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setModalIndex((prev) => {
+              const index = prev ?? 0;
+              return index === 0 ? items.length - 1 : index - 1;
+            });
+          }}
+          className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+        >
+          ← Previous
+        </button>
+
+        <span className="text-sm text-white/80">
+          {modalIndex + 1} / {items.length}
+        </span>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setModalIndex((prev) => {
+              const index = prev ?? 0;
+              return index === items.length - 1 ? 0 : index + 1;
+            });
+          }}
+          className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+        >
+          Next →
+        </button>
+      </div>
+
+      {/* Thumbnail Strip */}
+      <div className="bg-black/80 px-4 py-3">
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+          {items.map((item, index) => (
+            <button
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalIndex(index);
+              }}
+              className={`relative flex-shrink-0 rounded-md overflow-hidden border-2 transition
+                ${
+                  modalIndex === index
+                    ? "border-white"
+                    : "border-transparent opacity-60 hover:opacity-100"
+                }
+              `}
+            >
+              <img
+                src={item.image}
+                alt={`Thumbnail ${index}`}
+                className="h-16 w-24 object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
 
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
@@ -279,13 +329,14 @@ export default function Page() {
           </div>
         </div>
 
-        <Card>
+        <div className=' shadow-none  border-0'>
 
-          <CardContent>
+          <div>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-24">Index</TableHead>
                     <TableHead className="w-24">Preview</TableHead>
                     <TableHead>Title</TableHead>
                     <TableHead>Status</TableHead>
@@ -347,6 +398,9 @@ export default function Page() {
                     items.map(item => (
                       <TableRow key={item._id}>
                         <TableCell>
+                          {items.findIndex(i => i._id === item._id) + 1 + (pagination.page - 1) * pagination.limit}
+                        </TableCell>
+                        <TableCell>
                           <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
                             <img  onClick={() => {
                               setClick(item.image);
@@ -384,8 +438,8 @@ export default function Page() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Simple modal (no navigation) */}

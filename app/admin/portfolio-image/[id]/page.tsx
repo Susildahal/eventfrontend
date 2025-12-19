@@ -188,15 +188,18 @@ export default function Page() {
           </div>
         </div>
 
-        <Card>
+        <div>
          
-          <CardContent>
+          <div>
      
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead >Preview</TableHead>
+
+                    <TableHead>Index</TableHead>
+
+                    <TableHead>Preview</TableHead>
                     <TableHead >Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -219,6 +222,7 @@ export default function Page() {
                   ) : null}
                   {items.map((item, index) => (
                     <TableRow key={item._id}>
+                      <TableCell className="font-medium text-black dark:text-white">{index + 1}</TableCell>
                       <TableCell>
                         <div className="h-10 w-10 object-cover rounded bg-gray-100 rounded overflow-hidden">
                           <img src={item.image} alt={item.image} className="h-full w-full object-cover" />
@@ -240,8 +244,8 @@ export default function Page() {
                 </TableBody>
               </Table>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Simple modal (no navigation) */}

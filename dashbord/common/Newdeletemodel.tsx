@@ -46,13 +46,14 @@ const Newdeletemodel: React.FC<DeleteModelProps> = ({
 
   return (
     <AlertDialog
+    
       // Prevent closing while loading
       open={!!deleteId}
       onOpenChange={(open) => {
         if (!loading && !open) setDeleteId(null)
       }}
     >
-      <AlertDialogContent>
+      <AlertDialogContent >
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>

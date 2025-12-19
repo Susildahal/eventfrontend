@@ -13,6 +13,7 @@ interface SiteSettings {
   phone: string;
   email: string;
   address: string;
+  bookingEmail: string;
   socialMedia: Record<string, SocialMedia>;
   updatedAt?: string;
 }
