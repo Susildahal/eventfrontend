@@ -360,13 +360,13 @@ export default function EventsdashbordClient() {
 
         <div>
           <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val)} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+            <TabsList className="grid w-full grid-cols-2 border border-gray-200 dark:border-gray-700">
               <TabsTrigger value="hero">Hero</TabsTrigger>
               <TabsTrigger value="faqs">FAQs</TabsTrigger>
             </TabsList>
 
             <TabsContent value="hero" className="space-y-6 mt-6">
-              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+              <Card className=" ">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Hero Section</CardTitle>
                   <CardDescription className="text-gray-600 dark:text-gray-400">Edit hero content and image. </CardDescription>
