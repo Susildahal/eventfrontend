@@ -52,7 +52,7 @@ interface FaqItem {
   status?: boolean
 }
 
-const TITLE_OPTIONS = ['General', 'Cancellation', 'Premits', 'Catering']
+const TITLE_OPTIONS = ['General', 'Cancellation', 'Permits', 'Catering']
 
 const truncateWords = (text: string, limit: number = 80) => {
   const words = text.split(' ')
