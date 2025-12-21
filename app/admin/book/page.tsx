@@ -553,5 +553,3 @@ function EditForm({ booking, onCancel, onSave }: EditFormProps) {
     </div>
   );
 }
-
-

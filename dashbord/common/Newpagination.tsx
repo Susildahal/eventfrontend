@@ -57,6 +57,9 @@ const NewPagination: React.FC<PaginationProps> = ({
   return (
     <div className="flex items-center justify-center gap-2 mt-5 flex-wrap">
       {/* Prev */}
+
+
+      <p> Showing {((currentPage - 1) * limit) + 1} to {Math.min(currentPage * limit, total)} of {total} entries</p>
       <button
         disabled={currentPage === 1}
         onClick={() => handlePageChange(currentPage - 1)}
