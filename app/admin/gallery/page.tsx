@@ -289,7 +289,7 @@ export default function Page() {
       <div className=" max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <div className='flex gap-4  items-center justify-center'>
-            <ArrowLeft className="w-6 h-6 cursor-pointer" onClick={() => router.back()} />
+            <ArrowLeft className="w-6 h-6 cursor-pointer text-[rgb(190,149,69)]" onClick={() => router.back()} />
             <div className=' flex flex-col'>
               <h2 className="text-2xl font-semibold">Gallery</h2>
               <p className="text-sm text-gray-500">Add, edit or remove gallery images </p>
