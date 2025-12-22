@@ -306,10 +306,10 @@ export default function ProfilePage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="container max-w-2xl mx-auto pb-8"
+        className="container max-w-2xl mx-auto "
       >
-        <Card className="w-full">
-          <CardHeader className="flex flex-col items-center">
+        <div className="w-full border-[rgb(190,149,69)] p-6 border-[1px] hover:border-[rgb(190,149,69)] rounded-lg shadow-sm ">
+          <div className="flex flex-col items-center">
             <div className="relative">
               <div className="flex items-center justify-center w-24 h-24 rounded-full bg-primary/10 overflow-hidden">
                 {profileImage ? (
@@ -344,7 +344,7 @@ export default function ProfilePage() {
                 {profileData.email}
               </CardDescription>
             </div>
-          </CardHeader>
+          </div>
 
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -567,7 +567,7 @@ export default function ProfilePage() {
               </TabsContent>
             </Tabs>
           </CardContent>
-        </Card>
+        </div>
       </motion.div>
     </>
   )

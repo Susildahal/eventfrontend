@@ -99,13 +99,13 @@ export default function servicetypesPage() {
             </div>
           </div>
 
-          <Card>
+          <>
             <CardContent>
               {loading && !items.length && <div className="p-4 text-sm text-gray-500">Loading...</div>}
               {error && <div className="p-4 text-sm text-red-500">{error}</div>}
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader>
+                  <TableHeader>s
                     <TableRow>
                       <TableHead>Index</TableHead>
                       <TableHead>Name</TableHead>
@@ -152,7 +152,7 @@ export default function servicetypesPage() {
                 </Table>
               </div>
             </CardContent>
-          </Card>
+          </>
         </div>
 
         {isOpen && (

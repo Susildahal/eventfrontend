@@ -46,7 +46,7 @@ export function HeroForm({
 }: HeroFormProps) {
   return (
     <>
-      <Card className=" border-[var(--color-border)]">
+      <div className=" border-[var(--color-border)]">
         <CardHeader>
           <CardTitle className="text-[var(--color-foreground)]">Hero Section</CardTitle>
           <CardDescription className="text-[var(--color-muted-foreground)]">Edit about us hero content</CardDescription>
@@ -96,7 +96,7 @@ export function HeroForm({
             />
           </div>
         </CardContent>
-      </Card>
+      </div>
 
     
     </>

@@ -222,9 +222,9 @@ export default function SiteSettings() {
         )}
 
         {/* General Information Card */}
-        <Card>
+        <div className="space-y-6  border-[1px] shadow rounded-2xl p-4 bg-slate-950  border-[rgb(190,149,69)]">
           <CardHeader>
-            <CardTitle>General Information</CardTitle>
+            <CardTitle className='pt-2.5'>General Information</CardTitle>
             <CardDescription>
               Basic details about your website and business contact information.
             </CardDescription>
@@ -307,10 +307,10 @@ export default function SiteSettings() {
               />
             </div>
           </CardContent>
-        </Card>
+        </div>
 
         {/* Social Media Card */}
-        <Card>
+        <div className=' space-y-6 border-[1px] shadow rounded-2xl p-4 bg-slate-950  border-[rgb(190,149,69)]'>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div className="space-y-1">
               <CardTitle>Social Media</CardTitle>
@@ -409,7 +409,7 @@ export default function SiteSettings() {
               </div>
             ))}
           </CardContent>
-        </Card>
+        </div>
 
         {/* Submit Action */}
         <div className="flex justify-end pt-4">

@@ -336,14 +336,14 @@ function ServicePage() {
   
         <div>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2  border border-gray-200 dark:border-gray-700">
+            <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
               <TabsTrigger value="hero">Hero</TabsTrigger>
               <TabsTrigger value="criteria">Criteria</TabsTrigger>
             </TabsList>
 
             {/* HERO SECTION */}
             <TabsContent value="hero" className="space-y-6 mt-6">
-              <Card className=" border border-gray-200 dark:border-gray-700">
+              <div className=" p-4">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Hero Section</CardTitle>
                   <CardDescription className="text-gray-600 dark:text-gray-400">Edit main headline and introduction</CardDescription>
@@ -355,7 +355,7 @@ function ServicePage() {
                     <Input
                       value={sections.hero.mainTitle}
                       onChange={(e) => handleHeroChange('mainTitle', e.target.value)}
-                      className="mt-2 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
+                      className="mt-2 placeholder-gray-500"
                       placeholder="Main title"
                       required
                     />
@@ -365,7 +365,7 @@ function ServicePage() {
                     <Input
                       value={sections.hero.title}
                       onChange={(e) => handleHeroChange('title', e.target.value)}
-                      className="mt-2 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
+                      className="mt-2  placeholder-gray-500"
                       placeholder="Main title"
                       required
                     />
@@ -376,7 +376,7 @@ function ServicePage() {
                     <Textarea
                       value={sections.hero.subtitle}
                       onChange={(e) => handleHeroChange('subtitle', e.target.value)}
-                      className="mt-2 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 min-h-[120px]"
+                      className="mt-2placeholder-gray-500 min-h-[120px]"
                       placeholder="Hero subtitle"
                       required
                     />
@@ -387,7 +387,7 @@ function ServicePage() {
                     <Input
                       value={sections.hero.image}
                       onChange={(e) => handleHeroChange('image', e.target.value)}
-                      className="mt-2 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500"
+                      className="mt-2 placeholder-gray-500"
                       placeholder="Image URL"
                       required
                     />
@@ -437,12 +437,12 @@ function ServicePage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </div>
             </TabsContent>
 
             {/* CRITERIA SECTION */}
             <TabsContent value="criteria" className="space-y-6 mt-6">
-              <Card className=" border border-gray-200 dark:border-gray-700">
+              <div className="">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-gray-900 dark:text-white">Criteria Items</CardTitle>
@@ -461,14 +461,14 @@ function ServicePage() {
                           <Input
                             value={item.label}
                             onChange={(e) => handleCriteriaChange(item.id, 'label', e.target.value)}
-                            className="dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500"
+                            className="placeholder-gray-500"
                             placeholder="Label"
                             required
                           />
                           <Textarea
                             value={item.description}
                             onChange={(e) => handleCriteriaChange(item.id, 'description', e.target.value)}
-                            className="dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[80px]"
+                            className="placeholder-gray-500 min-h-[80px]"
                             placeholder="Description"
                             required
                           />
@@ -485,7 +485,7 @@ function ServicePage() {
                     </div>
                   ))}
                 </CardContent>
-              </Card>
+              </div>
             </TabsContent>
 
        

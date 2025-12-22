@@ -194,7 +194,7 @@ export default function AboutUsAdminDashboard() {
           </div> */}
         </div>
         <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'hero' | 'mission')} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+          <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="hero">Hero</TabsTrigger>
             <TabsTrigger value="mission">Mission & Vision</TabsTrigger>
        

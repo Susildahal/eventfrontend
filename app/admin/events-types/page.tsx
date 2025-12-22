@@ -130,7 +130,7 @@ export default function EventTypesPage() {
             </div>
           </div>
 
-          <Card>
+          <div>
             <CardContent>
               {loading && !items.length && <div className="p-4 text-sm text-gray-500">Loading...</div>}
               {error && <div className="p-4 text-sm text-red-500">{error}</div>}
@@ -183,7 +183,7 @@ export default function EventTypesPage() {
                 </Table>
               </div>
             </CardContent>
-          </Card>
+          </div>
         </div>
 
         {isOpen && (

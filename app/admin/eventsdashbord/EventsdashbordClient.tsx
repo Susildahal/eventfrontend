@@ -84,6 +84,7 @@ export default function EventsdashbordClient() {
       reader.readAsDataURL(file);
       reader.onload = (event) => {
         const img = new Image();
+
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement('canvas');
@@ -366,7 +367,7 @@ export default function EventsdashbordClient() {
             </TabsList>
 
             <TabsContent value="hero" className="space-y-6 mt-6">
-              <Card className=" ">
+              <div className=" ">
                 <CardHeader>
                   <CardTitle className="text-gray-900 dark:text-white">Hero Section</CardTitle>
                   <CardDescription className="text-gray-600 dark:text-gray-400">Edit hero content and image. </CardDescription>
@@ -375,15 +376,15 @@ export default function EventsdashbordClient() {
                   <div className="space-y-4">
                     <div>
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Main Title</label>
-                      <Input value={sections.hero.title} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, title: e.target.value } }))} className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500" placeholder="Main title" required />
+                      <Input value={sections.hero.title} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, title: e.target.value } }))} className="mt-2  placeholder-gray-500" placeholder="Main title" required />
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Subtitle</label>
-                      <Input value={sections.hero.subtitle} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, subtitle: e.target.value } }))} className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500" placeholder="Subtitle" required />
+                      <Input value={sections.hero.subtitle} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, subtitle: e.target.value } }))} className="mt-2  placeholder-gray-500" placeholder="Subtitle" required />
                     </div>
                     <div>
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
-                      <Textarea value={sections.hero.description} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, description: e.target.value } }))} className="mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 min-h-[100px]" placeholder="Description" required />
+                      <Textarea value={sections.hero.description} onChange={(e) => setSections(prev => ({ ...prev, hero: { ...prev.hero, description: e.target.value } }))} className="mt-2  placeholder-gray-500 min-h-[100px]" placeholder="Description" required />
                     </div>
                   </div>
 
@@ -423,8 +424,8 @@ export default function EventsdashbordClient() {
                         <div key={index} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                           <div className="flex justify-between items-start gap-3">
                             <div className="flex-1 space-y-3">
-                              <Input value={item.title} onChange={(e) => handleHeroContentChange(index, 'title', e.target.value)} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500" placeholder="Title" required />
-                              <Textarea value={item.description} onChange={(e) => handleHeroContentChange(index, 'description', e.target.value)} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[80px]" placeholder="Description" required />
+                              <Input value={item.title} onChange={(e) => handleHeroContentChange(index, 'title', e.target.value)} className=" placeholder-gray-500" placeholder="Title" required />
+                              <Textarea value={item.description} onChange={(e) => handleHeroContentChange(index, 'description', e.target.value)} className=" placeholder-gray-500 min-h-[80px]" placeholder="Description" required />
                             </div>
                             <Button onClick={() => deleteHeroContent(index)} size="sm" variant="destructive"><Trash2 className="w-4 h-4" /></Button>
                           </div>
@@ -433,11 +434,11 @@ export default function EventsdashbordClient() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="faqs" className="space-y-6 mt-6">
-              <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+              <div className="">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-gray-900 dark:text-white">FAQs</CardTitle>
@@ -450,15 +451,15 @@ export default function EventsdashbordClient() {
                     <div key={item.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3 border border-gray-200 dark:border-gray-700">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 space-y-3">
-                          <Input value={item.question} onChange={(e) => handleFaqChange(item.id, 'question', e.target.value)} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500" placeholder="Question" required />
-                          <Textarea value={item.answer} onChange={(e) => handleFaqChange(item.id, 'answer', e.target.value)} className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 min-h-[80px]" placeholder="Answer" required />
+                          <Input value={item.question} onChange={(e) => handleFaqChange(item.id, 'question', e.target.value)} className=" placeholder-gray-500" placeholder="Question" required />
+                          <Textarea value={item.answer} onChange={(e) => handleFaqChange(item.id, 'answer', e.target.value)} className=" placeholder-gray-500 min-h-[80px]" placeholder="Answer" required />
                         </div>
                         <Button onClick={() => deleteFaq(item.id)} size="sm" variant="destructive" className="ml-3"><Trash2 className="w-4 h-4" /></Button>
                       </div>
                     </div>
                   ))}
                 </CardContent>
-              </Card>
+              </div>
             </TabsContent>
           </Tabs>
 
