@@ -130,7 +130,7 @@ export default function LoginPage() {
       console.log("Login response:", response.data)
       const authToken = response.data.token
       localStorage.setItem("authToken", authToken)
-      router.push("/admin")
+      router.push("/admin/dashbord")
     } catch (err) {
       if (err instanceof yup.ValidationError) {
         const validationErrors: { email?: string; password?: string } = {}
