@@ -15,7 +15,8 @@ const LoginStatus = () => {
     if (!token) {
       router.replace("/login");
     } else {
- router.replace("/admin/dashbord");
+      // Keep existing project route spelling
+      router.replace("/admin/dashbord");
     }
 
     // Mark checked for this session (resets on tab close)

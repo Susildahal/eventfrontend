@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -24,6 +23,7 @@ export default function SiteSettings() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [urlErrors, setUrlErrors] = useState<Record<number, string>>({});
 
   interface SocialMedia {
     name: string;
@@ -52,6 +52,17 @@ export default function SiteSettings() {
   };
 
   const [formData, setFormData] = useState<SiteSettingsForm>(defaultForm);
+
+  // URL validation function
+  const validateUrl = (url: string): boolean => {
+    if (!url) return true; // Empty URLs are allowed
+    try {
+      const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+      return urlPattern.test(url);
+    } catch {
+      return false;
+    }
+  };
 
   // Fetch existing settings from Redux on mount
   useEffect(() => {
@@ -101,6 +112,22 @@ export default function SiteSettings() {
       socialMedia: newSocialMedia
     }));
     setSuccess(false);
+
+    // Validate URL when it changes
+    if (field === 'url') {
+      if (value && !validateUrl(value)) {
+        setUrlErrors(prev => ({
+          ...prev,
+          [index]: 'Please enter a valid URL (e.g., https://example.com)'
+        }));
+      } else {
+        setUrlErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[index];
+          return newErrors;
+        });
+      }
+    }
   };
 
   const handleSocialMediaIconChange = (index: number, icon: string) => {
@@ -145,10 +172,41 @@ export default function SiteSettings() {
       ...prev,
       socialMedia: prev.socialMedia.filter((_, i) => i !== index)
     }));
+    // Remove URL error for this index
+    setUrlErrors(prev => {
+      const newErrors = { ...prev };
+      delete newErrors[index];
+      return newErrors;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Check for URL validation errors
+    const hasUrlErrors = Object.keys(urlErrors).length > 0;
+    if (hasUrlErrors) {
+      setError('Please fix all URL errors before saving.');
+      return;
+    }
+
+    // Validate all URLs before submitting
+    let hasInvalidUrls = false;
+    formData.socialMedia.forEach((social, index) => {
+      if (social.url && !validateUrl(social.url)) {
+        hasInvalidUrls = true;
+        setUrlErrors(prev => ({
+          ...prev,
+          [index]: 'Please enter a valid URL'
+        }));
+      }
+    });
+
+    if (hasInvalidUrls) {
+      setError('Please enter valid URLs for all social media profiles.');
+      return;
+    }
+
     setLoading(true);
     setError('');
     setSuccess(false);
@@ -222,7 +280,7 @@ export default function SiteSettings() {
         )}
 
         {/* General Information Card */}
-        <div className="space-y-6  border-[1px] shadow rounded-2xl p-4 bg-slate-950  border-[rgb(190,149,69)]">
+        <div className="space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 border-gray-200 dark:border-[rgb(190,149,69)]">
           <CardHeader>
             <CardTitle className='pt-2.5'>General Information</CardTitle>
             <CardDescription>
@@ -310,7 +368,7 @@ export default function SiteSettings() {
         </div>
 
         {/* Social Media Card */}
-        <div className=' space-y-6 border-[1px] shadow rounded-2xl p-4 bg-slate-950  border-[rgb(190,149,69)]'>
+        <div className='space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 border-gray-200 dark:border-[rgb(190,149,69)]'>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div className="space-y-1">
               <CardTitle>Social Media</CardTitle>
@@ -390,7 +448,14 @@ export default function SiteSettings() {
                     value={social.url}
                     onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
                     placeholder="https://..."
+                    className={urlErrors[index] ? 'border-red-500 dark:border-red-500' : ''}
                   />
+                  {urlErrors[index] && (
+                    <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {urlErrors[index]}
+                    </p>
+                  )}
                 </div>
 
                 {/* Delete Button */}
@@ -415,7 +480,7 @@ export default function SiteSettings() {
         <div className="flex justify-end pt-4">
           <Button 
             type="submit" 
-            disabled={loading}
+            disabled={loading || Object.keys(urlErrors).length > 0}
             size="lg"
             className="min-w-[150px]"
           >
