@@ -128,6 +128,23 @@ export default function SiteSettings() {
         });
       }
     }
+
+    // If user enters a name but hasn't provided a URL, mark it as required
+    if (field === 'name') {
+      const currentUrl = newSocialMedia[index].url;
+      if (value && !currentUrl) {
+        setUrlErrors(prev => ({
+          ...prev,
+          [index]: 'Please provide a URL for this platform.'
+        }));
+      } else if (!value) {
+        setUrlErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[index];
+          return newErrors;
+        });
+      }
+    }
   };
 
   const handleSocialMediaIconChange = (index: number, icon: string) => {
@@ -138,6 +155,20 @@ export default function SiteSettings() {
       socialMedia: newSocialMedia
     }));
     setSuccess(false);
+    // If an icon is selected but URL is missing, mark URL as required
+    const currentUrl = newSocialMedia[index].url;
+    if (icon && !currentUrl) {
+      setUrlErrors(prev => ({
+        ...prev,
+        [index]: 'Please provide a URL for this platform.'
+      }));
+    } else if (!icon) {
+      setUrlErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[index];
+        return newErrors;
+      });
+    }
   };
 
   const getIconComponent = (name?: string) => {
@@ -193,17 +224,26 @@ export default function SiteSettings() {
     // Validate all URLs before submitting
     let hasInvalidUrls = false;
     formData.socialMedia.forEach((social, index) => {
+      // If name or icon provided, URL is required
+      if ((social.name || social.icon) && !social.url) {
+        hasInvalidUrls = true;
+        setUrlErrors(prev => ({
+          ...prev,
+          [index]: 'Please provide a URL for this platform.'
+        }));
+      }
+
       if (social.url && !validateUrl(social.url)) {
         hasInvalidUrls = true;
         setUrlErrors(prev => ({
           ...prev,
-          [index]: 'Please enter a valid URL'
+          [index]: 'Please enter a valid URL (e.g., https://example.com)'
         }));
       }
     });
 
     if (hasInvalidUrls) {
-      setError('Please enter valid URLs for all social media profiles.');
+      setError('Please fix the highlighted social media URL errors before saving.');
       return;
     }
 
@@ -280,7 +320,7 @@ export default function SiteSettings() {
         )}
 
         {/* General Information Card */}
-        <div className="space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 border-gray-200 dark:border-[rgb(190,149,69)]">
+        <div className="space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 ">
           <CardHeader>
             <CardTitle className='pt-2.5'>General Information</CardTitle>
             <CardDescription>
@@ -368,7 +408,7 @@ export default function SiteSettings() {
         </div>
 
         {/* Social Media Card */}
-        <div className='space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 border-gray-200 dark:border-[rgb(190,149,69)]'>
+        <div className='space-y-6 border shadow rounded-2xl p-4 bg-white dark:bg-slate-950 '>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <div className="space-y-1">
               <CardTitle>Social Media</CardTitle>

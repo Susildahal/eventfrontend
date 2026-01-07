@@ -6,7 +6,7 @@ const LoginStatus = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Prevent recheck after refreshffffffff
+    // Prevent recheck after refresh
     const alreadyChecked = sessionStorage.getItem("checked");
     if (alreadyChecked) return;
 
@@ -15,10 +15,9 @@ const LoginStatus = () => {
     if (!token) {
       router.replace("/login");
     } else {
-      // Keep existing project route spellingggggggg
+      // Keep existing project route
       router.replace("/admin/dashbord");
     }
-//sadsdasda
     // Mark checked for this session (resets on tab close)
     sessionStorage.setItem("checked", "true");
   }, []);
