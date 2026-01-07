@@ -15,7 +15,7 @@ const LoginStatus = () => {
     if (!token) {
       router.replace("/login");
     } else {
-      // Keep existing project route spelling
+      // Keep existing project route spellingggggggg
       router.replace("/admin/dashbord");
     }
 //sadsdasda
